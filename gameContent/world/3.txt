@@ -1,0 +1,12 @@
+{
+	"roomID":"3",
+	"name":"Test Room 3",
+	"description":["This room is for testing NPC spawning"],
+	"exits":[
+				{
+					"name":"north",
+					"roomID":"0",
+					"isHidden":false
+				}
+			]
+}

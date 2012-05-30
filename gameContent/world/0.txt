@@ -1,0 +1,22 @@
+{
+	"roomID":"0",
+	"name":"Test Room 0",
+	"description":["This is the main testing room, where all players", "will initially spawn"],
+	"exits":[
+				{
+					"name":"north",
+					"roomID":"1",
+					"isHidden":false
+				}, 
+				{
+					"name":"east",
+					"roomID":"2",
+					"isHidden":false
+				}, 
+				{
+					"name":"south",
+					"roomID":"3",
+					"isHidden":false
+				}
+			]
+}
