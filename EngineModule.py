@@ -1,10 +1,12 @@
 import os
 import json
+import EnvironmentModule
+import ConnectionModule
+from ConnectionModule import *
 from EnvironmentModule import *
 from ActorModule import *
 from EventModule import *
-
-import EnvironmentModule
+from CommandModule import *
 
 
 class RoomEngine(EventReceiver):
@@ -125,3 +127,45 @@ class ActorEngine(EventReceiver):
 			return True
 		except IOError as e:
 			return False
+			
+			
+
+
+
+class CommandEngine(EventReceiver):
+	def __init__(self):
+		EventReceiver.__init__(self)
+		attributes = {
+			'commandList' : {}
+		}
+
+		for key in attributes.keys():
+			self.attributes[key] = attributes[key]
+
+		commandExecutionHandler = EventHandler()
+
+		commandExecutionHandler.attributes['signature']	= 'execute_command'
+		commandExecutionHandler.attributes['function']	= self.executeCommand
+
+		self.addEventHandler(commandExecutionHandler)
+		
+		
+	def executeCommand(self, event):
+		print 'command engine received event'
+		cmdName		= event.attributes['data']['command']
+		connection	= event.attributes['data']['connection']
+		
+		if cmdName == 'quit':
+			ConnectionModule.connectionList.removeConnection(connection)
+		else:
+			commandList = self.attributes['commandList']
+			command		= commandList['go']
+			
+			if commandList.has_key(cmdName):
+				command = commandList[cmdName]
+			
+			command.receiveEvent(event)
+	
+	
+	def buildCommandList(self):
+		self.attributes['commandList']['go'] = Go()

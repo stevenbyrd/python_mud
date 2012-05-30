@@ -14,20 +14,24 @@ class GameMain:
 		ConnectionModule.connectionList	= ConnectionList()
 		EngineModule.roomEngine			= RoomEngine()
 		EngineModule.actorEngine		= ActorEngine()
+		EngineModule.commandEngine		= CommandEngine()
 		
 		EngineModule.roomEngine.buildWorld()
+		EngineModule.commandEngine.buildCommandList()
 
-		loginListener	= LoginListener()
-		inputDriver		= InputDriver()
-		outputDriver	= OutputDriver()
-		updateDriver	= UpdateDriver()
-		roomDriver		= RoomDriver()		
+		loginListener		= LoginListener()
+		inputDriver			= InputDriver()
+		outputDriver		= OutputDriver()
+		updateDriver		= UpdateDriver()
+		roomDriver			= RoomDriver()
+		connectionUpdater	= ConnectionListUpdater()	
 
 		loginListener.start()
 		inputDriver.start()
 		outputDriver.start()
 		updateDriver.start()
 		roomDriver.start()
+		connectionUpdater.start()
 
 
 
@@ -36,7 +40,7 @@ class GameMain:
 class InputDriver(threading.Thread):
 	def run(self):
 		while True:
-			ConnectionModule.connectionList.attributes['semaphore'].acquire()
+			ConnectionModule.connectionList.attributes['openConnectionsSemaphore'].acquire()
 			
 			for connection in ConnectionModule.connectionList.attributes['connectionList']:
 				try:
@@ -45,11 +49,13 @@ class InputDriver(threading.Thread):
 				
 					if len(playerInput) > 0:
 						connection.attributes['inputBuffer'].append(playerInput)
+						
+						print 'received input: {}'.format(playerInput)
 				except:
 					pass
 					#socket unavailable for now, we'll get it next time
 			
-			ConnectionModule.connectionList.attributes['semaphore'].release()
+			ConnectionModule.connectionList.attributes['openConnectionsSemaphore'].release()
 			
 			sleep(0.05)
 
@@ -58,20 +64,22 @@ class InputDriver(threading.Thread):
 class OutputDriver(threading.Thread):
 	def run(self):
 		while True:
-			ConnectionModule.connectionList.attributes['semaphore'].acquire()
+			ConnectionModule.connectionList.attributes['openConnectionsSemaphore'].acquire()
 			
 			for connection in ConnectionModule.connectionList.attributes['connectionList']:
 				try:
 					for line in connection.attributes['outputBuffer']:
 						connection.attributes['socket'].send(line)
 						
+						print 'sent output: {}'.format(line)
+						
 					connection.attributes['outputBuffer'] = []
 				
 				except:
-					pass
 					#socket unavailable for now, we'll get it next time
+					pass
 			
-			ConnectionModule.connectionList.attributes['semaphore'].release()
+			ConnectionModule.connectionList.attributes['openConnectionsSemaphore'].release()
 			
 			sleep(0.05)
 
@@ -80,10 +88,35 @@ class OutputDriver(threading.Thread):
 class UpdateDriver(threading.Thread):
 	def run(self):
 		while True:
+			ConnectionModule.connectionList.attributes['openConnectionsSemaphore'].acquire()
+			
 			for connection in ConnectionModule.connectionList.attributes['connectionList']:
-				pass
-
-
+				playerInput	= connection.pollInput()
+				parsedInput	= playerInput.lower().strip()
+				
+				if len(playerInput) > 0:
+					self.processInput(connection, playerInput)
+			
+			ConnectionModule.connectionList.attributes['openConnectionsSemaphore'].release()
+			
+			sleep(0.05)
+	
+	
+	def processInput(self, connection, inputStr):		
+		parsedInput = inputStr.split(' ')
+		
+		if len(parsedInput) > 0:
+			cmd				= parsedInput[0]
+			args			= parsedInput[1:]
+			commandEvent	= Event()
+			
+			commandEvent.attributes['signature']			= 'execute_command'
+			commandEvent.attributes['data']['command']		= cmd
+			commandEvent.attributes['data']['args']			= args
+			commandEvent.attributes['data']['connection']	= connection
+		
+			EngineModule.commandEngine.receiveEvent(commandEvent);
+	
 
 class RoomDriver(threading.Thread):
 	def run(self):
