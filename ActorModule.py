@@ -51,17 +51,30 @@ class Player(Humanoid):
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 		
-		playerInHandler								= EventHandler()
-		notificationHandler							= EventHandler()
+		playerInHandler			= EventHandler()
+		notificationHandler		= EventHandler()
+		entityDescribedHandler	= EventHandler()
 		
-		playerInHandler.attributes['signature']		= 'player_entered'
-		playerInHandler.attributes['function']		= self.playerEnteredRoom
+		playerInHandler.attributes['signature']			= 'player_entered'
+		playerInHandler.attributes['function']			= self.playerEnteredRoom
 		
-		notificationHandler.attributes['signature']	= 'receive_notification'
-		notificationHandler.attributes['function']	= self.receiveNotification
+		notificationHandler.attributes['signature']		= 'receive_notification'
+		notificationHandler.attributes['function']		= self.receiveNotification
+		
+		entityDescribedHandler.attributes['signature']	= 'entity_described_self'
+		entityDescribedHandler.attributes['function']	= self.entityDescribedSelf
 		
 		self.addEventHandler(playerInHandler)
 		self.addEventHandler(notificationHandler)
+		self.addEventHandler(entityDescribedHandler)
+		
+		
+	def entityDescribedSelf(self, event):
+		for line in event.attributes['data']['description']:
+			self.send(line)
+			
+		self.sendFinal(event.attributes['data']['lastLine'])
+		
 		
 		
 	def receiveNotification(self, event):
@@ -84,6 +97,10 @@ class Player(Humanoid):
 	
 	def sendFinal(self, message):
 		self.attributes['connection'].sendFinal(message)
+		
+		
+	def insertCommand(self, command):
+		self.attributes['connection'].attributes['inputBuffer'].append(command)
 
 
 

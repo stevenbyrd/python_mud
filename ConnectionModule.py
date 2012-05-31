@@ -12,8 +12,16 @@ class LoginListener(threading.Thread):
 	def run(self):
 		serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	
-		serversocket.bind(('localhost', 8888))
-		serversocket.listen(2)
+		#hack to get my host name
+		hostname	= socket.gethostname()
+		tokenized	= hostname.split('.')
+		hostname	= '{}.{}.{}.{}'.format(tokenized[3], tokenized[2], tokenized[1], tokenized[0])
+		
+		print socket.gethostname()
+		print hostname
+	
+		serversocket.bind((hostname, 8888))
+		serversocket.listen(5)
 		
 		while True:
 			clientsocket = serversocket.accept()[0]

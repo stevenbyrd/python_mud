@@ -43,6 +43,7 @@ class Room(EventReceiver):
 		playerOutHandler	= EventHandler()
 		playerLogoutHandler	= EventHandler()
 		actorMoveHandler	= EventHandler()
+		wasLookedAtHandler	= EventHandler()
 		
 		playerInHandler.attributes['signature']		= 'player_entered'
 		playerInHandler.attributes['function']		= self.addPlayer
@@ -56,10 +57,42 @@ class Room(EventReceiver):
 		actorMoveHandler.attributes['signature']	= 'actor_move'
 		actorMoveHandler.attributes['function']		= self.moveActor
 		
+		wasLookedAtHandler.attributes['signature']	= 'was_looked_at'
+		wasLookedAtHandler.attributes['function']	= self.wasLookedAt
+		
 		self.addEventHandler(playerInHandler)
 		self.addEventHandler(playerOutHandler)
 		self.addEventHandler(playerLogoutHandler)
 		self.addEventHandler(actorMoveHandler)
+		self.addEventHandler(wasLookedAtHandler)
+		
+		
+	def wasLookedAt(self, event):
+		player		= event.attributes['data']['observer']
+		description = ['\n' + ANSI.red(self.attributes['name']) + '\n\n']
+		exitList	= 'Obvious exits:'
+		
+		for line in self.attributes['description']:
+			description.append(line + '\n')
+		
+		for exit in self.attributes['exits']:
+			if exit.attributes['isHidden'] == False:
+				exitList = exitList + ' ' + exit.attributes['name'] + ','
+		
+		if exitList == 'Obvious exits:':
+			exitList = 'Obvious exits: none'
+
+		if exitList.endswith(','):
+			exitList = exitList[0:-1]
+		
+		exitList = ANSI.blue(exitList) + '\n'
+		
+		describeEvent									= Event()
+		describeEvent.attributes['signature']			= 'entity_described_self'
+		describeEvent.attributes['data']['description']	= description
+		describeEvent.attributes['data']['lastLine']	= exitList
+		
+		player.receiveEvent(describeEvent)
 		
 		
 	def moveActor(self, event):
@@ -102,6 +135,8 @@ class Room(EventReceiver):
 			playerList.append(player)
 			
 			player.attributes['roomID'] = self.attributes['roomID']
+			
+			player.insertCommand('look')
 
 		self.attributes['playerSemaphore'].release()
 
