@@ -5,17 +5,17 @@
 	"exits":[
 				{
 					"name":"north",
-					"roomID":"1",
+					"destination":"1",
 					"isHidden":false
 				}, 
 				{
 					"name":"east",
-					"roomID":"2",
+					"destination":"2",
 					"isHidden":false
 				}, 
 				{
 					"name":"south",
-					"roomID":"3",
+					"destination":"3",
 					"isHidden":false
 				}
 			]

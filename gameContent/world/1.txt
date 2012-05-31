@@ -5,7 +5,7 @@
 	"exits":[
 				{
 					"name":"south",
-					"roomID":"0",
+					"destination":"0",
 					"isHidden":false
 				}
 			]

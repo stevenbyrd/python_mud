@@ -169,13 +169,21 @@ class ConnectionListUpdater(threading.Thread):
 		connectionList.attributes['newConnectionSemaphore'].acquire()
 		
 		for connection in connectionList.attributes['newConnections']:
+			player									= connection.attributes['player']
 			loginEvent								= Event()
 			loginEvent.attributes['signature'] 		= 'player_login'
-			loginEvent.attributes['data']['player']	= connection.attributes['player']
+			loginEvent.attributes['data']['player']	= player
 
 			EngineModule.roomEngine.receiveEvent(loginEvent)
 			
 			connectionList.attributes['connectionList'].append(connection)
+			
+			playerName												= player.attributes['name']
+			loginNotificationEvent									= Event()
+			loginNotificationEvent.attributes['signature']			= 'broadcast_to_all_players'
+			loginNotificationEvent.attributes['data']['message']	= '{} just logged in.'.format(playerName)
+		
+			EngineModule.actorEngine.receiveEvent(loginNotificationEvent)
 		
 		connectionList.attributes['newConnections'] = []
 		
@@ -188,6 +196,14 @@ class ConnectionListUpdater(threading.Thread):
 		for connection in connectionList.attributes['closedConnections']:
 			connectionList.attributes['connectionList'].remove(connection)
 			connection.attributes['socket'].close()
+			
+			player													= connection.attributes['player']
+			playerName												= player.attributes['name']
+			logoutNotificationEvent									= Event()
+			logoutNotificationEvent.attributes['signature']			= 'broadcast_to_all_players'
+			logoutNotificationEvent.attributes['data']['message']	= '{} logged off.'.format(playerName)
+		
+			EngineModule.actorEngine.receiveEvent(logoutNotificationEvent)
 		
 		connectionList.attributes['closedConnections'] = []
 		

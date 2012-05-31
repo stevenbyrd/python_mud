@@ -1,4 +1,5 @@
 import time
+import ANSI
 from EventModule import *
 
 class Actor(EventReceiver):
@@ -50,17 +51,39 @@ class Player(Humanoid):
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 		
-		playerInHandler							= EventHandler()
-		playerInHandler.attributes['signature']	= 'player_entered'
-		playerInHandler.attributes['function']	= self.playerEnteredRoom
+		playerInHandler								= EventHandler()
+		notificationHandler							= EventHandler()
+		
+		playerInHandler.attributes['signature']		= 'player_entered'
+		playerInHandler.attributes['function']		= self.playerEnteredRoom
+		
+		notificationHandler.attributes['signature']	= 'receive_notification'
+		notificationHandler.attributes['function']	= self.receiveNotification
 		
 		self.addEventHandler(playerInHandler)
+		self.addEventHandler(notificationHandler)
+		
+		
+	def receiveNotification(self, event):
+		message			= event.attributes['data']['message']
+		notification	= ANSI.yellow('### {} '.format(message))
+
+		self.sendFinal(notification)
+		
 		
 	def playerEnteredRoom(self, event):
 		player	= event.attributes['data']['player']
 		name	= player.attributes['name']
 		
-		self.attributes['connection'].sendFinal('{} just arrived.'.format(name))
+		self.sendFinal('{} just arrived.'.format(name))
+		
+		
+	def send(self, message):
+		self.attributes['connection'].send(message)	
+		
+	
+	def sendFinal(self, message):
+		self.attributes['connection'].sendFinal(message)
 
 
 

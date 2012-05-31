@@ -49,8 +49,6 @@ class InputDriver(threading.Thread):
 				
 					if len(playerInput) > 0:
 						connection.attributes['inputBuffer'].append(playerInput)
-						
-						print 'received input: {}'.format(playerInput)
 				except:
 					pass
 					#socket unavailable for now, we'll get it next time
@@ -70,8 +68,6 @@ class OutputDriver(threading.Thread):
 				try:
 					for line in connection.attributes['outputBuffer']:
 						connection.attributes['socket'].send(line)
-						
-						print 'sent output: {}'.format(line)
 						
 					connection.attributes['outputBuffer'] = []
 				
@@ -93,16 +89,17 @@ class UpdateDriver(threading.Thread):
 			for connection in ConnectionModule.connectionList.attributes['connectionList']:
 				playerInput	= connection.pollInput()
 				parsedInput	= playerInput.lower().strip()
+				player		= connection.attributes['player']
 				
 				if len(playerInput) > 0:
-					self.processInput(connection, playerInput)
+					self.processInput(player, playerInput)
 			
 			ConnectionModule.connectionList.attributes['openConnectionsSemaphore'].release()
 			
 			sleep(0.05)
 	
 	
-	def processInput(self, connection, inputStr):		
+	def processInput(self, player, inputStr):		
 		parsedInput = inputStr.split(' ')
 		
 		if len(parsedInput) > 0:
@@ -113,7 +110,7 @@ class UpdateDriver(threading.Thread):
 			commandEvent.attributes['signature']			= 'execute_command'
 			commandEvent.attributes['data']['command']		= cmd
 			commandEvent.attributes['data']['args']			= args
-			commandEvent.attributes['data']['connection']	= connection
+			commandEvent.attributes['data']['source']		= player
 		
 			EngineModule.commandEngine.receiveEvent(commandEvent);
 	
