@@ -2,6 +2,7 @@
 	"name":"Khoma",
 	"race":"Sol",
 	"actorID":"0",
+	"uniqueID":"0",
 	"description":[
 					"description line 0",
 					"description line 1",

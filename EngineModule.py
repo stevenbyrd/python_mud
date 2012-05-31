@@ -99,27 +99,59 @@ class ActorEngine(EventReceiver):
 	def __init__(self):
 		EventReceiver.__init__(self)
 		attributes = {
-			'playerMap'	: {},
-			'npcMap'	: {}
+			'playerMapSemaphore'	: threading.BoundedSemaphore(1),
+			'playerMap'				: {},
+			'npcMap'				: {}
 		}
 		
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 	
-		playerLoginHandler = EventHandler()
+		playerLoginHandler	= EventHandler()
+		playerLogoutHandler	= EventHandler()
 
 		playerLoginHandler.attributes['signature']	= 'player_login'
 		playerLoginHandler.attributes['function']	= self.playerLogin
+		
+		playerLogoutHandler.attributes['signature']	= 'player_logout'
+		playerLogoutHandler.attributes['function']	= self.playerLogout
 
 		self.addEventHandler(playerLoginHandler)
+		self.addEventHandler(playerLogoutHandler)
 	
 	
 	def playerLogin(self, event):
-		player		= event.attributes['data']['player']
+		player = event.attributes['data']['player']
+		
+		self.addPlayer(player)
+		
+		
+		
+	def playerLogout(self, event):
+		connection	= event.attributes['data']['connection']
+		player		= connection.attributes['player']
 		playerID	= player.attributes['uniqueID']
 		
-		self.attributes['playerMap'][playerID] = player
+		self.removePlayer(playerID)
 		
+		
+	def addPlayer(self, player):
+		self.attributes['playerMapSemaphore'].acquire();
+		
+		playerID								= player.attributes['uniqueID']
+		self.attributes['playerMap'][playerID]	= player
+		
+		self.attributes['playerMapSemaphore'].release();
+		
+		
+	def removePlayer(self, playerID):
+		self.attributes['playerMapSemaphore'].acquire();
+		
+		if self.attributes['playerMap'].has_key(playerID):
+			del self.attributes['playerMap'][playerID]
+		
+		self.attributes['playerMapSemaphore'].release();
+	
 		
 	def loadPlayer(self, playerName):
 		currentDir	= os.getcwd()
@@ -135,8 +167,6 @@ class ActorEngine(EventReceiver):
 			player.attributes[key] = jsonObj[key]
 			
 		player.attributes['roomID'] = '0'
-
-		self.attributes['playerMap'][player.attributes['actorID']] = player
 		
 		return player
 		
@@ -175,19 +205,17 @@ class CommandEngine(EventReceiver):
 		
 		
 	def executeCommand(self, event):
-		print 'command engine received event'
 		cmdName		= event.attributes['data']['command']
 		connection	= event.attributes['data']['connection']
 		
 		if cmdName == 'quit':
-			ConnectionModule.connectionList.removeConnection(connection)
-			
-			logoutEvent = Event()
-			
+			logoutEvent 									= Event()
 			logoutEvent.attributes['signature']				= 'player_logout'
 			logoutEvent.attributes['data']['connection']	= connection
 			
 			roomEngine.receiveEvent(logoutEvent)
+			actorEngine.receiveEvent(logoutEvent)
+			ConnectionModule.connectionList.receiveEvent(logoutEvent)
 		else:
 			commandList = self.attributes['commandList']
 			command		= commandList['go']

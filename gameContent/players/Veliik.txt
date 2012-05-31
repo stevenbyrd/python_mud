@@ -1,7 +1,8 @@
 {
 	"name":"Veliik",
 	"race":"Sol",
-	"actorID":"1",
+	"actorID":"0",
+	"uniqueID":"1",
 	"description":[
 					"description line 0",
 					"description line 1",

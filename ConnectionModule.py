@@ -42,9 +42,7 @@ class LoginListener(threading.Thread):
 						loginEvent.attributes['signature'] 		= 'player_login'
 						loginEvent.attributes['data']['player']	= player
 
-						EngineModule.roomEngine.receiveEvent(loginEvent)
 						EngineModule.actorEngine.receiveEvent(loginEvent)
-
 						connectionList.receiveEvent(loginEvent)
 					else:
 						clientsocket.send('\nPlayer not found.\nEnter your name:')
@@ -110,11 +108,16 @@ class ConnectionList(EventReceiver):
 			self.attributes[key] = attributes[key]
 			
 		playerLoginHandler	= EventHandler()
+		playerLogoutHandler	= EventHandler()
 
 		playerLoginHandler.attributes['signature']	= 'player_login'
 		playerLoginHandler.attributes['function']	= self.playerLogin
+		
+		playerLogoutHandler.attributes['signature']	= 'player_logout'
+		playerLogoutHandler.attributes['function']	= self.playerLogout
 
 		self.addEventHandler(playerLoginHandler)
+		self.addEventHandler(playerLogoutHandler)
 	
 	
 	def addConnection(self, connection):
@@ -134,6 +137,12 @@ class ConnectionList(EventReceiver):
 		connection	= player.attributes['connection']
 		
 		self.addConnection(connection)
+		
+		
+	def playerLogout(self, event):
+		connection = event.attributes['data']['connection']
+		
+		self.removeConnection(connection)
 
 
 
@@ -160,6 +169,12 @@ class ConnectionListUpdater(threading.Thread):
 		connectionList.attributes['newConnectionSemaphore'].acquire()
 		
 		for connection in connectionList.attributes['newConnections']:
+			loginEvent								= Event()
+			loginEvent.attributes['signature'] 		= 'player_login'
+			loginEvent.attributes['data']['player']	= connection.attributes['player']
+
+			EngineModule.roomEngine.receiveEvent(loginEvent)
+			
 			connectionList.attributes['connectionList'].append(connection)
 		
 		connectionList.attributes['newConnections'] = []

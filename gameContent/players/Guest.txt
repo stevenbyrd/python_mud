@@ -1,7 +1,8 @@
 {
 	"name":"Guest",
 	"race":"Hulk",
-	"actorID":"2",
+	"actorID":"0",
+	"uniqueID":"2",
 	"description":[
 					"description line 0",
 					"description line 1",

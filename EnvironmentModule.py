@@ -91,11 +91,15 @@ class Room(EventReceiver):
 		self.attributes['playerSemaphore'].acquire()
 		
 		if player not in set(playerList):			
-			for player in playerList:
-				player.receiveEvent(event)
+			for p in playerList:
+				p.receiveEvent(event)
 				
 			playerList.append(player)
-			
+		
+		print 'Room add player'
+		for p in playerList:
+			print p.attributes['name']
+
 		self.attributes['playerSemaphore'].release()
 
 
@@ -109,7 +113,9 @@ class Room(EventReceiver):
 			playerList.remove(player)
 			
 			if event.attributes['signature'] == 'player_exited':
-				for player in playeList:
-					player.receiveEvent(event)
-				
+				for p in playeList:
+					p.receiveEvent(event)
+		print 'Room remove player'
+		for p in playerList:
+			print p.attributes['name']	
 		self.attributes['playerSemaphore'].release()
