@@ -1,5 +1,6 @@
 from EventModule import EventReceiver
 from EventModule import EventHandler
+import threading
 
 class Exit(EventReceiver):
 	def __init__(self):
@@ -49,14 +50,16 @@ class Room(EventReceiver):
 	def __init__(self):
 		EventReceiver.__init__(self)
 		attributes = {
-			'roomID'		: '',
-			'name'			: '',
-			'description'	: [],
-			'exits'			: [],
-			'players'		: [],
-			'npcs'			: [],
-			'spawnableNPCs'	: [],
-			'updateRate'	: 0
+			'playerSemaphore'	: threading.BoundedSemaphore(1),
+			'npcSemaphore'		: threading.BoundedSemaphore(1),
+			'roomID'			: '',
+			'name'				: '',
+			'description'		: [],
+			'exits'				: [],
+			'players'			: [],
+			'npcs'				: [],
+			'spawnableNPCs'		: [],
+			'updateRate'		: 0
 		}
 		
 		for key in attributes.keys():
@@ -64,36 +67,49 @@ class Room(EventReceiver):
 	
 		playerInHandler		= EventHandler()
 		playerOutHandler	= EventHandler()
-	
-		playerInHandler.attributes['signature']		= 'player_entered'
-		playerOutHandler.attributes['signature']	= 'player_exited'
+		playerLogoutHandler	= EventHandler()
 		
+		playerInHandler.attributes['signature']	= 'player_entered'
 		playerInHandler.attributes['function']	= self.addPlayer
-		playerOutHandler.attributes['function']	= self.removePlayer
+
+		playerOutHandler.attributes['signature']	= 'player_exited'	
+		playerOutHandler.attributes['function']		= self.removePlayer
+		
+		
+		playerLogoutHandler.attributes['signature']	= 'player_logout'
+		playerLogoutHandler.attributes['function']	= self.removePlayer
 		
 		self.addEventHandler(playerInHandler)
 		self.addEventHandler(playerOutHandler)
+		self.addEventHandler(playerLogoutHandler)
 		
 
 	def addPlayer(self, event):
-		data		= event.attributes['data']
-		player		= data['player']
+		player		= event.attributes['data']['player']
 		playerList	= self.attributes['players']
 		
-		if player not in set(playerList):
-			playerList.append(player)
-			
+		self.attributes['playerSemaphore'].acquire()
+		
+		if player not in set(playerList):			
 			for player in playerList:
 				player.receiveEvent(event)
+				
+			playerList.append(player)
+			
+		self.attributes['playerSemaphore'].release()
 
 
 	def removePlayer(self, event):
-		data		= event.attributes['data']
-		player		= data['player']
+		player		= event.attributes['data']['player']
 		playerList	= self.attributes['players']
+		
+		self.attributes['playerSemaphore'].acquire()
 		
 		if player in set(playerList):
 			playerList.remove(player)
 			
-			for player in playeList:
-				player.receiveEvent(event)
+			if event.attributes['signature'] == 'player_exited':
+				for player in playeList:
+					player.receiveEvent(event)
+				
+		self.attributes['playerSemaphore'].release()
