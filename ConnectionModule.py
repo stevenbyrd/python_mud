@@ -122,10 +122,12 @@ class ConnectionList(EventReceiver):
 		self.attributes['newConnections'].append(connection)
 		self.attributes['newConnectionSemaphore'].release()
 	
+	
 	def removeConnection(self, connection):
 		self.attributes['closedConnectionSemaphore'].acquire()
 		self.attributes['closedConnections'].append(connection)
 		self.attributes['closedConnectionSemaphore'].release()
+	
 		
 	def playerLogin(self, event):
 		player 		= event.attributes['data']['player']
