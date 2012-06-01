@@ -45,6 +45,7 @@ class Room(EventReceiver):
 		actorMoveHandler	= EventHandler()
 		wasLookedAtHandler	= EventHandler()
 		actorObserveHandler	= EventHandler()
+		actorSpokeHandler	= EventHandler()
 		
 		playerInHandler.attributes['signature']		= 'player_entered'
 		playerInHandler.attributes['function']		= self.addPlayer
@@ -64,12 +65,21 @@ class Room(EventReceiver):
 		actorObserveHandler.attributes['signature']	= 'actor_observed'
 		actorObserveHandler.attributes['function']	= self.actorObserved
 		
+		actorSpokeHandler.attributes['signature']	= 'actor_spoke'
+		actorSpokeHandler.attributes['function']	= self.actorSpoke
+		
 		self.addEventHandler(playerInHandler)
 		self.addEventHandler(playerOutHandler)
 		self.addEventHandler(playerLogoutHandler)
 		self.addEventHandler(actorMoveHandler)
 		self.addEventHandler(wasLookedAtHandler)
 		self.addEventHandler(actorObserveHandler)
+		self.addEventHandler(actorSpokeHandler)
+
+
+	def actorSpoke(self, event):
+		for player in self.attributes['players']:
+			player.receiveEvent(event)
 
 
 	def actorObserved(self, event):
@@ -80,12 +90,11 @@ class Room(EventReceiver):
 							self.attributes['players'])
 		
 		if len(targetList) == 0:
-			describeEvent									= Event()
-			describeEvent.attributes['signature']			= 'entity_described_self'
-			describeEvent.attributes['data']['lastLine']	= 'You don\'t see that here.'
-			describeEvent.attributes['data']['description'] = []
+			feedbackEvent									= Event()
+			feedbackEvent.attributes['signature']			= 'received_feedback'
+			feedbackEvent.attributes['data']['feedback']	= 'You don\'t see that here.'
 			
-			observer.receiveEvent(describeEvent)
+			actor.receiveEvent(feedbackEvent)
 		else:
 			lookEvent									= Event()
 			lookEvent.attributes['data']['observer']	= observer
@@ -97,7 +106,7 @@ class Room(EventReceiver):
 		
 	def wasObserved(self, event):
 		player		= event.attributes['data']['observer']
-		description = ['\n' + ANSI.red(self.attributes['name']) + '\n']
+		description = [ANSI.red(self.attributes['name']) + '\n']
 		exitList	= 'Obvious exits:'
 		playerList	= filter(lambda p: p != player, self.attributes['players'])
 		
@@ -129,8 +138,7 @@ class Room(EventReceiver):
 		
 		describeEvent									= Event()
 		describeEvent.attributes['signature']			= 'entity_described_self'
-		describeEvent.attributes['data']['lastLine']	= description[-1]
-		describeEvent.attributes['data']['description'] = description[0:-1]
+		describeEvent.attributes['data']['description'] = description
 		
 		player.receiveEvent(describeEvent)
 		
@@ -141,14 +149,21 @@ class Room(EventReceiver):
 		exit		= None
 		
 		if direction != None and direction != '':
-			for e in self.attributes['exits']:
-				if e.attributes['name'].startswith(direction):
-					exit = e
-					break
+			exitList = filter(lambda e : 
+									e.attributes['name'].lower().startswith(direction.lower()), 
+								self.attributes['exits'])
+								
+			if len(exitList) > 0:
+				exit = exitList[0]
+	
 		
 		if exit == None:
-			if actor.attributes['actorID'] == '0':
-				actor.sendFinal(ANSI.yellow('You can\'t go that way!'))
+			feedbackEvent									= Event()
+			feedbackEvent.attributes['signature']			= 'received_feedback'
+			feedbackEvent.attributes['data']['feedback']	= ANSI.yellow('You can\'t go that way!')
+			
+			actor.receiveEvent(feedbackEvent)
+
 		else:			
 			currentRoom									= self.attributes['roomID']
 			destination									= exit.attributes['destination']
@@ -195,6 +210,10 @@ class Room(EventReceiver):
 			
 			if message != None and message != '':
 				for p in playerList:
-					p.sendFinal(message)
+					feedbackEvent									= Event()
+					feedbackEvent.attributes['signature']			= 'received_feedback'
+					feedbackEvent.attributes['data']['feedback']	= message
+
+					p.receiveEvent(feedbackEvent)
 
 		self.attributes['playerSemaphore'].release()

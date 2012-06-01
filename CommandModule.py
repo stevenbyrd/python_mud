@@ -65,4 +65,37 @@ class Look(Command):
 			lookEvent.attributes['data']['target']	= args[0]
 		
 		room.receiveEvent(lookEvent)
+		
+		
+		
+		
+
+class Say(Command):
+	def __init__(self):
+		Command.__init__(self)
+		
+	
+	def execute(self, event):
+		actor	= event.attributes['data']['source']
+		words	= event.attributes['data']['args']
+		
+		if words == None or len(words) == 0:
+			feedbackEvent									= Event()
+			feedbackEvent.attributes['signature']			= 'received_feedback'
+			feedbackEvent.attributes['data']['feedback']	= 'Say what?'
 			
+			actor.receiveEvent(feedbackEvent)
+		else:
+			roomID		= actor.attributes['roomID']
+			room		= EngineModule.roomEngine.getRoom(roomID)
+			speakEvent	= Event()
+			sentence	= ''
+			
+			for word in words:
+				sentence = '{} {}'.format(sentence, word)
+				
+			speakEvent.attributes['signature']			= 'actor_spoke'
+			speakEvent.attributes['data']['speaker']	= actor
+			speakEvent.attributes['data']['sentence']	= ', "{}".'.format(sentence[1:])
+			
+			room.receiveEvent(speakEvent)

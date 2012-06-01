@@ -98,7 +98,7 @@ class Connection:
 		self.send(	ANSI.magenta('\n[') + 
 					ANSI.yellow('HP: ') + ANSI.white(self.attributes['player'].attributes['currentHP']) + 
 					ANSI.yellow(' Mana: ') + ANSI.white(self.attributes['player'].attributes['currentMana']) + 
-					ANSI.magenta(']\n'))
+					ANSI.magenta(']: '))
 						
 						
 						

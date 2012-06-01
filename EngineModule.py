@@ -286,7 +286,10 @@ class CommandEngine(EventReceiver):
 	
 	
 	def buildCommandList(self):
-		self.attributes['commandList']['go']	= Go()
-		self.attributes['commandList']['look']	= Look()
-		self.attributes['commandList']['l']		= self.attributes['commandList']['look']
-		self.attributes['commandList']['ls']	= self.attributes['commandList']['look']
+		cmdList = self.attributes['commandList']
+		
+		cmdList['go']	= Go()
+		cmdList['look']	= Look()
+		cmdList['l']	= cmdList['look']
+		cmdList['ls']	= cmdList['look']
+		cmdList['say']	= Say()
