@@ -4,9 +4,8 @@
 	"actorID":"0",
 	"uniqueID":"0",
 	"description":[
-					"description line 0",
-					"description line 1",
-					"description line 2"
+					"Khoma is the creator of the engine that this game runs on.",
+					"If you think of a feature, let him know!"
 				  ],
 	"stats":{
 				"strength":20,

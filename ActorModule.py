@@ -117,7 +117,7 @@ class Player(Humanoid):
 				self.send('\n{}\n'.format(description[0]))
 		
 				if len(description) == 2:
-					self.sendFInal('{}\n'.format(description[1]))
+					self.sendFinal('{}\n'.format(description[1]))
 				else:
 					for line in description[1:-1]:
 						self.send('{}\n'.format(line))
