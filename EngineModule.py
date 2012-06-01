@@ -76,7 +76,7 @@ class RoomEngine(EventReceiver):
 	def moveActor(self, event):
 		actor			= event.attributes['data']['actor']
 		fromRoomID		= event.attributes['data']['fromRoomID']
-		destinationID	= event.attributes['data']['toRoomID']
+		destinationID		= event.attributes['data']['toRoomID']
 		exitMessage		= event.attributes['data']['exitMessage']
 		source			= self.getRoom(fromRoomID)
 		destination		= self.getRoom(destinationID)
