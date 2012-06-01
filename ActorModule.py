@@ -71,7 +71,7 @@ class Player(Humanoid):
 		notificationHandler		= EventHandler()
 		entityDescribedHandler	= EventHandler()
 		feedbackHandler			= EventHandler()
-		actorSpokeHandler		= EventHandler()
+		actorEmoteHandler		= EventHandler()
 		
 		playerInHandler.attributes['signature']			= 'player_entered'
 		playerInHandler.attributes['function']			= self.playerEnteredRoom
@@ -85,26 +85,35 @@ class Player(Humanoid):
 		feedbackHandler.attributes['signature']			= 'received_feedback'
 		feedbackHandler.attributes['function']			= self.receivedFeedback
 		
-		actorSpokeHandler.attributes['signature']		= 'actor_spoke'
-		actorSpokeHandler.attributes['function']		= self.actorSpoke
+		actorEmoteHandler.attributes['signature']		= 'actor_emoted'
+		actorEmoteHandler.attributes['function']		= self.actorEmoted
 		
 		self.addEventHandler(playerInHandler)
 		self.addEventHandler(notificationHandler)
 		self.addEventHandler(entityDescribedHandler)
 		self.addEventHandler(feedbackHandler)
-		self.addEventHandler(actorSpokeHandler)
+		self.addEventHandler(actorEmoteHandler)
 		
 		
-	def actorSpoke(self, event):
-		speaker		= event.attributes['data']['speaker']
-		sentence	= event.attributes['data']['sentence']
+	def actorEmoted(self, event):
+		emoter	= event.attributes['data']['emoter']
+		target	= event.attributes['data']['target']
+		text	= None
 		
-		if speaker == self:
-			sentence = 'You say{}'.format(sentence)
+		if emoter == self:
+			text = event.attributes['data']['emoterText']
+		elif target != None and target == self:
+			text = event.attributes['data']['targetText']
 		else:
-			sentence = '\n{} says{}'.format(speaker.attributes['name'], sentence)
+			text = event.attributes['data']['audienceText']
 		
-		self.sendFinal(sentence)
+		if text != None and text != '':
+			text = text.replace('#emoter#', emoter.attributes['name'])
+
+			if target != None:
+				text = text.replace('#target#', target.attributes['name'])
+
+			self.sendFinal(text)
 		
 		
 	def entityDescribedSelf(self, event):
@@ -112,7 +121,7 @@ class Player(Humanoid):
 		
 		if len(description) > 0:
 			if len(description) == 1:
-				self.sendFinal('\n{}\n'.format(description[0]))
+				self.sendFinal('{}\n'.format(description[0]))
 			else:
 				self.send('\n{}\n'.format(description[0]))
 		
@@ -122,13 +131,13 @@ class Player(Humanoid):
 					for line in description[1:-1]:
 						self.send('{}\n'.format(line))
 					
-					self.sendFinal('{}\n'.format(description[-1]))
+					self.attributes['connection'].sendFinal('{}\n'.format(description[-1]))
 		
 		
 		
 	def receivedNotification(self, event):
 		message			= event.attributes['data']['message']
-		notification	= ANSI.yellow('\n### {} '.format(message))
+		notification	= ANSI.yellow('### {} '.format(message))
 
 		self.sendFinal(notification)
 		
@@ -137,13 +146,13 @@ class Player(Humanoid):
 		player	= event.attributes['data']['player']
 		name	= player.attributes['name']
 		
-		self.sendFinal('\n{} just arrived.'.format(name))
+		self.sendFinal('{} just arrived.'.format(name))
 		
 		
 	def receivedFeedback(self, event):
 		feedback = event.attributes['data']['feedback']
 
-		self.sendFinal('\n{}'.format(feedback))
+		self.sendFinal('{}'.format(feedback))
 		
 		
 	def send(self, message):
@@ -151,7 +160,7 @@ class Player(Humanoid):
 		
 	
 	def sendFinal(self, message):
-		self.attributes['connection'].sendFinal(message)
+		self.attributes['connection'].sendFinal('\n' + message)
 		
 		
 	def insertCommand(self, command):

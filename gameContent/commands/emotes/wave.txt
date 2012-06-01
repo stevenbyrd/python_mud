@@ -1,0 +1,18 @@
+{
+	"commandNames":["wave", "wav"],
+	"template":
+	{
+		"targeted":
+		{
+			"emoterText":"You wave to #target#.",
+			"audienceText":"#emoter# waves to #target#.",
+			"targetText":"#emoter# waves to you."
+		},
+
+		"untargeted":
+		{
+			"emoterText":"You wave cheerfully.",
+			"audienceText":"#emoter# waves cheerfully."
+		}
+	}	
+}

@@ -67,7 +67,8 @@ class Look(Command):
 		room.receiveEvent(lookEvent)
 		
 		
-		
+
+
 		
 
 class Say(Command):
@@ -94,8 +95,50 @@ class Say(Command):
 			for word in words:
 				sentence = '{} {}'.format(sentence, word)
 				
-			speakEvent.attributes['signature']			= 'actor_spoke'
-			speakEvent.attributes['data']['speaker']	= actor
-			speakEvent.attributes['data']['sentence']	= ', "{}".'.format(sentence[1:])
+			speakEvent.attributes['signature']				= 'actor_emoted'
+			speakEvent.attributes['data']['emoter']			= actor
+			speakEvent.attributes['data']['emoterText']		= 'You say, "{}".'.format(sentence[1:])
+			speakEvent.attributes['data']['audienceText']	= '{} says, "{}".'.format(actor.attributes['name'], sentence[1:])
 			
 			room.receiveEvent(speakEvent)
+			
+			
+			
+			
+
+class Emote(Command):
+	def __init__(self, template):
+		Command.__init__(self)
+		self.eventTemplate = template
+		
+	def execute(self, event):
+		emoteEvent	= Event()
+		emoter		= event.attributes['data']['source']
+		args		= event.attributes['data']['args']
+		roomID		= emoter.attributes['roomID']
+		room		= EngineModule.roomEngine.getRoom(roomID)
+		data		= None
+		
+		if args == None or len(args) == 0:
+			data			= self.eventTemplate['untargeted'].copy()
+			data['target']	= None
+		else:
+			data			= self.eventTemplate['targeted'].copy()
+			data['target']	= args[0]
+
+		data['emoter'] = emoter
+
+		emoteEvent.attributes['signature']	= 'actor_emoted'
+		emoteEvent.attributes['data']		= data
+		
+		room.receiveEvent(emoteEvent)
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

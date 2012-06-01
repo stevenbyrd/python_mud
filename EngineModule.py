@@ -293,3 +293,23 @@ class CommandEngine(EventReceiver):
 		cmdList['l']	= cmdList['look']
 		cmdList['ls']	= cmdList['look']
 		cmdList['say']	= Say()
+		
+		
+		# EMOTES
+		currentDir	= os.getcwd()
+		emoteDir	= currentDir + '/gameContent/commands/emotes' 
+		fileList	= os.listdir(emoteDir)
+
+		for fname in fileList:			
+			if fname.endswith('.txt'):
+				filePath		= '{}/{}'.format(emoteDir, fname)
+				emoteFile		= open(filePath, 'r')
+				jsonString		= emoteFile.read()
+				jsonObj			= json.loads(jsonString)
+				emote			= Emote(jsonObj['template'])
+
+				emoteFile.close()
+
+				for cmdName in jsonObj['commandNames']:
+					cmdList[cmdName] = emote
+		

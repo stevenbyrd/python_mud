@@ -45,7 +45,7 @@ class Room(EventReceiver):
 		actorMoveHandler	= EventHandler()
 		wasLookedAtHandler	= EventHandler()
 		actorObserveHandler	= EventHandler()
-		actorSpokeHandler	= EventHandler()
+		actorEmoteHandler	= EventHandler()
 		
 		playerInHandler.attributes['signature']		= 'player_entered'
 		playerInHandler.attributes['function']		= self.addPlayer
@@ -65,8 +65,8 @@ class Room(EventReceiver):
 		actorObserveHandler.attributes['signature']	= 'actor_observed'
 		actorObserveHandler.attributes['function']	= self.actorObserved
 		
-		actorSpokeHandler.attributes['signature']	= 'actor_spoke'
-		actorSpokeHandler.attributes['function']	= self.actorSpoke
+		actorEmoteHandler.attributes['signature']	= 'actor_emoted'
+		actorEmoteHandler.attributes['function']	= self.actorEmoted
 		
 		self.addEventHandler(playerInHandler)
 		self.addEventHandler(playerOutHandler)
@@ -74,10 +74,35 @@ class Room(EventReceiver):
 		self.addEventHandler(actorMoveHandler)
 		self.addEventHandler(wasLookedAtHandler)
 		self.addEventHandler(actorObserveHandler)
-		self.addEventHandler(actorSpokeHandler)
+		self.addEventHandler(actorEmoteHandler)
 
 
-	def actorSpoke(self, event):
+	def actorEmoted(self, event):
+		targetName	= event.attributes['data']['target']
+		playerList	= filter(lambda player: 
+								player != event.attributes['data']['emoter'],
+							self.attributes['players'])
+		target		= None
+		
+		if targetName != None and targetName != '':
+			targetList	= filter(lambda player : 
+									player.attributes['name'].lower().startswith(targetName.lower()),
+									playerList)
+							
+			if len(targetList) > 0:
+				target = targetList[0]
+			else:
+				emoter											= event.attributes['data']['emoter']
+				feedbackEvent									= Event()
+				feedbackEvent.attributes['signature']			= 'received_feedback'
+				feedbackEvent.attributes['data']['feedback']	= 'You don\'t see that here.'
+
+				emoter.receiveEvent(feedbackEvent)
+				
+				return
+				
+		event.attributes['data']['target'] = target	
+	
 		for player in self.attributes['players']:
 			player.receiveEvent(event)
 
