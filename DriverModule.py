@@ -55,7 +55,7 @@ class InputDriver(threading.Thread):
 			
 			ConnectionModule.connectionList.attributes['openConnectionsSemaphore'].release()
 			
-			sleep(0.05)
+			sleep(0.005)
 
 
 
@@ -77,7 +77,7 @@ class OutputDriver(threading.Thread):
 			
 			ConnectionModule.connectionList.attributes['openConnectionsSemaphore'].release()
 			
-			sleep(0.05)
+			sleep(0.005)
 
 
 
@@ -96,7 +96,7 @@ class UpdateDriver(threading.Thread):
 			
 			ConnectionModule.connectionList.attributes['openConnectionsSemaphore'].release()
 			
-			sleep(0.05)
+			sleep(0.005)
 	
 	
 	def processInput(self, player, inputStr):		

@@ -14,8 +14,12 @@ class LoginListener(threading.Thread):
 	
 		#hack to get my host name
 		hostname	= socket.gethostname()
-		tokenized	= hostname.split('.')
-		hostname	= '{}.{}.{}.{}'.format(tokenized[3], tokenized[2], tokenized[1], tokenized[0])
+		
+		try:
+			tokenized	= hostname.split('.')
+			hostname	= '{}.{}.{}.{}'.format(tokenized[3], tokenized[2], tokenized[1], tokenized[0])
+		except:
+			hostname = 'localhost'
 		
 		print socket.gethostname()
 		print hostname
