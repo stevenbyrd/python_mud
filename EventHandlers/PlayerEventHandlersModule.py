@@ -96,17 +96,17 @@ class EntityDescribedSelfHandler(EventHandler):
 		
 		if len(description) > 0:
 			if len(description) == 1:
-				receiver.sendFinal('{}\n'.format(description[0]))
+				receiver.sendFinal('{}\n\r'.format(description[0]))
 			else:
-				receiver.send('\n{}\n'.format(description[0]))
+				receiver.send('\n\r{}\n\r'.format(description[0]))
 		
 				if len(description) == 2:
-					receiver.attributes['connection'].sendFinal('{}\n'.format(description[1]))
+					receiver.attributes['connection'].sendFinal('{}\n\r'.format(description[1]))
 				else:
 					for line in description[1:-1]:
-						receiver.send('{}\n'.format(line))
+						receiver.send('{}\n\r'.format(line))
 					
-					receiver.attributes['connection'].sendFinal('{}\n'.format(description[-1]))
+					receiver.attributes['connection'].sendFinal('{}\n\r'.format(description[-1]))
 					
 					
 					

@@ -82,7 +82,7 @@ class WasObservedHandler(EventHandler):
 			
 	def wasObserved(self, receiver, event):
 		player		= event.attributes['data']['observer']
-		description = [lib.ANSI.red(receiver.attributes['name']) + '\n']
+		description = [lib.ANSI.red(receiver.attributes['name']) + '\n\r']
 		exitList	= 'Obvious exits:'
 		playerList	= filter(lambda p: p != player, receiver.attributes['players'])
 
@@ -217,5 +217,5 @@ class PlayerLogoutHandler(EventHandler):
 	def playerExited(self, receiver, event):
 		actor = event.attributes['data']['actor']
 
-		receiver.removePlayer(player)
+		receiver.removePlayer(actor)
 		

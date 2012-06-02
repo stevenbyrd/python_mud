@@ -65,7 +65,7 @@ class Player(Humanoid):
 		
 	
 	def sendFinal(self, message):
-		self.attributes['connection'].sendFinal('\n' + message)
+		self.attributes['connection'].sendFinal('\n\r' + message)
 		
 		
 	def insertCommand(self, command):

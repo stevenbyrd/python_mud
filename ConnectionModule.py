@@ -31,7 +31,7 @@ class LoginListener(threading.Thread):
 			
 			clientsocket.setblocking(False)
 						
-			clientsocket.send('\nWelcome! Enter your name:\n')
+			clientsocket.send('\n\rWelcome! Enter your name:\n\r')
 
 			playerInput = ''
 
@@ -56,7 +56,7 @@ class LoginListener(threading.Thread):
 						EngineModule.actorEngine.receiveEvent(loginEvent)
 						connectionList.receiveEvent(loginEvent)
 					else:
-						clientsocket.send('\nPlayer not found.\nEnter your name:')
+						clientsocket.send('\n\rPlayer not found.\n\rEnter your name:')
 
 						playerInput = ''
 				else:
@@ -94,7 +94,7 @@ class Connection:
 
 	def sendFinal(self, message):
 		self.send(message)
-		self.send(	lib.ANSI.magenta('\n[') + 
+		self.send(	lib.ANSI.magenta('\n\r[') + 
 					lib.ANSI.yellow('HP: ') + lib.ANSI.white(self.attributes['player'].attributes['currentHP']) + 
 					lib.ANSI.yellow(' Mana: ') + lib.ANSI.white(self.attributes['player'].attributes['currentMana']) + 
 					lib.ANSI.magenta(']: '))
