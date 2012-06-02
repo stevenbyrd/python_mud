@@ -61,7 +61,7 @@ class ActorObservedHandler(EventHandler):
 			feedbackEvent.attributes['signature']			= 'received_feedback'
 			feedbackEvent.attributes['data']['feedback']	= 'You don\'t see that here.'
 		
-			actor.receiveEvent(feedbackEvent)
+			observer.receiveEvent(feedbackEvent)
 		else:
 			lookEvent									= Event()
 			lookEvent.attributes['data']['observer']	= observer
