@@ -1,0 +1,18 @@
+{
+	"commandNames":["bow"],
+	"template":
+	{
+		"targeted":
+		{
+			"emoterText":"You bow before #target#.",
+			"audienceText":"#emoter# bows before #target#.",
+			"targetText":"#emoter# bows deeply before you."
+		},
+
+		"untargeted":
+		{
+			"emoterText":"You bow graciously.",
+			"audienceText":"#emoter# makes a sweeping bow."
+		}
+	}	
+}

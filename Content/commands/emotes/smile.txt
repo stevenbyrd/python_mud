@@ -1,0 +1,18 @@
+{
+	"commandNames":["smile", "smil", "smi"],
+	"template":
+	{
+		"targeted":
+		{
+			"emoterText":"You smile at #target#.",
+			"audienceText":"#emoter# smiles sweetly #target#.",
+			"targetText":"#emoter# smiles at you sweetly."
+		},
+
+		"untargeted":
+		{
+			"emoterText":"You smile broadly.",
+			"audienceText":"#emoter# smiles ear to ear."
+		}
+	}	
+}

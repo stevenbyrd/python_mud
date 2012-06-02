@@ -1,0 +1,12 @@
+{
+	"roomID":"2",
+	"name":"Test Room 2",
+	"description":["This room is for testing hidden exits. Head west to escape."],
+	"exits":[
+				{
+					"name":"west",
+					"destination":"0",
+					"isHidden":true
+				}
+			]
+}

@@ -1,0 +1,20 @@
+{
+	"name":"Veliik",
+	"race":"Sol",
+	"actorID":"0",
+	"uniqueID":"1",
+	"description":[
+					"description line 0",
+					"description line 1",
+					"description line 2"
+				  ],
+	"stats":{
+				"strength":20,
+				"constitution":20,
+				"energy":20,
+				"focus":20,
+				"agility":20,
+				"awareness":20
+			},
+	"gender":"male"
+}

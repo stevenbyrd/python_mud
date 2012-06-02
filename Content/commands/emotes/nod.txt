@@ -1,0 +1,18 @@
+{
+	"commandNames":["nod", "no"],
+	"template":
+	{
+		"targeted":
+		{
+			"emoterText":"You nod to #target#.",
+			"audienceText":"#emoter# nods at #target#.",
+			"targetText":"#emoter# nods at you."
+		},
+
+		"untargeted":
+		{
+			"emoterText":"You nod.",
+			"audienceText":"#emoter# nods."
+		}
+	}	
+}
