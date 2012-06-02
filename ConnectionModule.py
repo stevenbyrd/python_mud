@@ -1,8 +1,8 @@
 from EngineModule import *
-from EventModule import *
+from EventHandlers.ConnectionEventHandlersModule import *
 import EngineModule
 import threading
-import ANSI
+import lib.ANSI
 import socket
 from time import sleep
 import select
@@ -10,10 +10,8 @@ import select
 
 class LoginListener(threading.Thread):
 	def run(self):
-		serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	
-		#hack to get my host name
-		hostname	= socket.gethostname()
+		serversocket	= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		hostname		= socket.gethostname() #hack to get my host name
 		
 		try:
 			tokenized	= hostname.split('.')
@@ -24,6 +22,7 @@ class LoginListener(threading.Thread):
 		print socket.gethostname()
 		print hostname
 	
+		serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		serversocket.bind((hostname, 8888))
 		serversocket.listen(5)
 		
@@ -95,10 +94,10 @@ class Connection:
 
 	def sendFinal(self, message):
 		self.send(message)
-		self.send(	ANSI.magenta('\n[') + 
-					ANSI.yellow('HP: ') + ANSI.white(self.attributes['player'].attributes['currentHP']) + 
-					ANSI.yellow(' Mana: ') + ANSI.white(self.attributes['player'].attributes['currentMana']) + 
-					ANSI.magenta(']: '))
+		self.send(	lib.ANSI.magenta('\n[') + 
+					lib.ANSI.yellow('HP: ') + lib.ANSI.white(self.attributes['player'].attributes['currentHP']) + 
+					lib.ANSI.yellow(' Mana: ') + lib.ANSI.white(self.attributes['player'].attributes['currentMana']) + 
+					lib.ANSI.magenta(']: '))
 						
 						
 						
@@ -118,18 +117,9 @@ class ConnectionList(EventReceiver):
 		
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
-			
-		playerLoginHandler	= EventHandler()
-		playerLogoutHandler = EventHandler()
 
-		playerLoginHandler.attributes['signature']	= 'player_login'
-		playerLoginHandler.attributes['function']	= self.playerLogin
-		
-		playerLogoutHandler.attributes['signature'] = 'player_logout'
-		playerLogoutHandler.attributes['function']	= self.playerLogout
-
-		self.addEventHandler(playerLoginHandler)
-		self.addEventHandler(playerLogoutHandler)
+		self.addEventHandler(PlayerLoginHandler())
+		self.addEventHandler(PlayerLogoutHandler())
 	
 	
 	def addConnection(self, connection):
@@ -142,19 +132,7 @@ class ConnectionList(EventReceiver):
 		self.attributes['closedConnectionSemaphore'].acquire()
 		self.attributes['closedConnections'].append(connection)
 		self.attributes['closedConnectionSemaphore'].release()
-	
-		
-	def playerLogin(self, event):
-		player		= event.attributes['data']['player']
-		connection	= player.attributes['connection']
-		
-		self.addConnection(connection)
-		
-		
-	def playerLogout(self, event):
-		connection = event.attributes['data']['connection']
-		
-		self.removeConnection(connection)
+
 
 
 

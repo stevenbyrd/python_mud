@@ -73,7 +73,7 @@ class RoomEngine(EventReceiver):
 		return self.attributes['roomMap'][roomID]
 		
 		
-	def moveActor(self, event):
+	def moveActor(self, receiver, event):
 		actor			= event.attributes['data']['actor']
 		fromRoomID		= event.attributes['data']['fromRoomID']
 		destinID		= event.attributes['data']['toRoomID']
@@ -98,7 +98,7 @@ class RoomEngine(EventReceiver):
 		
 		
 	
-	def playerLogin(self, event):
+	def playerLogin(self, receiver, event):
 		player			= event.attributes['data']['player']
 		roomID			= player.attributes['roomID']
 		room			= self.getRoom(roomID)
@@ -110,7 +110,7 @@ class RoomEngine(EventReceiver):
 		room.receiveEvent(playerInEvent)
 	
 	
-	def playerLogout(self, event):
+	def playerLogout(self, receiver, event):
 		connection	= event.attributes['data']['connection']
 		player		= connection.attributes['player']
 		roomID		= player.attributes['roomID']
@@ -157,12 +157,12 @@ class ActorEngine(EventReceiver):
 		self.addEventHandler(broadcastHandler)
 		
 		
-	def broadcastToAllPlayers(self, event):
+	def broadcastToAllPlayers(self, receiver, event):
 		self.attributes['playerSetSemaphore'].acquire();
 
 		message											= event.attributes['data']['message']
 		notificationEvent								= Event()
-		notificationEvent.attributes['signature']		= 'receive_notification'
+		notificationEvent.attributes['signature']		= 'received_notification'
 		notificationEvent.attributes['data']['message'] = message
 		
 		
@@ -172,14 +172,14 @@ class ActorEngine(EventReceiver):
 		self.attributes['playerSetSemaphore'].release();	
 	
 	
-	def playerLogin(self, event):
+	def playerLogin(self, receiver, event):
 		player = event.attributes['data']['player']
 		
 		self.addPlayer(player)
 		
 		
 		
-	def playerLogout(self, event):
+	def playerLogout(self, receiver, event):
 		connection	= event.attributes['data']['connection']
 		player		= connection.attributes['player']
 		
@@ -262,7 +262,7 @@ class CommandEngine(EventReceiver):
 		self.addEventHandler(commandExecutionHandler)
 		
 		
-	def executeCommand(self, event):
+	def executeCommand(self, receiver, event):
 		cmdName = event.attributes['data']['command']
 		
 		if cmdName == 'quit':
