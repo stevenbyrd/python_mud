@@ -41,7 +41,7 @@ class ReceivedNotificationHandler(EventHandler):
 		self.attributes['function']		= (lambda receiver, event :
 												(lambda : 
 													receiver.sendFinal((lambda :
-																 		lib.ANSI.yellow('\n### {}\n'.format((lambda : 
+																 		lib.ANSI.yellow('\n\r### {}\n\r'.format((lambda : 
 																											event.attributes['data']['message'])())))()))())
 
 
