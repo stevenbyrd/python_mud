@@ -192,6 +192,7 @@ class ActorEmotedHandler(EventHandler):
 					feedbackEvent									= Event()
 					feedbackEvent.attributes['signature']			= 'received_feedback'
 					feedbackEvent.attributes['data']['feedback']	= 'You don\'t see that here.'
+					feedbackEvent.attributes['data']['actor']		= emoter
 
 					receiver.emitEvent(feedbackEvent)
 
