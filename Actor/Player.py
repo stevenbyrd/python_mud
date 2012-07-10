@@ -13,11 +13,15 @@ class Player(Humanoid):
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 		
-		self.addEventHandler(ActorEnteredRoomHandler())
+		self.addEventHandler(ActorMovedFromRoomEventHandler())
+		self.addEventHandler(ActorAddedToRoomEventHandler())
 		self.addEventHandler(ReceivedNotificationHandler())
-		self.addEventHandler(EntityDescribedSelfHandler())
-		self.addEventHandler(ReceivedFeedbackHandler())
 		self.addEventHandler(ActorEmotedHandler())
+		self.addEventHandler(ReceivedFeedbackHandler())
+		self.addEventHandler(EntityDescribedSelfHandler())
+		
+		
+		
 				
 		
 	def send(self, message):
@@ -33,20 +37,67 @@ class Player(Humanoid):
 		
 		
 		
+		
+		
+class ActorMovedFromRoomEventHandler(EventHandler):
+	def __init__(self):
+		EventHandler.__init__(self)
+		self.attributes['signature']	= 'actor_moved_from_room'
+		self.attributes['function']		= self.actorMovedFromRoom
+
+
+	def actorMovedFromRoom(self, receiver, event):
+		actor	= event.attributes['data']['actor']
+		exit	= event.attributes['data']['exit']
+		message	= ''
+		
+		
+		if actor == receiver:
+			message = 'You leave {}.'.format(exit.attributes['name'])
+		else:
+			message	= '{} leaves {}.'.format(actor.attributes['name'], exit.attributes['name'])
+		
+				
+		if message != None and len(message) > 0:
+			receiver.sendFinal(message)
+			
+			
+				
+				
+class ActorAddedToRoomEventHandler(EventHandler):
+	def __init__(self):
+		EventHandler.__init__(self)
+		self.attributes['signature']	= 'actor_added_to_room'
+		self.attributes['function']		= self.actorAddedToRoom
+
+
+	def actorAddedToRoom(self, receiver, event):
+		actor = event.attributes['data']['actor']
+		
+		if actor != receiver:
+			name = actor.attributes['name']
+
+			receiver.sendFinal('{} just arrived.'.format(name))
+
+		
+		
+		
 
 class ReceivedNotificationHandler(EventHandler):
 	def __init__(self):
 		EventHandler.__init__(self)
 		self.attributes['signature']	= 'received_notification'
-		self.attributes['function']		= (lambda receiver, event :
-												(lambda : 
-													receiver.sendFinal((lambda :
-																 		lib.ANSI.yellow('\n\r### {}\n\r'.format((lambda : 
-																											event.attributes['data']['message'])())))()))())
+		self.attributes['function']		= self.receiveNotification
+		
+	def receiveNotification(self, receiver, event):		
+		actor = event.attributes['data']['actor']
+		
+		#actor == None indicates a broadcast
+		if actor == receiver or actor == None:
+			message = '\n\r### {}\n\r'.format(event.attributes['data']['message'])
+			colored	= lib.ANSI.yellow(message)
 
-
-
-
+			receiver.sendFinal(colored)
 
 
 
@@ -81,21 +132,18 @@ class ActorEmotedHandler(EventHandler):
 
 
 
-
-class ActorEnteredRoomHandler(EventHandler):
+class ReceivedFeedbackHandler(EventHandler):
 	def __init__(self):
 		EventHandler.__init__(self)
-		self.attributes['signature']	= 'player_entered'
-		self.attributes['function']		= self.playerEnteredRoom
+		self.attributes['signature']	= 'received_feedback'
+		self.attributes['function']		= self.receivedFeedback
 
 
-	def playerEnteredRoom(self, receiver, event):
-		player	= event.attributes['data']['player']
-		name	= player.attributes['name']
-
-		receiver.sendFinal('{} just arrived.'.format(name))
-
-
+	def receivedFeedback(self, receiver, event):
+		if event.attributes['data']['actor'] == receiver:
+			feedback = event.attributes['data']['feedback']
+			
+			receiver.sendFinal('{}'.format(feedback))
 
 
 
@@ -109,33 +157,19 @@ class EntityDescribedSelfHandler(EventHandler):
 
 	def entityDescribedSelf(self, receiver, event):
 		description = event.attributes['data']['description']
+		observer	= event.attributes['data']['observer']
 
-		if len(description) > 0:
-			if len(description) == 1:
-				receiver.sendFinal('{}\n\r'.format(description[0]))
-			else:
-				receiver.send('\n\r{}\n\r'.format(description[0]))
-
-				if len(description) == 2:
-					receiver.attributes['connection'].sendFinal('{}\n\r'.format(description[1]))
+		if observer == receiver:
+			if len(description) > 0:
+				if len(description) == 1:
+					receiver.sendFinal('{}\n\r'.format(description[0]))
 				else:
-					for line in description[1:-1]:
-						receiver.send('{}\n\r'.format(line))
+					receiver.send('\n\r{}\n\r'.format(description[0]))
 
-					receiver.attributes['connection'].sendFinal('{}\n\r'.format(description[-1]))
+					if len(description) == 2:
+						receiver.attributes['connection'].sendFinal('{}\n\r'.format(description[1]))
+					else:
+						for line in description[1:-1]:
+							receiver.send('{}\n\r'.format(line))
 
-
-
-
-
-class ReceivedFeedbackHandler(EventHandler):
-	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'received_feedback'
-		self.attributes['function']		= self.receivedFeedback
-
-
-	def receivedFeedback(self, receiver, event):
-		feedback = event.attributes['data']['feedback']
-
-		receiver.sendFinal('{}'.format(feedback))
+						receiver.attributes['connection'].sendFinal('{}\n\r'.format(description[-1]))

@@ -1,15 +1,35 @@
 import threading
 from Event.Event import Event
 from time import sleep
-from Engine import ConnectionEngine
-from Engine import CommandEngine
+import Engine.ConnectionEngine
+import Engine.CommandEngine
+from Event.EventEmitter import EventEmitter
 
-class UpdateDriver(threading.Thread):
+
+def addEventSubscriber(subscriber):
+	UpdateDriver.instance.addEventSubscriber(subscriber)
+	
+	
+def removeEventSubscriber(subscriber):
+	UpdateDriver.instance.removeEventSubscriber(subscriber)
+
+
+class UpdateDriver(threading.Thread, EventEmitter):
+	instance = None
+	
+	
+	def __init__(self):
+		threading.Thread.__init__(self)
+		EventEmitter.__init__(self)
+		
+		UpdateDriver.instance = self
+		
+	
 	def run(self):
 		while True:
-			ConnectionEngine.lock('openConnectionsSemaphore')
+			Engine.ConnectionEngine.lock('openConnectionsSemaphore')
 			
-			for connection in ConnectionEngine.attribute('connectionList'):
+			for connection in Engine.ConnectionEngine.attribute('connectionList'):
 				playerInput = connection.pollInput()
 				parsedInput = playerInput.lower().strip()
 				player		= connection.attributes['player']
@@ -17,7 +37,7 @@ class UpdateDriver(threading.Thread):
 				if len(playerInput) > 0:
 					self.processInput(player, playerInput)
 			
-			ConnectionEngine.release('openConnectionsSemaphore')
+			Engine.ConnectionEngine.release('openConnectionsSemaphore')
 			
 			sleep(0.005)
 	
@@ -35,4 +55,4 @@ class UpdateDriver(threading.Thread):
 			commandEvent.attributes['data']['args']			= args
 			commandEvent.attributes['data']['source']		= player
 		
-			CommandEngine.receiveEvent(commandEvent)
+			self.emitEvent(commandEvent)

@@ -1,13 +1,11 @@
 from Event.Event import Event
 from Event.EventHandler import EventHandler
-from Event.EventReceiver import EventReceiver
+from Engine import Engine
+import CommandEngine
+from Driver import LoginListener
 import threading
 
 
-def receiveEvent(event):
-	ConnectionEngine.instance.receiveEvent(event)
-	
-	
 def lock(semaphoreName):
 	ConnectionEngine.instance.attributes[semaphoreName].acquire()
 	
@@ -22,11 +20,11 @@ def attribute(attribute):
 def setAttribute(attribute, value):
 	ConnectionEngine.instance.attributes[attribute] = value
 
-class ConnectionEngine(EventReceiver):
+class ConnectionEngine(Engine):
 	instance = None
 	
 	def __init__(self):
-		EventReceiver.__init__(self)
+		Engine.__init__(self)
 		attributes = {
 			'openConnectionsSemaphore'	: threading.BoundedSemaphore(3),
 			'newConnectionSemaphore'	: threading.BoundedSemaphore(1),
@@ -43,6 +41,9 @@ class ConnectionEngine(EventReceiver):
 		self.addEventHandler(PlayerLogoutHandler())
 		
 		ConnectionEngine.instance = self
+		
+		LoginListener.addEventSubscriber(self)
+		CommandEngine.addEventSubscriber(self)
 	
 	
 	def addConnection(self, connection):

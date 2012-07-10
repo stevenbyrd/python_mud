@@ -1,25 +1,29 @@
 from Event.Event import Event
 from Event.EventHandler import EventHandler
-from Event.EventReceiver import EventReceiver
+from Engine import Engine
+import CommandEngine
 from Environment.Room import Room
 from Environment.Exit import Exit
+from Driver import ConnectionListUpdater
 import os
 import json
 
-def receiveEvent(event):
-	RoomEngine.instance.receiveEvent(event)
-	
+
+def addEventSubscriber(subscriber):
+	RoomEngine.instance.addEventSubscriber(subscriber)
+
 
 def getRoom(roomID):
 	return RoomEngine.instance.getRoom(roomID)
 
 
-class RoomEngine(EventReceiver):
+class RoomEngine(Engine):
 	instance = None
 	
 	
 	def __init__(self):
-		EventReceiver.__init__(self)
+		Engine.__init__(self)
+		
 		attributes = {
 			'roomMap'	: {},
 			'roomList'	: []
@@ -29,13 +33,18 @@ class RoomEngine(EventReceiver):
 			self.attributes[key] = attributes[key]
 				
 		
+		self.addEventHandler(ActorMovedEventHandler())
 		self.addEventHandler(PlayerLoginEventHandler())
 		self.addEventHandler(RoomEnginePlayerLogoutEventHandler())
-		self.addEventHandler(ActorMovedEventHandler())
+		
 		
 		RoomEngine.instance = self
 		
 		self.buildWorld()
+		
+		ConnectionListUpdater.addEventSubscriber(self)
+		CommandEngine.addEventSubscriber(self)
+		
 		
 	
 	def buildWorld(self):
@@ -66,6 +75,8 @@ class RoomEngine(EventReceiver):
 
 				self.attributes['roomList'].append(room)
 				self.attributes['roomMap'][room.attributes['roomID']] = room
+				
+				room.addEventSubscriber(self)
 	
 	
 	def getRoom(self, roomID):
@@ -78,33 +89,32 @@ class ActorMovedEventHandler(EventHandler):
 	def __init__(self):
 		EventHandler.__init__(self)
 
-		self.attributes['signature']	= 'move_actor'
-		self.attributes['function']		= self.moveActor
+		self.attributes['signature']	= 'actor_moved'
+		self.attributes['function']		= self.actorMoved
 
 
-	def moveActor(self, receiver, event):
+	def actorMoved(self, receiver, event):
 		actor			= event.attributes['data']['actor']
+		exit			= event.attributes['data']['exit']
 		fromRoomID		= event.attributes['data']['fromRoomID']
 		destinID		= event.attributes['data']['toRoomID']
-		exitMessage		= event.attributes['data']['exitMessage']
 		source			= receiver.getRoom(fromRoomID)
 		destination		= receiver.getRoom(destinID)
-
-		# send exit event to the room the actor is leaving
-		exitEvent									= Event()
-		exitEvent.attributes['signature']			= 'actor_exited'
-		exitEvent.attributes['data']['actor']		= actor
-		exitEvent.attributes['data']['exitMessage'] = exitMessage
-
-		source.receiveEvent(exitEvent)
-
-		# send entered event to destination room
-		enterEvent								= Event()
-		enterEvent.attributes['signature']		= 'player_entered'
-		enterEvent.attributes['data']['player'] = actor
-
-		destination.receiveEvent(enterEvent)
-
+		
+		movedFromEvent								= Event()
+		movedFromEvent.attributes['signature']		= 'actor_moved_from_room'
+		movedFromEvent.attributes['data']['actor']	= actor
+		movedFromEvent.attributes['data']['exit']	= exit
+		movedFromEvent.attributes['data']['room']	= source
+		
+		receiver.emitEvent(movedFromEvent)
+		
+		movedToEvent								= Event()
+		movedToEvent.attributes['signature']		= 'actor_added_to_room'
+		movedToEvent.attributes['data']['actor']	= actor
+		movedToEvent.attributes['data']['room']		= destination
+		
+		receiver.emitEvent(movedToEvent)
 
 
 
@@ -123,10 +133,11 @@ class PlayerLoginEventHandler(EventHandler):
 		room			= receiver.getRoom(roomID)
 		playerInEvent	= Event()
 
-		playerInEvent.attributes['signature']		= 'player_entered'
-		playerInEvent.attributes['data']['player']	= player
+		playerInEvent.attributes['signature']		= 'actor_added_to_room'
+		playerInEvent.attributes['data']['actor']	= player
+		playerInEvent.attributes['data']['room']	= room
 
-		room.receiveEvent(playerInEvent)
+		receiver.emitEvent(playerInEvent)
 
 
 
@@ -152,4 +163,4 @@ class RoomEnginePlayerLogoutEventHandler(EventHandler):
 		logoutEvent.attributes['data']['actor']			= player
 		logoutEvent.attributes['data']['exitMessage']	= None
 
-		room.receiveEvent(logoutEvent)
+		receiver.emitEvent(logoutEvent)

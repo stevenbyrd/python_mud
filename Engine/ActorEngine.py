@@ -1,16 +1,18 @@
 from Event.Event import Event
 from Event.EventHandler import EventHandler
-from Event.EventReceiver import EventReceiver
+from Engine import Engine
+import CommandEngine
 from Actor.Player import Player
+import Driver.ConnectionListUpdater
 import threading
 import os
 import json
 
 
-def receiveEvent(event):
-	ActorEngine.instance.receiveEvent(event)
-	
-	
+def addEventSubscriber(subscriber):
+	ActorEngine.instance.addEventSubscriber(subscriber)
+
+
 def playerExists(playerName):
 	return ActorEngine.instance.playerExists(playerName)
 	
@@ -18,12 +20,13 @@ def playerExists(playerName):
 def loadPlayer(playerName):
 	return ActorEngine.instance.loadPlayer(playerName)
 
-class ActorEngine(EventReceiver):
+
+class ActorEngine(Engine):
 	instance = None
 	
 	
 	def __init__(self):
-		EventReceiver.__init__(self)
+		Engine.__init__(self)
 		attributes = {
 			'playerSetSemaphore'	: threading.BoundedSemaphore(1),
 			'playerMap'				: {},
@@ -39,6 +42,9 @@ class ActorEngine(EventReceiver):
 		self.addEventHandler(BroadcastEventHandler())
 		
 		ActorEngine.instance = self
+		
+		Driver.ConnectionListUpdater.addEventSubscriber(self)
+		CommandEngine.addEventSubscriber(self)
 		
 		
 	def addPlayer(self, player):
@@ -112,11 +118,10 @@ class BroadcastEventHandler(EventHandler):
 		notificationEvent								= Event()
 		notificationEvent.attributes['signature']		= 'received_notification'
 		notificationEvent.attributes['data']['message'] = message
+		notificationEvent.attributes['data']['actor']	= None
 
-
-		for player in receiver.attributes['playerList']:
-			player.receiveEvent(notificationEvent)
-
+		receiver.emitEvent(notificationEvent)
+		
 		receiver.attributes['playerSetSemaphore'].release();
 
 

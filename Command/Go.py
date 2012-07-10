@@ -1,6 +1,6 @@
 from Event.Event import Event
 from Command import Command
-from Engine import RoomEngine
+import Engine.RoomEngine
 
 class Go(Command):
 	def __init__(self):
@@ -8,27 +8,23 @@ class Go(Command):
 		
 
 	def execute(self, receiver, event):
-		cmd		= event.attributes['data']['command']
-		args	= event.attributes['data']['args']
-		actor	= event.attributes['data']['source']
-		roomID	= actor.attributes['roomID']
-		room	= RoomEngine.getRoom(roomID)
+		if event.attributes['data']['commandInstance'] == receiver:
+			cmd		= event.attributes['data']['command']
+			args	= event.attributes['data']['args']
+			actor	= event.attributes['data']['source']
+			roomID	= actor.attributes['roomID']
+			room	= Engine.RoomEngine.getRoom(roomID)
 		
-		if cmd != 'go':
-			args = [cmd]
+			if cmd != 'go':
+				args = [cmd]
 		
-		if args == None or len(args) == 0:
-			feedbackEvent									= Event()
-			feedbackEvent.attributes['signature']			= 'received_feedback'
-			feedbackEvent.attributes['data']['feedback']	= 'Go where?'
-			
-			actor.receiveEvent(feedbackEvent)
-			
-			return
+			if args == None or len(args) == 0:
+				args = ['']
 		
-		moveEvent									= Event()
-		moveEvent.attributes['signature']			= 'actor_moved'
-		moveEvent.attributes['data']['direction']	= args[0]
-		moveEvent.attributes['data']['source']		= actor
+			moveEvent									= Event()
+			moveEvent.attributes['signature']			= 'actor_attempted_movement'
+			moveEvent.attributes['data']['direction']	= args[0]
+			moveEvent.attributes['data']['source']		= actor
+			moveEvent.attributes['data']['room']		= room
 		
-		room.receiveEvent(moveEvent)
+			receiver.emitEvent(moveEvent)

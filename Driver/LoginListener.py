@@ -3,10 +3,30 @@ import socket
 from time import sleep
 from Connection.Connection import Connection
 from Event.Event import Event
-from Engine import ActorEngine
-from Engine import ConnectionEngine
+import Engine.ActorEngine
+import Engine.ConnectionEngine
+from Event.EventEmitter import EventEmitter
 
-class LoginListener(threading.Thread):
+
+def addEventSubscriber(subscriber):
+	LoginListener.instance.addEventSubscriber(subscriber)
+	
+	
+def removeEventSubscriber(subscriber):
+	LoginListener.instance.removeEventSubscriber(subscriber)
+	
+
+class LoginListener(threading.Thread, EventEmitter):
+	instance = None
+	
+	
+	def __init__(self):
+		threading.Thread.__init__(self)
+		EventEmitter.__init__(self)
+		
+		LoginListener.instance = self
+	
+	
 	def run(self):
 		serversocket	= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		hostname		= socket.gethostname() #hack to get my host name
@@ -42,8 +62,8 @@ class LoginListener(threading.Thread):
 				if len(playerInput) > 0:
 					playerInput = playerInput.strip()
 
-					if ActorEngine.playerExists(playerInput) == True:
-						player		= ActorEngine.loadPlayer(playerInput)				
+					if Engine.ActorEngine.playerExists(playerInput) == True:
+						player		= Engine.ActorEngine.loadPlayer(playerInput)				
 						connection	= Connection(clientsocket, player)
 						loginEvent	= Event()
 
@@ -51,8 +71,7 @@ class LoginListener(threading.Thread):
 						loginEvent.attributes['signature']		= 'player_login'
 						loginEvent.attributes['data']['player'] = player
 
-						ActorEngine.receiveEvent(loginEvent)
-						ConnectionEngine.receiveEvent(loginEvent)
+						self.emitEvent(loginEvent)
 					else:
 						clientsocket.send('\n\rPlayer not found.\n\rEnter your name:')
 

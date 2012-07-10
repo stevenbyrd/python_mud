@@ -1,57 +1,78 @@
 import threading
 from time import sleep
 from Event.Event import Event
-from Engine import ConnectionEngine
-from Engine import RoomEngine
-from Engine import ActorEngine
+import Engine.ConnectionEngine
+import Engine.RoomEngine
+import Engine.ActorEngine
+from Event.EventEmitter import EventEmitter
 
-class ConnectionListUpdater(threading.Thread):
+
+def addEventSubscriber(subscriber):
+	ConnectionListUpdater.instance.addEventSubscriber(subscriber)
+	
+	
+def removeEventSubscriber(subscriber):
+	ConnectionListUpdater.instance.removeEventSubscriber(subscriber)
+
+
+class ConnectionListUpdater(threading.Thread, EventEmitter):
+	instance = None
+	
+	
+	def __init__(self):
+		threading.Thread.__init__(self)
+		EventEmitter.__init__(self)
+	
+		ConnectionListUpdater.instance = self
+		
+	
 	def run(self):
 		while True:			
-			ConnectionEngine.lock('openConnectionsSemaphore')
-			ConnectionEngine.lock('openConnectionsSemaphore')
-			ConnectionEngine.lock('openConnectionsSemaphore')
+			Engine.ConnectionEngine.lock('openConnectionsSemaphore')
+			Engine.ConnectionEngine.lock('openConnectionsSemaphore')
+			Engine.ConnectionEngine.lock('openConnectionsSemaphore')
 	
 			self.removeClosedConnections()
 			self.addNewConnections()
 	
-			ConnectionEngine.release('openConnectionsSemaphore')
-			ConnectionEngine.release('openConnectionsSemaphore')
-			ConnectionEngine.release('openConnectionsSemaphore')
+			Engine.ConnectionEngine.release('openConnectionsSemaphore')
+			Engine.ConnectionEngine.release('openConnectionsSemaphore')
+			Engine.ConnectionEngine.release('openConnectionsSemaphore')
 			
 			sleep(0.5)
 			
 	
 	def addNewConnections(self):
-		ConnectionEngine.lock('newConnectionSemaphore')
+		Engine.ConnectionEngine.lock('newConnectionSemaphore')
 		
-		for connection in ConnectionEngine.attribute('newConnections'):
+		for connection in Engine.ConnectionEngine.attribute('newConnections'):
 			player									= connection.attributes['player']
 			loginEvent								= Event()
 			loginEvent.attributes['signature']		= 'player_login'
 			loginEvent.attributes['data']['player'] = player
 
-			RoomEngine.receiveEvent(loginEvent)
+			self.emitEvent(loginEvent)
 			
-			ConnectionEngine.attribute('connectionList').append(connection)
+			Engine.ConnectionEngine.attribute('connectionList').append(connection)
 			
 			playerName												= player.attributes['name']
 			loginNotificationEvent									= Event()
 			loginNotificationEvent.attributes['signature']			= 'broadcast_to_all_players'
 			loginNotificationEvent.attributes['data']['message']	= '{} just logged in.'.format(playerName)
 		
-			ActorEngine.receiveEvent(loginNotificationEvent)
+			self.emitEvent(loginNotificationEvent)
 		
-		ConnectionEngine.setAttribute('newConnections', [])
+		Engine.ConnectionEngine.setAttribute('newConnections', [])
 		
-		ConnectionEngine.release('newConnectionSemaphore')
+		Engine.ConnectionEngine.release('newConnectionSemaphore')
 		
 		
 	def removeClosedConnections(self):
-		ConnectionEngine.lock('closedConnectionSemaphore')
+		Engine.ConnectionEngine.lock('closedConnectionSemaphore')
 		
-		for connection in ConnectionEngine.attribute('closedConnections'):
-			ConnectionEngine.attribute('connectionList').remove(connection)
+		for connection in Engine.ConnectionEngine.attribute('closedConnections'):
+			Engine.ConnectionEngine.attribute('connectionList').remove(connection)
+			
 			connection.attributes['socket'].close()
 			
 			player													= connection.attributes['player']
@@ -60,8 +81,8 @@ class ConnectionListUpdater(threading.Thread):
 			logoutNotificationEvent.attributes['signature']			= 'broadcast_to_all_players'
 			logoutNotificationEvent.attributes['data']['message']	= '{} logged off.'.format(playerName)
 		
-			ActorEngine.receiveEvent(logoutNotificationEvent)
+			self.emitEvent(logoutNotificationEvent)
 		
-		ConnectionEngine.setAttribute('closedConnections', [])
+		Engine.ConnectionEngine.setAttribute('closedConnections', [])
 		
-		ConnectionEngine.release('closedConnectionSemaphore')
+		Engine.ConnectionEngine.release('closedConnectionSemaphore')

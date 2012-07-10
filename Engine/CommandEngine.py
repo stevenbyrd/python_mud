@@ -1,28 +1,43 @@
 from Event.Event import Event
 from Event.EventHandler import EventHandler
-from Event.EventReceiver import EventReceiver
 from Command.Command import Command
 from Command.Say import Say
 from Command.Emote import Emote
 from Command.Look import Look
 from Command.Go import Go
-from Engine import *
+from Command.Cast import Cast
+from Engine import Engine
+from Driver import UpdateDriver
 import os
 import json
 
 
-def receiveEvent(event):
-	CommandEngine.instance.receiveEvent(event)
-	
+def addEventSubscriber(subscriber):
+	CommandEngine.instance.addEventSubscriber(subscriber)
 
-class CommandEngine(EventReceiver):
+
+def addSubscriberForCommand(cmdName, subscriber):
+	if cmdName == 'emote':
+		for emote in CommandEngine.instance.attributes['emoteList']:
+			emote.addEventSubscriber(subscriber)
+	else:
+		commandList = CommandEngine.instance.attributes['commandList']
+
+		if commandList.has_key(cmdName):
+			command = commandList[cmdName]
+		
+			command.addEventSubscriber(subscriber)
+
+
+class CommandEngine(Engine):
 	instance = None
 	
 	
 	def __init__(self):
-		EventReceiver.__init__(self)
+		Engine.__init__(self)
 		attributes = {
-			'commandList' : {}
+			'commandList' : {},
+			'emoteList': []
 		}
 
 		for key in attributes.keys():
@@ -33,6 +48,8 @@ class CommandEngine(EventReceiver):
 		CommandEngine.instance = self
 		
 		self.buildCommandList()
+		
+		UpdateDriver.addEventSubscriber(self)
 	
 	
 	def buildCommandList(self):
@@ -43,6 +60,8 @@ class CommandEngine(EventReceiver):
 		cmdList['l']	= cmdList['look']
 		cmdList['ls']	= cmdList['look']
 		cmdList['say']	= Say()
+		cmdList['cast']	= Cast()
+		cmdList['c']	= cmdList['cast']
 		
 		
 		# EMOTES
@@ -63,6 +82,7 @@ class CommandEngine(EventReceiver):
 				for cmdName in jsonObj['commandNames']:
 					cmdList[cmdName] = emote
 					
+				self.attributes['emoteList'].append(emote)
 					
 					
 					
@@ -85,14 +105,14 @@ class CommandExecutionEventHandler(EventHandler):
 			logoutEvent.attributes['signature']				= 'player_logout'
 			logoutEvent.attributes['data']['connection']	= connection
 
-			RoomEngine.receiveEvent(logoutEvent)
-			ActorEngine.receiveEvent(logoutEvent)
-			ConnectionEngine.receiveEvent(logoutEvent)
+			receiver.emitEvent(logoutEvent)
 		else:
 			commandList = receiver.attributes['commandList']
 			command		= commandList['go']
 
 			if commandList.has_key(cmdName):
 				command = commandList[cmdName]
+				
+			event.attributes['data']['commandInstance'] = command
 
-			command.receiveEvent(event)
+			receiver.emitEvent(event)

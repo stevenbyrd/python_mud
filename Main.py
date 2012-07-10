@@ -1,6 +1,7 @@
 from Engine.ConnectionEngine import ConnectionEngine
 from Engine.RoomEngine import RoomEngine
 from Engine.ActorEngine import ActorEngine
+from Engine.AffectEngine import AffectEngine
 from Engine.CommandEngine import CommandEngine
 from Driver.LoginListener import LoginListener
 from Driver.InputDriver import InputDriver
@@ -15,19 +16,19 @@ class Main:
 			'commandList' : {}
 		}
 		
-		ConnectionEngine()
-		RoomEngine()
-		ActorEngine()
-		CommandEngine()
-		
-
 		loginListener		= LoginListener()
 		inputDriver			= InputDriver()
 		outputDriver		= OutputDriver()
 		updateDriver		= UpdateDriver()
 		roomDriver			= RoomDriver()
-		connectionUpdater	= ConnectionListUpdater()	
-
+		connectionUpdater	= ConnectionListUpdater()
+		
+		CommandEngine()		
+		ConnectionEngine()
+		RoomEngine()
+		ActorEngine()
+		AffectEngine()
+		
 		loginListener.start()
 		inputDriver.start()
 		outputDriver.start()

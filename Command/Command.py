@@ -1,9 +1,12 @@
 from Event.EventHandler import EventHandler
 from Event.EventReceiver import EventReceiver
+from Event.EventEmitter import EventEmitter
+import Engine.CommandEngine
 
-class Command(EventReceiver):
+class Command(EventReceiver, EventEmitter):
 	def __init__(self):
 		EventReceiver.__init__(self)
+		EventEmitter.__init__(self)
 
 		commandExecutionHandler = EventHandler()
 
@@ -11,3 +14,5 @@ class Command(EventReceiver):
 		commandExecutionHandler.attributes['function']	= self.execute
 
 		self.addEventHandler(commandExecutionHandler)
+		
+		Engine.CommandEngine.addEventSubscriber(self)

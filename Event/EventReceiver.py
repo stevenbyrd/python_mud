@@ -1,8 +1,10 @@
+from lib.BaseClass import BaseClass
+
 class EventReceiver:
     def __init__(self):
-        self.attributes = {
-            'event_handlers' : []
-        }
+		BaseClass.__init__(self)
+        
+		self.attributes['event_handlers'] = []
     
     
     def addEventHandler(self, handler):
