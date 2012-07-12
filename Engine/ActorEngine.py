@@ -9,6 +9,11 @@ import os
 import json
 
 
+def emitEvent(event, emitter):
+	print 'ActorEngine received event {} from {}'.format(event.attributes['signature'], emitter)
+	
+	ActorEngine.instance.emitEvent(event)
+
 def addEventSubscriber(subscriber):
 	ActorEngine.instance.addEventSubscriber(subscriber)
 
@@ -23,7 +28,6 @@ def loadPlayer(playerName):
 
 class ActorEngine(Engine):
 	instance = None
-	
 	
 	def __init__(self):
 		Engine.__init__(self)
@@ -78,7 +82,7 @@ class ActorEngine(Engine):
 		playerFile	= open(filePath, 'r')
 		jsonString	= playerFile.read()
 		jsonObj		= json.loads(jsonString)
-		player		= Player()
+		player		= Player('0')
 		
 		playerFile.close()
 		

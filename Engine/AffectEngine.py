@@ -1,16 +1,19 @@
 from Event.Event import Event
 from Event.EventHandler import EventHandler
 from Engine import Engine
+from Affect.Affect import Affect
+import AffectComponent.GainHealth
 import os
 import json
 
 	
-def getAffect(affectName):
-	if AffectEngine.instance.attributes['affectList'].has_key(affectName):
-		return AffectEngine.instance.attributes['affectList'][affectName]
+def executeAffect(affectName, source, target):
+	AffectEngine.instance.executeAffect(affectName, source, target)
 	
-	return None
-
+	
+def affectExists(affectName):
+	return AffectEngine.instance.attributes['affects'].has_key(affectName)
+	
 	
 class AffectEngine(Engine):
 	instance = None
@@ -18,22 +21,75 @@ class AffectEngine(Engine):
 	def __init__(self):
 		Engine.__init__(self)
 		attributes = {
-			'affectList' : {}
+			'affects'			: {},
+			'affectComponents'	: {}
 		}
 
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 			
 		AffectEngine.instance = self
-			
+		
+		self.buildAffectList()
+		self.buildAffectComponentList()
+		
+		
+	
+	
+	def buildAffectComponentList(self):
+		componentList = self.attributes['affectComponents']
+		
+		componentList['gain_health'] = AffectComponent.GainHealth.GainHealth
+		
+		
+		
 			
 	def buildAffectList(self):
-		affectList = self.attributes['affectList']
-
-
+		affects		= self.attributes['affects']
+		currentDir	= os.getcwd()
+		affectDir	= currentDir + '/Content/affects' 
+		fileList	= os.listdir(affectDir)
+		
+		for fname in fileList:			
+			if fname.endswith('.txt'):
+				filePath	= '{}/{}'.format(affectDir, fname)
+				affectFile	= open(filePath, 'r')
+				jsonString	= affectFile.read()
+				jsonObj		= json.loads(jsonString)
+				affect		= Affect(jsonObj)
+				
+				affectFile.close()
+				
+				for affectName in affect.attributes['affectNames']:
+					affects[affectName] = affect
 		
 
-
-
-
-
+		
+		
+	def executeAffect(self, affectName, source, target):
+		affects = self.attributes['affects']
+		
+		if affects.has_key(affectName):
+			affect		= affects[affectName]
+			pipeline	= affect.attributes['pipeline']
+			components	= self.attributes['affectComponents']
+			
+			for componentJSON in pipeline:
+				componentName = componentJSON['component_name']
+				
+				if components.has_key(componentName):
+					args		= componentJSON['args']
+					component	= components[componentName](source, target, args)
+					
+					component.execute()
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					

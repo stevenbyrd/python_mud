@@ -2,15 +2,22 @@ from Event.Event import Event
 from Event.EventHandler import EventHandler
 from Engine import Engine
 import CommandEngine
+import ActorEngine
 from Environment.Room import Room
 from Environment.Exit import Exit
-from Driver import ConnectionListUpdater
+import Driver.ConnectionListUpdater
 import os
 import json
 
 
 def addEventSubscriber(subscriber):
 	RoomEngine.instance.addEventSubscriber(subscriber)
+	
+
+def emitEvent(event, emitter):
+	print 'RoomEngine received event {} from {}'.format(event.attributes['signature'], emitter)
+	
+	RoomEngine.instance.emitEvent(event)
 
 
 def getRoom(roomID):
@@ -19,7 +26,6 @@ def getRoom(roomID):
 
 class RoomEngine(Engine):
 	instance = None
-	
 	
 	def __init__(self):
 		Engine.__init__(self)
@@ -31,20 +37,16 @@ class RoomEngine(Engine):
 		
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
-				
 		
-		self.addEventHandler(ActorMovedEventHandler())
 		self.addEventHandler(PlayerLoginEventHandler())
 		self.addEventHandler(RoomEnginePlayerLogoutEventHandler())
-		
 		
 		RoomEngine.instance = self
 		
 		self.buildWorld()
 		
-		ConnectionListUpdater.addEventSubscriber(self)
+		Driver.ConnectionListUpdater.addEventSubscriber(self)
 		CommandEngine.addEventSubscriber(self)
-		
 		
 	
 	def buildWorld(self):
@@ -75,46 +77,11 @@ class RoomEngine(Engine):
 
 				self.attributes['roomList'].append(room)
 				self.attributes['roomMap'][room.attributes['roomID']] = room
-				
-				room.addEventSubscriber(self)
+
 	
 	
 	def getRoom(self, roomID):
 		return self.attributes['roomMap'][roomID]
-		
-		
-		
-		
-class ActorMovedEventHandler(EventHandler):
-	def __init__(self):
-		EventHandler.__init__(self)
-
-		self.attributes['signature']	= 'actor_moved'
-		self.attributes['function']		= self.actorMoved
-
-
-	def actorMoved(self, receiver, event):
-		actor			= event.attributes['data']['actor']
-		exit			= event.attributes['data']['exit']
-		fromRoomID		= event.attributes['data']['fromRoomID']
-		destinID		= event.attributes['data']['toRoomID']
-		source			= receiver.getRoom(fromRoomID)
-		destination		= receiver.getRoom(destinID)
-		
-		movedFromEvent								= Event()
-		movedFromEvent.attributes['signature']		= 'actor_moved_from_room'
-		movedFromEvent.attributes['data']['actor']	= actor
-		movedFromEvent.attributes['data']['exit']	= exit
-		movedFromEvent.attributes['data']['room']	= source
-		
-		receiver.emitEvent(movedFromEvent)
-		
-		movedToEvent								= Event()
-		movedToEvent.attributes['signature']		= 'actor_added_to_room'
-		movedToEvent.attributes['data']['actor']	= actor
-		movedToEvent.attributes['data']['room']		= destination
-		
-		receiver.emitEvent(movedToEvent)
 
 
 
@@ -138,8 +105,6 @@ class PlayerLoginEventHandler(EventHandler):
 		playerInEvent.attributes['data']['room']	= room
 
 		receiver.emitEvent(playerInEvent)
-
-
 
 
 

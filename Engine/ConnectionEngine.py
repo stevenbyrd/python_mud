@@ -20,6 +20,7 @@ def attribute(attribute):
 def setAttribute(attribute, value):
 	ConnectionEngine.instance.attributes[attribute] = value
 
+
 class ConnectionEngine(Engine):
 	instance = None
 	

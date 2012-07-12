@@ -14,24 +14,15 @@ import json
 
 def addEventSubscriber(subscriber):
 	CommandEngine.instance.addEventSubscriber(subscriber)
+	
 
-
-def addSubscriberForCommand(cmdName, subscriber):
-	if cmdName == 'emote':
-		for emote in CommandEngine.instance.attributes['emoteList']:
-			emote.addEventSubscriber(subscriber)
-	else:
-		commandList = CommandEngine.instance.attributes['commandList']
-
-		if commandList.has_key(cmdName):
-			command = commandList[cmdName]
-		
-			command.addEventSubscriber(subscriber)
+def emitEvent(event, emitter):
+	print 'CommandEngine received event {} from {}'.format(event.attributes['signature'], emitter)
+	CommandEngine.instance.emitEvent(event)
 
 
 class CommandEngine(Engine):
 	instance = None
-	
 	
 	def __init__(self):
 		Engine.__init__(self)
@@ -109,10 +100,12 @@ class CommandExecutionEventHandler(EventHandler):
 		else:
 			commandList = receiver.attributes['commandList']
 			command		= commandList['go']
+			source		= event.attributes['data']['source']
 
 			if commandList.has_key(cmdName):
 				command = commandList[cmdName]
-				
-			event.attributes['data']['commandInstance'] = command
-
-			receiver.emitEvent(event)
+				args	= event.attributes['data']['args']
+			else:
+				args = [cmdName]
+			
+			command.execute(source, args)
