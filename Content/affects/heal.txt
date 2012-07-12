@@ -1,0 +1,13 @@
+{
+	"affectNames":["heal"],
+	"pipeline":
+	[
+		{
+			"component_name":"gain_health",
+			"args":
+			{
+				"amount":20
+			}
+		}
+	]
+}
