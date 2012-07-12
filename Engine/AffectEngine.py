@@ -3,6 +3,7 @@ from Event.EventHandler import EventHandler
 from Engine import Engine
 from Affect.Affect import Affect
 import AffectComponent.GainHealth
+import AffectComponent.AffectEmote
 import os
 import json
 
@@ -39,7 +40,8 @@ class AffectEngine(Engine):
 	def buildAffectComponentList(self):
 		componentList = self.attributes['affectComponents']
 		
-		componentList['gain_health'] = AffectComponent.GainHealth.GainHealth
+		componentList['gain_health']	= AffectComponent.GainHealth.GainHealth
+		componentList['affect_emote']	= AffectComponent.AffectEmote.AffectEmote
 		
 		
 		

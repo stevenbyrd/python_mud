@@ -314,7 +314,7 @@ class SpellCastAttempted(EventHandler):
 				target = source
 			else:
 				targetList	= filter(lambda actor : 
-										actor.attributes['name'].lower().startswith(target.lower()), 
+										actor.attributes['name'].lower().startswith(targetName.lower()), 
 									receiver.attributes['players'])
 
 				if len(targetList) == 0:

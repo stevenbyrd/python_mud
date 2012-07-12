@@ -8,6 +8,27 @@
 			{
 				"amount":20
 			}
+		},
+		{
+			"component_name":"affect_emote",
+			"args":
+			{
+				"template":
+				{
+					"targeted":
+					{
+						"emoterText":"You cast a heal spell on #target#.",
+						"audienceText":"#emoter# casts a heal spell on #target#.",
+						"targetText":"#emoter# casts a heal spell on you."
+					},
+
+					"untargeted":
+					{
+						"emoterText":"You cast a heal spell.",
+						"audienceText":"#emoter# casts a heal spell."
+					}
+				}
+			}
 		}
 	]
 }
