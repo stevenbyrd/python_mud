@@ -18,8 +18,6 @@ class Cast(Command):
 		else:
 			spellName = args[0]
 			
-			print spellName
-			
 			if Engine.AffectEngine.affectExists(spellName):
 				if len(args) == 1:
 					args.append(None)

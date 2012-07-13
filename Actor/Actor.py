@@ -20,12 +20,14 @@ class Actor(EventReceiver, EventEmitter):
 			'gender'		: '',
 			'roomID'		: roomID,
 			'stats'			: {
-									'strength'		: 0,
-									'constitution'	: 0,
-									'agility'		: 0,
-									'energy'		: 0,
-									'focus'			: 0,
-									'awareness'		: 0
+									'strength'		: 0,	#physical skills, inventory limit
+									'constitution'	: 0,	#combat tree, max hp
+									'agility'		: 0,	#stealth tree, dodging
+									'energy'		: 0,	#magic skills, max mana
+									'focus'			: 0,	#psionic skills, mana regen
+									'awareness'		: 0,	#traps tree, searching
+									'ingenuity'		: 0,	#crafting tree, critical hits
+									'composure'		: 0		#support tree, hp regen
 			},
 			'currentHP'		: 0,
 			'maxHP'			: 0,
@@ -45,6 +47,8 @@ class Actor(EventReceiver, EventEmitter):
 		startingRoom = Engine.RoomEngine.getRoom(roomID)
 		
 		startingRoom.addEventSubscriber(self)
+		
+		self.addEventAdjuster('testAdjustment')
 		
 		
 		

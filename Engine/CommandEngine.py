@@ -17,7 +17,7 @@ def addEventSubscriber(subscriber):
 	
 
 def emitEvent(event, emitter):
-	print 'CommandEngine received event {} from {}'.format(event.attributes['signature'], emitter)
+	#print 'CommandEngine received event {} from {}'.format(event.attributes['signature'], emitter)
 	CommandEngine.instance.emitEvent(event)
 
 

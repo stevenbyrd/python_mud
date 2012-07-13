@@ -15,8 +15,7 @@ def addEventSubscriber(subscriber):
 	
 
 def emitEvent(event, emitter):
-	print 'RoomEngine received event {} from {}'.format(event.attributes['signature'], emitter)
-	
+	#print 'RoomEngine received event {} from {}'.format(event.attributes['signature'], emitter)
 	RoomEngine.instance.emitEvent(event)
 
 

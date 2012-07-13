@@ -1,0 +1,19 @@
+{
+	"signature":"gained_health",
+	"targetValue":"amount",
+	"function":
+	{
+		"name":"multiply",
+		"args":
+		[
+			{
+				"name":"attribute_at_path",
+				"args":["data.target.attributes.currentHP"]
+			},
+			{
+				"name":"static_value",
+				"args":[2]
+			}
+		]
+	}
+}

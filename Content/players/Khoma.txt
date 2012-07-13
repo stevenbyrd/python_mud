@@ -13,7 +13,10 @@
 				"energy":20,
 				"focus":20,
 				"agility":20,
-				"awareness":20
+				"awareness":20,
+				"ingenuity":20,
+				"composure":20
 			},
-	"gender":"male"
+	"gender":"male",
+	"currentHP":5
 }

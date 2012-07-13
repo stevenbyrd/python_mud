@@ -10,8 +10,7 @@ import json
 
 
 def emitEvent(event, emitter):
-	print 'ActorEngine received event {} from {}'.format(event.attributes['signature'], emitter)
-	
+	#print 'ActorEngine received event {} from {}'.format(event.attributes['signature'], emitter)
 	ActorEngine.instance.emitEvent(event)
 
 def addEventSubscriber(subscriber):

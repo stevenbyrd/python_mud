@@ -14,7 +14,9 @@
 				"energy":10,
 				"focus":10,
 				"agility":10,
-				"awareness":10
+				"awareness":10,
+				"ingenuity":10,
+				"composure":10
 			},
 			
 	"gender":"neutral"
