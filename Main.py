@@ -7,7 +7,7 @@ from Engine.AffectEngine import AffectEngine
 from Driver.LoginListener import LoginListener
 from Driver.InputDriver import InputDriver
 from Driver.OutputDriver import OutputDriver
-from Driver.RoomDriver import RoomDriver
+from Driver.TickDriver import TickDriver
 from Driver.ConnectionListUpdater import ConnectionListUpdater
 from Driver.UpdateDriver import UpdateDriver
 
@@ -17,11 +17,11 @@ class Main:
 			'commandList' : {}
 		}
 		
+		tickDriver			= TickDriver()
 		loginListener		= LoginListener()
 		inputDriver			= InputDriver()
 		outputDriver		= OutputDriver()
 		updateDriver		= UpdateDriver()
-		roomDriver			= RoomDriver()
 		connectionUpdater	= ConnectionListUpdater()
 		
 		CommandEngine()		
@@ -34,7 +34,7 @@ class Main:
 		inputDriver.start()
 		outputDriver.start()
 		updateDriver.start()
-		roomDriver.start()
+		tickDriver.start()
 		connectionUpdater.start()
 		
 

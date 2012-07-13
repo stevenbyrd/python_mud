@@ -5,6 +5,11 @@ class Adjuster:
 		self.attributes = attributes
 		
 	def adjust(self, event):
-		event.attributes['data'][self.attributes['targetValue']] = AdjustmentFunctions.evaluateFunction(event, self.attributes['function'])
+		adjustedValue = AdjustmentFunctions.evaluateFunction(event, self.attributes['function'])
 		
-		return event
+		if adjustedValue == False:
+			return None
+		else:
+			event.attributes['data'][self.attributes['targetValue']] = adjustedValue
+		
+			return event

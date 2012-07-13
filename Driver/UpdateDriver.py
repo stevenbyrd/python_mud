@@ -17,7 +17,6 @@ def removeEventSubscriber(subscriber):
 class UpdateDriver(threading.Thread, EventEmitter):
 	instance = None
 	
-	
 	def __init__(self):
 		threading.Thread.__init__(self)
 		EventEmitter.__init__(self)

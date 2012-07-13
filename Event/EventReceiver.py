@@ -4,8 +4,11 @@ from Event import Event
 import os
 import json
 from Adjustments.Adjuster import Adjuster
+import Driver.TickDriver
+
 
 currentDir = os.getcwd()
+
 
 class EventReceiver:
 	def __init__(self):
@@ -13,6 +16,9 @@ class EventReceiver:
 		
 		self.attributes['event_handlers']	= []
 		self.attributes['event_adjusters']	= []
+		self.attributes['tick_count']		= 0
+		
+		Driver.TickDriver.addEventSubscriber(self)
 	
 	
 	def addEventHandler(self, handler):
@@ -32,12 +38,16 @@ class EventReceiver:
 	
 	
 	def receiveEvent(self, event, emitter):
+		if event.attributes['signature'] == 'game_tick':
+			self.attributes['tick_count'] += 1
+		
 		filterFunc	= (lambda receiver: receiver.attributes['signature'] == event.attributes['signature'])
 		newEvent	= Event()
 		
 		newEvent.attributes = {
 			'signature'	: event.attributes['signature'],
-			'data'		: event.attributes['data'].copy()
+			'data'		: event.attributes['data'].copy(),
+			'receiver'	: self
 		}
 	
 		for adjuster in filter(filterFunc, self.attributes['event_adjusters']):

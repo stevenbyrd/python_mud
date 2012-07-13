@@ -8,7 +8,7 @@
 		[
 			{
 				"name":"attribute_at_path",
-				"args":["data.target.attributes.currentHP"]
+				"args":["receiver.attributes.currentHP"]
 			},
 			{
 				"name":"static_value",

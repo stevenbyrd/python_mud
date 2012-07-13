@@ -7,7 +7,7 @@ import Engine.ActorEngine
 
 
 class Actor(EventReceiver, EventEmitter):
-	def __init__(self, roomID):
+	def __init__(self, actorJSON):
 		EventReceiver.__init__(self)
 		EventEmitter.__init__(self)
 		
@@ -18,7 +18,7 @@ class Actor(EventReceiver, EventEmitter):
 			'description'	: [],
 			'race'			: '',
 			'gender'		: '',
-			'roomID'		: roomID,
+			'roomID'		: '0',
 			'stats'			: {
 									'strength'		: 0,	#physical skills, inventory limit
 									'constitution'	: 0,	#combat tree, max hp
@@ -32,8 +32,13 @@ class Actor(EventReceiver, EventEmitter):
 			'currentHP'		: 0,
 			'maxHP'			: 0,
 			'currentMana'	: 0,
-			'maxMana'		: 0
+			'maxMana'		: 0,
+			'eventAdjusters': []
 		}
+		
+		for key in actorJSON.keys():
+			if attributes.has_key(key):
+				attributes[key] = actorJSON[key]
 		
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
@@ -41,14 +46,16 @@ class Actor(EventReceiver, EventEmitter):
 		self.addEventHandler(ActorMovedFromRoomEventHandler())
 		self.addEventHandler(WasObservedEventHandler())
 		self.addEventHandler(GainedHealthEventReceiver())
+		self.addEventHandler(GameTickEventHandler())
 		
 		Engine.ActorEngine.addEventSubscriber(self)
 		
-		startingRoom = Engine.RoomEngine.getRoom(roomID)
+		startingRoom = Engine.RoomEngine.getRoom(self.attributes['roomID'])
 		
 		startingRoom.addEventSubscriber(self)
 		
-		self.addEventAdjuster('testAdjustment')
+		for adjusterName in self.attributes['eventAdjusters']:
+			self.addEventAdjuster(adjusterName)
 		
 		
 		
@@ -115,3 +122,17 @@ class GainedHealthEventReceiver(EventHandler):
 			amount = event.attributes['data']['amount']
 			
 			receiver.attributes['currentHP'] += amount
+			
+			
+			
+
+class GameTickEventHandler(EventHandler):
+	def __init__(self):
+		EventHandler.__init__(self)
+		self.attributes['signature']	= 'game_tick'
+		self.attributes['function']		= self.gameTicked
+
+
+	def gameTicked(self, receiver, event):
+		from time import gmtime, strftime
+		print '{} ticked at {}'.format(receiver.attributes['name'], strftime("%H:%M:%S", gmtime()))

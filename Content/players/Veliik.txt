@@ -19,5 +19,8 @@
 				"composure":20
 			},
 	"gender":"male",
-	"currentHP":5
+	"currentHP":5,
+	"maxHP":200,
+	"currentMana":1,
+	"maxMana":200
 }

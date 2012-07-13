@@ -5,8 +5,8 @@ import lib.ANSI
 
 
 class Player(Humanoid):
-	def __init__(self, roomID):
-		Humanoid.__init__(self, roomID)
+	def __init__(self, actorJSON):
+		Humanoid.__init__(self, actorJSON)
 		attributes = {
 			'connection' : None
 		}

@@ -111,11 +111,7 @@ class ActorAttemptedMovementEventHandler(EventHandler):
 					feedbackEvent.attributes['data']['actor']		= actor
 
 					receiver.emitEvent(feedbackEvent)
-				else:
-					destination									= Engine.RoomEngine.getRoom(exit.attributes['destination'])
-				
-					print destination
-				
+				else:									
 					movedFromEvent								= Event()
 					movedFromEvent.attributes['signature']		= 'actor_moved_from_room'
 					movedFromEvent.attributes['data']['actor']	= actor
@@ -125,7 +121,7 @@ class ActorAttemptedMovementEventHandler(EventHandler):
 					movedToEvent								= Event()
 					movedToEvent.attributes['signature']		= 'actor_added_to_room'
 					movedToEvent.attributes['data']['actor']	= actor
-					movedToEvent.attributes['data']['room']		= destination
+					movedToEvent.attributes['data']['room']		= Engine.RoomEngine.getRoom(exit.attributes['destination'])
 					
 					Engine.RoomEngine.emitEvent(movedFromEvent, receiver)
 					Engine.RoomEngine.emitEvent(movedToEvent, receiver)

@@ -16,5 +16,8 @@
 			},
 	"gender":"male",
 	"roomID":"0",
-	"isAggro":false
+	"currentHP":1,
+	"maxHP":20,
+	"currentMana":1,
+	"maxMana":20
 }

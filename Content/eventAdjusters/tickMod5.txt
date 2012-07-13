@@ -1,0 +1,29 @@
+{
+	"signature":"game_tick",
+	"targetValue":"",
+	"function":
+	{
+		"name":"value_equal_to",
+		"args":
+		[
+			{
+				"name":"modulus",
+				"args":
+				[
+					{
+						"name":"attribute_at_path",
+						"args":["receiver.attributes.tick_count"]
+					},
+					{
+						"name":"static_value",
+						"args":[5]
+					}
+				]
+			},
+			{
+				"name":"static_value",
+				"args":[0]
+			}
+		]
+	}
+}

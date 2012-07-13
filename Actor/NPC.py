@@ -1,6 +1,6 @@
 class NPC(Actor):
-	def __init__(self, roomID):
-		Actor.__init__(self, roomID)
+	def __init__(self, actorJSON):
+		Actor.__init__(self, actorJSON)
 		attributes = {
 			'wanderRate'	: 0,
 			'spawnRate'		: 0,

@@ -81,14 +81,9 @@ class ActorEngine(Engine):
 		playerFile	= open(filePath, 'r')
 		jsonString	= playerFile.read()
 		jsonObj		= json.loads(jsonString)
-		player		= Player('0')
+		player		= Player(jsonObj)
 		
 		playerFile.close()
-		
-		for key in jsonObj.keys():
-			player.attributes[key] = jsonObj[key]
-			
-		player.attributes['roomID'] = '0'
 		
 		return player
 		

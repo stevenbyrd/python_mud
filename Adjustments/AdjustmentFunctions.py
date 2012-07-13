@@ -1,7 +1,10 @@
 functions = {
 	'multiply'			: lambda event, args: evaluateFunction(event, args[0]) * evaluateFunction(event, args[1]),
+	'sum'				: lambda event, args: evaluateFunction(event, args[0]) + evaluateFunction(event, args[1]),
 	'static_value'		: lambda event, args: args[0],
-	'attribute_at_path'	: lambda event, args: getAttributeAtPath(event.attributes, args[0])
+	'attribute_at_path'	: lambda event, args: getAttributeAtPath(event.attributes, args[0]),
+	'value_equal_to'	: lambda event, args: evaluateFunction(event, args[0]) == evaluateFunction(event, args[1]),
+	'modulus'			: lambda event, args: evaluateFunction(event, args[0]) % evaluateFunction(event, args[1])
 }
 
 
@@ -13,7 +16,6 @@ def evaluateFunction(event, argument):
 	
 def getAttributeAtPath(object, path):
 	if path == '' or path == None:
-		print 'returning {}'.format(object)
 		return object
 	else:
 		delimeterIndex	= path.find('.')

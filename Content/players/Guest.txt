@@ -19,5 +19,9 @@
 				"composure":10
 			},
 			
-	"gender":"neutral"
+	"gender":"neutral",
+	"currentHP":1,
+	"maxHP":200,
+	"currentMana":1,
+	"maxMana":200
 }
