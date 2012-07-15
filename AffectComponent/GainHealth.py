@@ -13,4 +13,4 @@ class GainHealth(AffectComponent):
 		healEvent.attributes['data']['target']	= self.attributes['target']
 		healEvent.attributes['data']['amount']	= self.attributes['amount']
 		
-		Engine.ActorEngine.emitEvent(healEvent, self)
+		Engine.ActorEngine.emitEvent(healEvent)

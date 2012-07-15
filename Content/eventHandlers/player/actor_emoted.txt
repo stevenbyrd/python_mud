@@ -1,0 +1,44 @@
+{
+	"signature":"actor_emoted",
+	"function":
+	["send_final",
+			["text_by_replace",
+					"#target#",
+					
+					["attribute_at_path",
+							"data.target.attributes.name"],
+					
+					["text_by_replace",
+							"#emoter#",
+							
+							["attribute_at_path",
+									"data.emoter.attributes.name"],
+							
+							["do_if",
+									["value_equal_to",
+											["attribute_at_path",
+													"data.emoter"],
+					
+											["attribute_at_path",
+													"receiver"]],
+					
+					
+									["attribute_at_path",
+											"data.emoterText"],
+									
+									
+									["do_if",
+											["value_equal_to",
+													["attribute_at_path",
+															"data.target"],
+					
+													["attribute_at_path",
+															"receiver"]],
+													
+											["attribute_at_path",
+													"data.targetText"],
+											
+											
+											["attribute_at_path",
+													"data.audienceText"]]]]]]
+}

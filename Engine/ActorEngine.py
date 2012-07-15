@@ -9,8 +9,7 @@ import os
 import json
 
 
-def emitEvent(event, emitter):
-	#print 'ActorEngine received event {} from {}'.format(event.attributes['signature'], emitter)
+def emitEvent(event):
 	ActorEngine.instance.emitEvent(event)
 
 def addEventSubscriber(subscriber):
@@ -40,9 +39,9 @@ class ActorEngine(Engine):
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 	
-		self.addEventHandler(PlayerLoginEventHandler())
-		self.addEventHandler(PlayerLogoutEventHandler())
-		self.addEventHandler(BroadcastEventHandler())
+		self.attributes['event_handlers'].append(PlayerLoginEventHandler())
+		self.attributes['event_handlers'].append(PlayerLogoutEventHandler())
+		self.attributes['event_handlers'].append(BroadcastEventHandler())
 		
 		ActorEngine.instance = self
 		
@@ -101,15 +100,13 @@ class ActorEngine(Engine):
 			
 			
 
-class BroadcastEventHandler(EventHandler):
+class BroadcastEventHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
+		self.attributes = {'signature':'broadcast_to_all_players'}
 
-		self.attributes['signature']	= 'broadcast_to_all_players'
-		self.attributes['function']		= self.broadcastToAllPlayers
-
-
-	def broadcastToAllPlayers(self, receiver, event):
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
+		
 		receiver.attributes['playerSetSemaphore'].acquire();
 
 		message											= event.attributes['data']['message']
@@ -126,16 +123,13 @@ class BroadcastEventHandler(EventHandler):
 
 
 
-class PlayerLoginEventHandler(EventHandler):
+class PlayerLoginEventHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
+		self.attributes = {'signature' : 'player_login'}
 
-		self.attributes['signature']	= 'player_login'
-		self.attributes['function']		= self.playerLogin
-
-
-	def playerLogin(self, receiver, event):
-		player = event.attributes['data']['player']
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
+		player		= event.attributes['data']['player']
 
 		receiver.addPlayer(player)
 
@@ -146,13 +140,10 @@ class PlayerLoginEventHandler(EventHandler):
 
 class PlayerLogoutEventHandler(EventHandler):
 	def __init__(self):
-		EventHandler.__init__(self)
+		self.attributes = {'signature':'player_logout'}
 
-		self.attributes['signature']	= 'player_logout'
-		self.attributes['function']		= self.playerLogout
-
-
-	def playerLogout(self, receiver, event):
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
 		connection	= event.attributes['data']['connection']
 		player		= connection.attributes['player']
 

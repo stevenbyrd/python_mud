@@ -38,8 +38,9 @@ class ConnectionEngine(Engine):
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 
-		self.addEventHandler(PlayerLoginHandler())
-		self.addEventHandler(PlayerLogoutHandler())
+
+		self.attributes['event_handlers'].append(PlayerLoginHandler())
+		self.attributes['event_handlers'].append(PlayerLogoutHandler())
 		
 		ConnectionEngine.instance = self
 		
@@ -62,14 +63,12 @@ class ConnectionEngine(Engine):
 
 
 
-class PlayerLoginHandler(EventHandler):
+class PlayerLoginHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'player_login'
-		self.attributes['function']		= self.playerLogin
+		self.attributes = {'signature':'player_login'}
 
-
-	def playerLogin(self, receiver, event):
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
 		player		= event.attributes['data']['player']
 		connection	= player.attributes['connection']
 
@@ -79,14 +78,12 @@ class PlayerLoginHandler(EventHandler):
 
 
 
-class PlayerLogoutHandler(EventHandler):
+class PlayerLogoutHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'player_logout'
-		self.attributes['function']		= self.playerLogout
+		self.attributes = {'signature':'player_logout'}
 
-
-	def playerLogout(self, receiver, event):
-		connection = event.attributes['data']['connection']
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
+		connection	= event.attributes['data']['connection']
 
 		receiver.removeConnection(connection)

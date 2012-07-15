@@ -2,6 +2,7 @@ from Event.Event import Event
 from Event.EventHandler import EventHandler
 from Event.EventReceiver import EventReceiver
 from Event.EventEmitter import EventEmitter
+from Exit import Exit
 import Engine.CommandEngine
 import Engine.RoomEngine
 import Engine.AffectEngine
@@ -10,7 +11,7 @@ from lib import ANSI
 
 
 class Room(EventReceiver, EventEmitter):
-	def __init__(self):
+	def __init__(self, roomJson):
 		EventReceiver.__init__(self)
 		EventEmitter.__init__(self)
 		
@@ -29,16 +30,31 @@ class Room(EventReceiver, EventEmitter):
 		
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
+			
+			
+		for key in roomJson.keys():
+			if key == 'exits':
+				for exitJson in roomJson[key]:
+					exit = Exit()
+					for field in exitJson.keys():
+						exit.attributes[field] = exitJson[field]
+					
+					self.attributes[key].append(exit)
+			elif key == 'eventHandlers':
+				for handlerName in roomJson[key]:
+					self.addEventHandler('room', handlerName)
+			else:
+				self.attributes[key] = roomJson[key]
 		
 		
-		self.addEventHandler(ActorAttemptedMovementEventHandler())
-		self.addEventHandler(ActorMovedFromRoomEventHandler())
-		self.addEventHandler(ActorAddedToRoomEventHandler())
-		self.addEventHandler(ActorEmotedHandler())
-		self.addEventHandler(ActorObservedHandler())
-		self.addEventHandler(WasObservedHandler())
-		self.addEventHandler(PlayerLogoutHandler())
-		self.addEventHandler(SpellCastAttempted())
+		self.attributes['event_handlers'].append(ActorAttemptedMovementEventHandler())
+		self.attributes['event_handlers'].append(ActorMovedFromRoomEventHandler())
+		self.attributes['event_handlers'].append(ActorAddedToRoomEventHandler())
+#		self.attributes['event_handlers'].append(ActorObservedHandler())
+		self.attributes['event_handlers'].append(WasObservedHandler())
+#		self.attributes['event_handlers'].append(ActorEmotedHandler())
+		self.attributes['event_handlers'].append(PlayerLogoutHandler())
+		self.attributes['event_handlers'].append(SpellCastAttempted())
 		
 		
 		Engine.RoomEngine.addEventSubscriber(self)
@@ -52,7 +68,6 @@ class Room(EventReceiver, EventEmitter):
 
 		if player in set(playerList):
 			playerList.remove(player)
-			#player.removeEventSubscriber(self)
 
 		self.attributes['playerSemaphore'].release()
 
@@ -66,7 +81,6 @@ class Room(EventReceiver, EventEmitter):
 			playerList.append(player)
 			player.attributes['roomID'] = self.attributes['roomID']
 			player.insertCommand('look')
-			#player.addEventSubscriber(self)
 
 		self.attributes['playerSemaphore'].release()
 		
@@ -74,14 +88,13 @@ class Room(EventReceiver, EventEmitter):
 		
 		
 		
-class ActorAttemptedMovementEventHandler(EventHandler):
+class ActorAttemptedMovementEventHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'actor_attempted_movement'
-		self.attributes['function']		= self.actorAttemptedMovement
+		self.attributes = {'signature':'actor_attempted_movement'}
 
-
-	def actorAttemptedMovement(self, receiver, event):
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
+		
 		if event.attributes['data']['room'] == receiver:
 			actor		= event.attributes['data']['source']
 			direction	= event.attributes['data']['direction']
@@ -123,19 +136,19 @@ class ActorAttemptedMovementEventHandler(EventHandler):
 					movedToEvent.attributes['data']['actor']	= actor
 					movedToEvent.attributes['data']['room']		= Engine.RoomEngine.getRoom(exit.attributes['destination'])
 					
-					Engine.RoomEngine.emitEvent(movedFromEvent, receiver)
-					Engine.RoomEngine.emitEvent(movedToEvent, receiver)
+					Engine.RoomEngine.emitEvent(movedFromEvent)
+					Engine.RoomEngine.emitEvent(movedToEvent)
 
 
 
-class ActorMovedFromRoomEventHandler(EventHandler):
+
+class ActorMovedFromRoomEventHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'actor_moved_from_room'
-		self.attributes['function']		= self.actorMovedFromRoom
+		self.attributes = {'signature':'actor_moved_from_room'}
 
+	def handleEvent(self, event):		
+		receiver = event.attributes['receiver']
 
-	def actorMovedFromRoom(self, receiver, event):		
 		if event.attributes['data']['room'] == receiver:
 			actor = event.attributes['data']['actor']
 			
@@ -145,14 +158,12 @@ class ActorMovedFromRoomEventHandler(EventHandler):
 
 
 
-class ActorAddedToRoomEventHandler(EventHandler):
+class ActorAddedToRoomEventHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'actor_added_to_room'
-		self.attributes['function']		= self.actorAddedToRoom	
+		self.attributes = {'signature':'actor_added_to_room'}
 
-
-	def actorAddedToRoom(self, receiver, event):
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
 		if event.attributes['data']['room'] == receiver:			
 			actor = event.attributes['data']['actor']
 			
@@ -161,13 +172,13 @@ class ActorAddedToRoomEventHandler(EventHandler):
 			
 			
 			
-class ActorEmotedHandler(EventHandler):
+class ActorEmotedHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'actor_emoted'
-		self.attributes['function']		= self.actorEmoted
+		self.attributes = {'signature':'actor_emoted'}
 
-	def actorEmoted(self, receiver, event):
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
+
 		if event.attributes['data']['room'] == receiver:
 			targetName	= event.attributes['data']['target']
 			target		= None
@@ -200,14 +211,13 @@ class ActorEmotedHandler(EventHandler):
 
 
 
-class ActorObservedHandler(EventHandler):
+class ActorObservedHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'actor_observed'
-		self.attributes['function']		= self.actorObserved
+		self.attributes = {'signature':'actor_observed'}
 
-
-	def actorObserved(self, receiver, event):
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
+		
 		if event.attributes['data']['room'] == receiver:			
 			observer	= event.attributes['data']['observer']
 			target		= event.attributes['data']['target']
@@ -233,14 +243,13 @@ class ActorObservedHandler(EventHandler):
 
 
 
-class WasObservedHandler(EventHandler):
+class WasObservedHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'was_observed'
-		self.attributes['function']		= self.wasObserved
+		self.attributes = {'signature':'was_observed'}
 
-
-	def wasObserved(self, receiver, event):
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
+		
 		if event.attributes['data']['room'] == receiver:		
 			player		= event.attributes['data']['observer']
 			description = [ANSI.red(receiver.attributes['name']) + '\n\r']
@@ -283,23 +292,24 @@ class WasObservedHandler(EventHandler):
 		
 		
 
-class PlayerLogoutHandler(EventHandler):
+class PlayerLogoutHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'player_logout'
-		self.attributes['function']		= (lambda receiver, event: receiver.removePlayer(event.attributes['data']['actor']))	
+		self.attributes = {'signature':'player_logout'}
+		
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
+		receiver.removePlayer(event.attributes['data']['actor'])
 
 
 
 
-class SpellCastAttempted(EventHandler):
+class SpellCastAttempted:
 	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'spell_cast_attempted'
-		self.attributes['function']		= self.spellCastAttempted	
+		self.attributes = {'signature':'spell_cast_attempted'}
 
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
 
-	def spellCastAttempted(self, receiver, event):
 		if event.attributes['data']['room'] == receiver:			
 			source		= event.attributes['data']['source']
 			targetName	= event.attributes['data']['target']

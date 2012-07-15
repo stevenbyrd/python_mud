@@ -14,8 +14,7 @@ def addEventSubscriber(subscriber):
 	RoomEngine.instance.addEventSubscriber(subscriber)
 	
 
-def emitEvent(event, emitter):
-	#print 'RoomEngine received event {} from {}'.format(event.attributes['signature'], emitter)
+def emitEvent(event):
 	RoomEngine.instance.emitEvent(event)
 
 
@@ -37,8 +36,8 @@ class RoomEngine(Engine):
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 		
-		self.addEventHandler(PlayerLoginEventHandler())
-		self.addEventHandler(RoomEnginePlayerLogoutEventHandler())
+		self.attributes['event_handlers'].append(PlayerLoginEventHandler())
+		self.attributes['event_handlers'].append(RoomEnginePlayerLogoutEventHandler())
 		
 		RoomEngine.instance = self
 		
@@ -59,21 +58,10 @@ class RoomEngine(Engine):
 				roomFile	= open(filePath, 'r')
 				jsonString	= roomFile.read()
 				jsonObj		= json.loads(jsonString)
-				room		= Room()
+				room		= Room(jsonObj)
 				
 				roomFile.close()
 				
-				for key in jsonObj.keys():
-					if key == 'exits':
-						for exitJson in jsonObj[key]:
-							exit = Exit()
-							for field in exitJson.keys():
-								exit.attributes[field] = exitJson[field]
-							
-							room.attributes[key].append(exit)
-					else:
-						room.attributes[key] = jsonObj[key]
-
 				self.attributes['roomList'].append(room)
 				self.attributes['roomMap'][room.attributes['roomID']] = room
 
@@ -85,15 +73,12 @@ class RoomEngine(Engine):
 
 
 
-class PlayerLoginEventHandler(EventHandler):
+class PlayerLoginEventHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
+		self.attributes = {'signature':'player_login'}
 
-		self.attributes['signature']	= 'player_login'
-		self.attributes['function']		= self.playerLogin
-
-
-	def playerLogin(self, receiver, event):
+	def handleEvent(self, event):
+		receiver		= event.attributes['receiver']
 		player			= event.attributes['data']['player']
 		roomID			= player.attributes['roomID']
 		room			= receiver.getRoom(roomID)
@@ -108,15 +93,12 @@ class PlayerLoginEventHandler(EventHandler):
 
 
 
-class RoomEnginePlayerLogoutEventHandler(EventHandler):
+class RoomEnginePlayerLogoutEventHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
+		self.attributes = {'signature':'player_logout'}
 
-		self.attributes['signature']	= 'player_logout'
-		self.attributes['function']		= self.playerLogout
-
-
-	def playerLogout(self, receiver, event):
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
 		connection	= event.attributes['data']['connection']
 		player		= connection.attributes['player']
 		roomID		= player.attributes['roomID']

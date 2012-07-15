@@ -30,4 +30,4 @@ class Say(Command):
 				speakEvent.attributes['data']['emoterText']		= 'You say, "{}".'.format(sentence[1:])
 				speakEvent.attributes['data']['audienceText']	= '{} says, "{}".'.format(actor.attributes['name'], sentence[1:])
 		
-		Engine.RoomEngine.emitEvent(speakEvent, self)
+		Engine.RoomEngine.emitEvent(speakEvent)

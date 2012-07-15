@@ -23,8 +23,20 @@
 	"currentMana":1,
 	"maxMana":200,
 	"eventAdjusters":[
-						"tickMod5",
 						"testAdjustment"
 					 ],
-	"roomID":"1"
+	"eventHandlers":{
+						"actor":[
+									"actor_moved_from_room",
+									"was_observed",
+									"gained_health"
+								],
+								
+						"player":[
+									"actor_moved_from_room",
+									"actor_added_to_room",
+									"actor_emoted"
+								 ]
+					},
+	"roomID":"0"
 }

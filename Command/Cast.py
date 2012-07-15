@@ -29,7 +29,7 @@ class Cast(Command):
 				castEvent.attributes['data']['spell']	= spellName
 				castEvent.attributes['data']['room']	= room
 			
-				Engine.RoomEngine.emitEvent(castEvent, self)
+				Engine.RoomEngine.emitEvent(castEvent)
 			else:
 				self.sendUnknownAffectFeedbackEvent(source)
 					
@@ -40,4 +40,4 @@ class Cast(Command):
 		feedbackEvent.attributes['data']['feedback']	= 'Cast what?'
 		feedbackEvent.attributes['data']['actor']		= actor
 
-		Engine.ActorEngine.emitEvent(feedbackEvent, self)
+		Engine.ActorEngine.emitEvent(feedbackEvent)

@@ -21,4 +21,4 @@ class Go(Command):
 		moveEvent.attributes['data']['source']		= actor
 		moveEvent.attributes['data']['room']		= room
 	
-		Engine.RoomEngine.emitEvent(moveEvent, self)
+		Engine.RoomEngine.emitEvent(moveEvent)

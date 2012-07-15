@@ -27,5 +27,5 @@ class Emote(Command):
 		emoteEvent.attributes['signature']	= 'actor_emoted'
 		emoteEvent.attributes['data']		= eventData
 	
-		Engine.RoomEngine.emitEvent(emoteEvent, self)
+		Engine.RoomEngine.emitEvent(emoteEvent)
 	

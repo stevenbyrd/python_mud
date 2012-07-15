@@ -1,9 +1,10 @@
 from lib.BaseClass import BaseClass
 import copy
 from Event import Event
+from EventHandler import EventHandler
 import os
 import json
-from Adjustments.Adjuster import Adjuster
+from EventAdjuster import EventAdjuster
 import Driver.TickDriver
 
 
@@ -21,7 +22,15 @@ class EventReceiver:
 		Driver.TickDriver.addEventSubscriber(self)
 	
 	
-	def addEventHandler(self, handler):
+	def addEventHandler(self, handlerType, handlerName):
+		filePath	= '{}/Content/eventHandlers/{}/{}.txt'.format(currentDir, handlerType, handlerName)
+		handlerFile	= open(filePath, 'r')
+		jsonString	= handlerFile.read()
+		jsonObj		= json.loads(jsonString)
+		handler		= EventHandler(jsonObj)
+		
+		handlerFile.close()		
+		
 		self.attributes['event_handlers'].append(handler)
 		
 	
@@ -30,11 +39,12 @@ class EventReceiver:
 		adjusterFile	= open(filePath, 'r')
 		jsonString		= adjusterFile.read()
 		jsonObj			= json.loads(jsonString)
-		adjuster		= Adjuster(jsonObj)
+		adjuster		= EventAdjuster(jsonObj)
 		
 		adjusterFile.close()		
 		
 		self.attributes['event_adjusters'].append(adjuster)
+		
 	
 	
 	def receiveEvent(self, event, emitter):
@@ -58,4 +68,4 @@ class EventReceiver:
 		
 		if newEvent != None:
 			for handler in filter(filterFunc, self.attributes['event_handlers']):
-					handler.attributes['function'](self, newEvent)			
+					handler.handleEvent(newEvent)			

@@ -16,8 +16,7 @@ def addEventSubscriber(subscriber):
 	CommandEngine.instance.addEventSubscriber(subscriber)
 	
 
-def emitEvent(event, emitter):
-	#print 'CommandEngine received event {} from {}'.format(event.attributes['signature'], emitter)
+def emitEvent(event):
 	CommandEngine.instance.emitEvent(event)
 
 
@@ -34,7 +33,7 @@ class CommandEngine(Engine):
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 
-		self.addEventHandler(CommandExecutionEventHandler())
+		self.attributes['event_handlers'].append(CommandExecutionEventHandler())
 		
 		CommandEngine.instance = self
 		
@@ -78,16 +77,13 @@ class CommandEngine(Engine):
 					
 					
 
-class CommandExecutionEventHandler(EventHandler):
+class CommandExecutionEventHandler:
 	def __init__(self):
-		EventHandler.__init__(self)
+		self.attributes = {'signature' : 'execute_command'}
 
-		self.attributes['signature']	= 'execute_command'
-		self.attributes['function']		= self.executeCommand
-
-
-	def executeCommand(self, receiver, event):
-		cmdName = event.attributes['data']['command']
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
+		cmdName		= event.attributes['data']['command']
 
 		if cmdName == 'quit':
 			player											= event.attributes['data']['source']

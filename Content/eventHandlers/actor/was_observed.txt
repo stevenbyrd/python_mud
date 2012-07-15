@@ -1,0 +1,32 @@
+{
+	"signature":"was_observed",
+	"function":
+	["do_if",
+			["value_equal_to",
+					["attribute_at_path",
+							"receiver"],
+					["attribute_at_path",
+							"data.target"]],
+			
+			["emit_event_from_engine",
+					"actor_engine",
+					
+					["create_event",
+							{
+								"signature":"entity_described_self",
+								"data":
+								{
+									"room":
+										["attribute_at_path",
+												"receiver.attributes.roomID"],
+										
+									"observer":	
+										["attribute_at_path",
+												"data.observer"],
+
+									"description":
+										["attribute_at_path",
+												"receiver.attributes.description"]
+								}
+							}]]]
+}

@@ -23,5 +23,18 @@
 	"currentHP":1,
 	"maxHP":200,
 	"currentMana":1,
-	"maxMana":200
+	"maxMana":200,
+	"eventHandlers":{
+						"actor":[
+									"actor_moved_from_room",
+									"was_observed",
+									"gained_health"
+								],
+								
+						"player":[
+									"actor_moved_from_room",
+									"actor_added_to_room",
+									"actor_emoted"
+								 ]
+					}
 }

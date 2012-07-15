@@ -22,4 +22,4 @@ class Look(Command):
 			lookEvent.attributes['signature']		= 'actor_observed'
 			lookEvent.attributes['data']['target']	= args[0]
 			
-		Engine.RoomEngine.emitEvent(lookEvent, self)
+		Engine.RoomEngine.emitEvent(lookEvent)

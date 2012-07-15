@@ -18,5 +18,8 @@
 					"destination":"3",
 					"isHidden":false
 				}
-			]
+			],
+	"eventHandlers":[
+						"actor_emoted"
+					]
 }

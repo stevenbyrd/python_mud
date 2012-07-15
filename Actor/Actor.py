@@ -33,7 +33,8 @@ class Actor(EventReceiver, EventEmitter):
 			'maxHP'			: 0,
 			'currentMana'	: 0,
 			'maxMana'		: 0,
-			'eventAdjusters': []
+			'eventAdjusters': [],
+			'eventHandlers'	: []
 		}
 		
 		for key in actorJSON.keys():
@@ -42,11 +43,6 @@ class Actor(EventReceiver, EventEmitter):
 		
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
-			
-		self.addEventHandler(ActorMovedFromRoomEventHandler())
-		self.addEventHandler(WasObservedEventHandler())
-		self.addEventHandler(GainedHealthEventReceiver())
-		self.addEventHandler(GameTickEventHandler())
 		
 		Engine.ActorEngine.addEventSubscriber(self)
 		
@@ -57,82 +53,8 @@ class Actor(EventReceiver, EventEmitter):
 		for adjusterName in self.attributes['eventAdjusters']:
 			self.addEventAdjuster(adjusterName)
 		
-		
-		
-		
-class ActorMovedFromRoomEventHandler(EventHandler):
-	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'actor_moved_from_room'
-		self.attributes['function']		= self.actorMovedFromRoom
-
-
-	def actorMovedFromRoom(self, receiver, event):
-		actor	= event.attributes['data']['actor']
-		oldRoom	= event.attributes['data']['room']
-		
-		if actor == receiver:
-			exit		= event.attributes['data']['exit']
-			destination	= exit.attributes['destination']
-			newRoom		= Engine.RoomEngine.getRoom(destination)
+		for key in self.attributes['eventHandlers']:
+			handlers = self.attributes['eventHandlers'][key]
 			
-			oldRoom.removeEventSubscriber(receiver)
-			newRoom.addEventSubscriber(receiver)
-			
-			receiver.attributes['roomID'] = destination
-
-			
-							
-				
-class WasObservedEventHandler(EventHandler):
-	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'was_observed'
-		self.attributes['function']		= self.wasObserved
-
-
-	def wasObserved(self, receiver, event):
-		target = event.attributes['data']['target']
-		
-		if target == receiver:
-			observer										= event.attributes['data']['observer']
-			description										= receiver.attributes['description'][:]
-			describeEvent									= Event()
-			describeEvent.attributes['signature']			= 'entity_described_self'
-			describeEvent.attributes['data']['description'] = description
-			describeEvent.attributes['data']['observer']	= observer
-			describeEvent.attributes['data']['room']		= Engine.RoomEngine.getRoom(receiver.attributes['roomID'])
-
-			Engine.ActorEngine.emitEvent(describeEvent, receiver)
-			
-			
-
-
-class GainedHealthEventReceiver(EventHandler):
-	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'gained_health'
-		self.attributes['function']		= self.gainedHealth
-
-
-	def gainedHealth(self, receiver, event):
-		target = event.attributes['data']['target']
-		
-		if target == receiver:
-			amount = event.attributes['data']['amount']
-			
-			receiver.attributes['currentHP'] += amount
-			
-			
-			
-
-class GameTickEventHandler(EventHandler):
-	def __init__(self):
-		EventHandler.__init__(self)
-		self.attributes['signature']	= 'game_tick'
-		self.attributes['function']		= self.gameTicked
-
-
-	def gameTicked(self, receiver, event):
-		from time import gmtime, strftime
-		print '{} ticked at {}'.format(receiver.attributes['name'], strftime("%H:%M:%S", gmtime()))
+			for handlerName in handlers:
+				self.addEventHandler(key, handlerName)
