@@ -7,5 +7,5 @@
 	{
 		"weight":1
 	},
-	"equipment_slot":0
+	"equipment_slot":"wielded"
 }

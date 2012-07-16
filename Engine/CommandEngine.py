@@ -65,6 +65,9 @@ class CommandEngine(Engine):
 		cmdList['drop']			= Command.loadCommand('Drop')
 		cmdList['grab']			= Command.loadCommand('Grab')
 		cmdList['get']			= cmdList['grab']
+		cmdList['equip']		= Command.loadCommand('Equip')
+		cmdList['eq']			= cmdList['equip']
+		cmdList['equipment']	= cmdList['equip']
 		
 		
 		# EMOTES

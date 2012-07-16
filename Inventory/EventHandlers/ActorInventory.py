@@ -2,6 +2,7 @@ from Event.Event import Event
 import Engine.ActorEngine
 import Engine.RoomEngine
 import re
+from lib import ANSI
 
 
 pattern = re.compile('[1-9][0-9]*')
@@ -78,3 +79,46 @@ class ActorGrabbedItemHandler:
 		receiver = event.attributes['receiver']
 		
 		receiver.attributes['items'].append(event.attributes['data']['item'])
+		
+		
+		
+		
+class ActorViewedEquipmentHandler:
+	def __init__(self):
+		self.attributes = {'signature': 'actor_viewed_equipment'}
+
+	def handleEvent(self, event):
+		actor		= event.attributes['data']['actor']
+		receiver	= event.attributes['receiver']
+		equipString	= ' nothing'
+		equipment	= filter(lambda item: item != None,
+							[receiver.attributes['equipment']['head'],
+							 receiver.attributes['equipment']['ears'],
+							 receiver.attributes['equipment']['eyes'],
+							 receiver.attributes['equipment']['face'],
+							 receiver.attributes['equipment']['neck'][0],
+							 receiver.attributes['equipment']['neck'][1],
+							 receiver.attributes['equipment']['body'],
+							 receiver.attributes['equipment']['arms'],
+							 receiver.attributes['equipment']['wrist'][0],
+							 receiver.attributes['equipment']['wrist'][1],
+							 receiver.attributes['equipment']['hands'],
+							 receiver.attributes['equipment']['finger'][0],
+							 receiver.attributes['equipment']['finger'][1],
+							 receiver.attributes['equipment']['waist'],
+							 receiver.attributes['equipment']['legs'],
+							 receiver.attributes['equipment']['feet'],
+							 receiver.attributes['equipment']['shield'],
+							 receiver.attributes['equipment']['wielded']])
+			
+		if len(equipment) != 0:
+			equipString = ''
+			
+			for item in equipment:
+				equipString = '{}\n  {}\t: {} {}'.format(equipString, ANSI.yellow(item.attributes['equipment_slot']), item.attributes['adjective'], item.attributes['name'])
+				
+		actor.sendFinal('You are wearing:{}'.format(equipString))
+			
+			
+		
+		

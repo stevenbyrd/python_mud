@@ -18,6 +18,7 @@ class Player(Humanoid):
 		self.addEventHandler(EventHandlers.Player.ItemDroppedHandler())
 		self.addEventHandler(EventHandlers.Player.ActorInitiatedItemGrabHandler())
 		self.addEventHandler(EventHandlers.Player.ActorGrabbedItemHandler())
+		self.addEventHandler(EventHandlers.Player.ActorViewedEquipmentHandler())
 		
 	
 	def send(self, message):

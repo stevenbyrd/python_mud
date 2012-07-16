@@ -121,3 +121,17 @@ class ActorGrabbedItemHandler:
 			receiver.sendFinal('You picked up the {}.'.format(itemName))
 		else:
 			receiver.sendFinal('{} picked up a {}.'.format(actor.attributes['name'], itemName))
+			
+			
+			
+			
+class ActorViewedEquipmentHandler:
+	def __init__(self):
+		self.attributes = {'signature': 'actor_viewed_equipment'}
+
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
+		
+		if event.attributes['data']['actor'] == receiver:
+			receiver.emitEvent(event)
+			
