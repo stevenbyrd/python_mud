@@ -21,8 +21,9 @@ class Emote(Command):
 			eventData			= self.eventTemplate['targeted'].copy()
 			eventData['target']	= args[0]
 
-		eventData['emoter']	= emoter
-		eventData['room']	= room
+		eventData['emoter']		= emoter
+		eventData['room']		= room
+		eventData['command']	= 'emote'
 
 		emoteEvent.attributes['signature']	= 'actor_emoted'
 		emoteEvent.attributes['data']		= eventData

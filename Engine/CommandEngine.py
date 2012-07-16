@@ -1,19 +1,11 @@
-from Event.Event import Event
-from Event.EventHandler import EventHandler
-from Command.Command import Command
-from Command.Say import Say
-from Command.Emote import Emote
-from Command.Look import Look
-from Command.Go import Go
-from Command.Cast import Cast
 from Engine import Engine
-from Driver import UpdateDriver
-import os
-import json
 
 
 def addEventSubscriber(subscriber):
-	CommandEngine.instance.addEventSubscriber(subscriber)
+	if CommandEngine.instance != None:
+		CommandEngine.instance.addEventSubscriber(subscriber)
+	else:
+		CommandEngine.subscribers.append(subscriber)
 	
 
 def emitEvent(event):
@@ -21,10 +13,15 @@ def emitEvent(event):
 
 
 class CommandEngine(Engine):
-	instance = None
+	instance 	= None
+	subscribers = []
 	
 	def __init__(self):
+		import Driver.UpdateDriver
+		import EventHandlers.CommandEngine
+
 		Engine.__init__(self)
+		
 		attributes = {
 			'commandList' : {},
 			'emoteList': []
@@ -33,25 +30,41 @@ class CommandEngine(Engine):
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 
-		self.attributes['event_handlers'].append(CommandExecutionEventHandler())
+		self.addEventHandler(EventHandlers.CommandEngine.CommandExecutionEventHandler())
 		
 		CommandEngine.instance = self
 		
+		for subscriber in CommandEngine.subscribers:
+			self.addEventSubscriber(subscriber)
+			
+		CommandEngine.subscribers = []
+		
 		self.buildCommandList()
 		
-		UpdateDriver.addEventSubscriber(self)
+		Driver.UpdateDriver.addEventSubscriber(self)
 	
 	
 	def buildCommandList(self):
+		import os
+		import json
+		import Command
+		from Command.Emote import Emote
+		
 		cmdList = self.attributes['commandList']
 		
-		cmdList['go']	= Go()
-		cmdList['look']	= Look()
-		cmdList['l']	= cmdList['look']
-		cmdList['ls']	= cmdList['look']
-		cmdList['say']	= Say()
-		cmdList['cast']	= Cast()
-		cmdList['c']	= cmdList['cast']
+		cmdList['go']			= Command.loadCommand('Go')
+		cmdList['look']			= Command.loadCommand('Look')
+		cmdList['l']			= cmdList['look']
+		cmdList['ls']			= cmdList['look']
+		cmdList['say']			= Command.loadCommand('Say')
+		cmdList['cast']			= Command.loadCommand('Cast')
+		cmdList['c']			= cmdList['cast']
+		cmdList['i']			= Command.loadCommand('Inventory')
+		cmdList['inventory']	= cmdList['i']
+		cmdList['inven']		= cmdList['i']
+		cmdList['drop']			= Command.loadCommand('Drop')
+		cmdList['grab']			= Command.loadCommand('Grab')
+		cmdList['get']			= cmdList['grab']
 		
 		
 		# EMOTES
@@ -77,31 +90,3 @@ class CommandEngine(Engine):
 					
 					
 
-class CommandExecutionEventHandler:
-	def __init__(self):
-		self.attributes = {'signature' : 'execute_command'}
-
-	def handleEvent(self, event):
-		receiver	= event.attributes['receiver']
-		cmdName		= event.attributes['data']['command']
-
-		if cmdName == 'quit':
-			player											= event.attributes['data']['source']
-			connection										= player.attributes['connection']
-			logoutEvent										= Event()
-			logoutEvent.attributes['signature']				= 'player_logout'
-			logoutEvent.attributes['data']['connection']	= connection
-
-			receiver.emitEvent(logoutEvent)
-		else:
-			commandList = receiver.attributes['commandList']
-			command		= commandList['go']
-			source		= event.attributes['data']['source']
-
-			if commandList.has_key(cmdName):
-				command = commandList[cmdName]
-				args	= event.attributes['data']['args']
-			else:
-				args = [cmdName]
-			
-			command.execute(source, args)

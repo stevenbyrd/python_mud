@@ -1,7 +1,9 @@
 {
 	"roomID":"2",
 	"name":"Test Room 2",
-	"description":["This room is for testing hidden exits. Head west to escape."],
+	"description":["This room is for testing hidden exits. Head west to escape.",
+					"Incidentally, this room has not registered the event handler",
+					"responsible for allowing you to speak or otherwise emote."],
 	"exits":[
 				{
 					"name":"west",
@@ -9,6 +11,12 @@
 					"isHidden":true
 				}
 			],
+	"eventAdjusters":[
+						"no_speaking"
+					 ],
 	"eventHandlers":[
-					]
+					],
+	"inventory":{
+					"items":[]
+				}
 }

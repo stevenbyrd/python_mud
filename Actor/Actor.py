@@ -1,13 +1,14 @@
-from Event.Event import Event
-from Event.EventHandler import EventHandler
 from Event.EventReceiver import EventReceiver
 from Event.EventEmitter import EventEmitter
-import Engine.RoomEngine
-import Engine.ActorEngine
 
 
 class Actor(EventReceiver, EventEmitter):
 	def __init__(self, actorJSON):
+		import Engine.RoomEngine
+		import Engine.ActorEngine
+		from Inventory.ActorInventory import ActorInventory
+		import EventHandlers.Actor
+
 		EventReceiver.__init__(self)
 		EventEmitter.__init__(self)
 		
@@ -34,11 +35,15 @@ class Actor(EventReceiver, EventEmitter):
 			'currentMana'	: 0,
 			'maxMana'		: 0,
 			'eventAdjusters': [],
-			'eventHandlers'	: []
+			'eventHandlers'	: [],
+			'inventory'		: None
 		}
 		
 		for key in actorJSON.keys():
-			if attributes.has_key(key):
+			if key == 'inventory':
+				inventory		= ActorInventory(actorJSON[key], self)
+				attributes[key]	= inventory
+			else:
 				attributes[key] = actorJSON[key]
 		
 		for key in attributes.keys():
@@ -49,12 +54,21 @@ class Actor(EventReceiver, EventEmitter):
 		startingRoom = Engine.RoomEngine.getRoom(self.attributes['roomID'])
 		
 		startingRoom.addEventSubscriber(self)
-		
-		for adjusterName in self.attributes['eventAdjusters']:
-			self.addEventAdjuster(adjusterName)
+			
+		for key in self.attributes['eventAdjusters']:
+			adjusters = self.attributes['eventAdjusters'][key]
+			
+			for adjusterName in adjusters:
+				self.addCustomEventAdjuster(key, adjusterName)
+				
 		
 		for key in self.attributes['eventHandlers']:
 			handlers = self.attributes['eventHandlers'][key]
 			
 			for handlerName in handlers:
-				self.addEventHandler(key, handlerName)
+				self.addCustomEventHandler(key, handlerName)
+				
+		self.addEventHandler(EventHandlers.Actor.ActorAttemptedDropHandler())
+		self.addEventHandler(EventHandlers.Actor.ItemDroppedHandler())
+		self.addEventHandler(EventHandlers.Actor.ActorInitiatedItemGrabHandler())
+		self.addEventHandler(EventHandlers.Actor.ActorGrabbedItemHandler())

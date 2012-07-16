@@ -9,5 +9,3 @@ class EventAdjuster:
 		function = copy.deepcopy(self.attributes['function'])
 		
 		ScriptFunctions.evaluate(event, function)
-		
-		return event

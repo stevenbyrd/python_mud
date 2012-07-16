@@ -1,9 +1,4 @@
-from Event.Event import Event
-from Event.EventHandler import EventHandler
 from Engine import Engine
-import CommandEngine
-from Driver import LoginListener
-import threading
 
 
 def lock(semaphoreName):
@@ -25,7 +20,13 @@ class ConnectionEngine(Engine):
 	instance = None
 	
 	def __init__(self):
+		from Driver import LoginListener
+		import threading
+		import CommandEngine
+		import EventHandlers.ConnectionEngine
+		
 		Engine.__init__(self)
+		
 		attributes = {
 			'openConnectionsSemaphore'	: threading.BoundedSemaphore(3),
 			'newConnectionSemaphore'	: threading.BoundedSemaphore(1),
@@ -39,8 +40,8 @@ class ConnectionEngine(Engine):
 			self.attributes[key] = attributes[key]
 
 
-		self.attributes['event_handlers'].append(PlayerLoginHandler())
-		self.attributes['event_handlers'].append(PlayerLogoutHandler())
+		self.addEventHandler(EventHandlers.ConnectionEngine.PlayerLoginHandler())
+		self.addEventHandler(EventHandlers.ConnectionEngine.PlayerLogoutHandler())
 		
 		ConnectionEngine.instance = self
 		
@@ -59,31 +60,3 @@ class ConnectionEngine(Engine):
 		self.attributes['closedConnections'].append(connection)
 		self.attributes['closedConnectionSemaphore'].release()
 		
-		
-
-
-
-class PlayerLoginHandler:
-	def __init__(self):
-		self.attributes = {'signature':'player_login'}
-
-	def handleEvent(self, event):
-		receiver	= event.attributes['receiver']
-		player		= event.attributes['data']['player']
-		connection	= player.attributes['connection']
-
-		receiver.addConnection(connection)
-
-
-
-
-
-class PlayerLogoutHandler:
-	def __init__(self):
-		self.attributes = {'signature':'player_logout'}
-
-	def handleEvent(self, event):
-		receiver	= event.attributes['receiver']
-		connection	= event.attributes['data']['connection']
-
-		receiver.removeConnection(connection)

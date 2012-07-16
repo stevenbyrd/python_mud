@@ -36,5 +36,22 @@
 									"actor_added_to_room",
 									"actor_emoted"
 								 ]
-					}
+					},
+	"inventory":{
+					"equipment":[],
+					"items":[
+								{
+									"itemType":"wieldable",
+									"itemID":"0",
+									"name":"sword",
+									"pluralName":"swords",
+									"description":"A rusty sword",
+									"stats":
+									{
+										"weight":1
+									},
+									"equipment_slot":"weapon"
+								}
+							]
+				}
 }

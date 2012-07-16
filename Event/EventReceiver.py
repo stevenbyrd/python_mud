@@ -20,22 +20,37 @@ class EventReceiver:
 		self.attributes['tick_count']		= 0
 		
 		Driver.TickDriver.addEventSubscriber(self)
+		
+		
+	def addEventHandler(self, handler):
+		if handler != None:
+			self.attributes['event_handlers'].append(handler)
 	
 	
-	def addEventHandler(self, handlerType, handlerName):
+	
+	def addCustomEventHandler(self, handlerType, handlerName):
 		filePath	= '{}/Content/eventHandlers/{}/{}.txt'.format(currentDir, handlerType, handlerName)
 		handlerFile	= open(filePath, 'r')
 		jsonString	= handlerFile.read()
 		jsonObj		= json.loads(jsonString)
 		handler		= EventHandler(jsonObj)
 		
-		handlerFile.close()		
+		handlerFile.close()
 		
-		self.attributes['event_handlers'].append(handler)
+		self.addEventHandler(handler)
 		
 	
-	def addEventAdjuster(self, adjusterName):
-		filePath		= '{}/Content/eventAdjusters/{}.txt'.format(currentDir, adjusterName)
+	
+	
+	def addEventAdjuster(self, adjuster):
+		if adjuster != None:
+			self.attributes['event_adjusters'].append(adjuster)
+	
+	
+	
+	
+	def addCustomEventAdjuster(self, adjusterType, adjusterName):
+		filePath		= '{}/Content/eventAdjusters/{}/{}.txt'.format(currentDir, adjusterType, adjusterName)
 		adjusterFile	= open(filePath, 'r')
 		jsonString		= adjusterFile.read()
 		jsonObj			= json.loads(jsonString)
@@ -43,7 +58,8 @@ class EventReceiver:
 		
 		adjusterFile.close()		
 		
-		self.attributes['event_adjusters'].append(adjuster)
+		self.addEventAdjuster(adjuster)
+		
 		
 	
 	
@@ -61,11 +77,11 @@ class EventReceiver:
 		}
 	
 		for adjuster in filter(filterFunc, self.attributes['event_adjusters']):
-			newEvent = adjuster.adjust(newEvent)
+			adjuster.adjust(newEvent)
 		
-			if newEvent == None:
+			if newEvent.attributes['signature'] == None:
 				break
 		
-		if newEvent != None:
+		if newEvent.attributes['signature'] != None:
 			for handler in filter(filterFunc, self.attributes['event_handlers']):
 					handler.handleEvent(newEvent)			

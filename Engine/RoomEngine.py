@@ -1,17 +1,11 @@
-from Event.Event import Event
-from Event.EventHandler import EventHandler
 from Engine import Engine
-import CommandEngine
-import ActorEngine
-from Environment.Room import Room
-from Environment.Exit import Exit
-import Driver.ConnectionListUpdater
-import os
-import json
 
 
 def addEventSubscriber(subscriber):
-	RoomEngine.instance.addEventSubscriber(subscriber)
+	if RoomEngine.instance != None:
+		RoomEngine.instance.addEventSubscriber(subscriber)
+	else:
+		RoomEngine.subscribers.append(subscriber)
 	
 
 def emitEvent(event):
@@ -23,9 +17,14 @@ def getRoom(roomID):
 
 
 class RoomEngine(Engine):
-	instance = None
+	instance	= None
+	subscribers = []
 	
 	def __init__(self):
+		import Driver.ConnectionListUpdater
+		import CommandEngine
+		import EventHandlers.RoomEngine
+		
 		Engine.__init__(self)
 		
 		attributes = {
@@ -36,10 +35,15 @@ class RoomEngine(Engine):
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 		
-		self.attributes['event_handlers'].append(PlayerLoginEventHandler())
-		self.attributes['event_handlers'].append(RoomEnginePlayerLogoutEventHandler())
+		self.addEventHandler(EventHandlers.RoomEngine.PlayerLoginEventHandler())
+		self.addEventHandler(EventHandlers.RoomEngine.PlayerLogoutEventHandler())
 		
 		RoomEngine.instance = self
+		
+		for subscriber in RoomEngine.subscribers:
+			self.addEventSubscriber(subscriber)
+			
+		RoomEngine.subscribers = []
 		
 		self.buildWorld()
 		
@@ -48,6 +52,11 @@ class RoomEngine(Engine):
 		
 	
 	def buildWorld(self):
+		from Environment.Room import Room
+		from Environment.Exit import Exit
+		import os
+		import json
+
 		currentDir	= os.getcwd()
 		worldDir	= currentDir + '/Content/world' 
 		fileList	= os.listdir(worldDir)
@@ -66,47 +75,6 @@ class RoomEngine(Engine):
 				self.attributes['roomMap'][room.attributes['roomID']] = room
 
 	
-	
 	def getRoom(self, roomID):
 		return self.attributes['roomMap'][roomID]
 
-
-
-
-class PlayerLoginEventHandler:
-	def __init__(self):
-		self.attributes = {'signature':'player_login'}
-
-	def handleEvent(self, event):
-		receiver		= event.attributes['receiver']
-		player			= event.attributes['data']['player']
-		roomID			= player.attributes['roomID']
-		room			= receiver.getRoom(roomID)
-		playerInEvent	= Event()
-
-		playerInEvent.attributes['signature']		= 'actor_added_to_room'
-		playerInEvent.attributes['data']['actor']	= player
-		playerInEvent.attributes['data']['room']	= room
-
-		receiver.emitEvent(playerInEvent)
-
-
-
-
-class RoomEnginePlayerLogoutEventHandler:
-	def __init__(self):
-		self.attributes = {'signature':'player_logout'}
-
-	def handleEvent(self, event):
-		receiver	= event.attributes['receiver']
-		connection	= event.attributes['data']['connection']
-		player		= connection.attributes['player']
-		roomID		= player.attributes['roomID']
-		room		= receiver.getRoom(roomID)
-		logoutEvent = Event()
-
-		logoutEvent.attributes['signature']				= 'player_logout'
-		logoutEvent.attributes['data']['actor']			= player
-		logoutEvent.attributes['data']['exitMessage']	= None
-
-		receiver.emitEvent(logoutEvent)

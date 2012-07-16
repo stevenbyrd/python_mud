@@ -2,7 +2,6 @@
 	"signature":"gained_health",
 	"function":
 	["set_value_at_path",
-			"",
 			["multiply",
 					["attribute_at_path",
 							"receiver.attributes.currentHP"],

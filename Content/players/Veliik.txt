@@ -35,5 +35,46 @@
 									"actor_added_to_room",
 									"actor_emoted"
 								 ]
-					}
+					},
+	"inventory":{
+					"equipment":[],
+					"items":[
+								{
+									"itemType":"wieldable",
+									"itemID":"0",
+									"name":"ritual knife",
+									"pluralName":"swords",
+									"description":"A rusty sword",
+									"stats":
+									{
+										"weight":1
+									},
+									"equipment_slot":"weapon"
+								},
+								{
+									"itemType":"wieldable",
+									"itemID":"0",
+									"name":"orphan",
+									"pluralName":"swords",
+									"description":"A rusty sword",
+									"stats":
+									{
+										"weight":1
+									},
+									"equipment_slot":"weapon"
+								},
+								{
+									"itemType":"wieldable",
+									"itemID":"0",
+									"name":"stone altar",
+									"pluralName":"swords",
+									"description":"A rusty sword",
+									"stats":
+									{
+										"weight":1
+									},
+									"equipment_slot":"weapon"
+								}
+							]
+				}
 }

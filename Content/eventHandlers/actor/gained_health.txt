@@ -9,10 +9,7 @@
 							"data.target"]],
 			
 			["set_value_at_path",
-					"",
-					
 					["attribute_at_path",
 							"data.amount"],
-					
 					"receiver.attributes.currentHP"]]
 }

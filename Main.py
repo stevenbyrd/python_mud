@@ -4,6 +4,7 @@ from Engine.ActorEngine import ActorEngine
 from Engine.AffectEngine import AffectEngine
 from Engine.CommandEngine import CommandEngine
 from Engine.AffectEngine import AffectEngine
+from Engine.ItemEngine import ItemEngine
 from Driver.LoginListener import LoginListener
 from Driver.InputDriver import InputDriver
 from Driver.OutputDriver import OutputDriver
@@ -29,6 +30,7 @@ class Main:
 		RoomEngine()
 		ActorEngine()
 		AffectEngine()
+		ItemEngine()
 		
 		loginListener.start()
 		inputDriver.start()

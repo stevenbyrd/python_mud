@@ -18,7 +18,6 @@
 					
 					["do_in_sequence",
 							["set_value_at_path",
-									"",
 									["get_element_from_list",
 											0,
 											["filter_list_with_lambda",

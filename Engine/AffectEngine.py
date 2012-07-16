@@ -1,9 +1,4 @@
-from Event.Event import Event
-from Event.EventHandler import EventHandler
 from Engine import Engine
-from Affect.Affect import Affect
-import AffectComponent.GainHealth
-import AffectComponent.AffectEmote
 import os
 import json
 
@@ -33,20 +28,21 @@ class AffectEngine(Engine):
 		
 		self.buildAffectList()
 		self.buildAffectComponentList()
-		
-		
 	
 	
 	def buildAffectComponentList(self):
+		import AffectComponent.GainHealth
+		import AffectComponent.AffectEmote
+		
 		componentList = self.attributes['affectComponents']
 		
 		componentList['gain_health']	= AffectComponent.GainHealth.GainHealth
 		componentList['affect_emote']	= AffectComponent.AffectEmote.AffectEmote
 		
-		
-		
 			
 	def buildAffectList(self):
+		from Affect.Affect import Affect
+		
 		affects		= self.attributes['affects']
 		currentDir	= os.getcwd()
 		affectDir	= currentDir + '/Content/affects' 
@@ -65,8 +61,6 @@ class AffectEngine(Engine):
 				for affectName in affect.attributes['affectNames']:
 					affects[affectName] = affect
 		
-
-		
 		
 	def executeAffect(self, affectName, source, target):
 		affects = self.attributes['affects']
@@ -84,14 +78,5 @@ class AffectEngine(Engine):
 					component	= components[componentName](source, target, args)
 					
 					component.execute()
-					
-					
-					
-					
-					
-					
-					
-					
-					
 					
 					

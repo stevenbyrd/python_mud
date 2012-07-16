@@ -19,11 +19,8 @@
 									["attribute_at_path",
 											"data.exit.attributes.destination"]]],
 					
-					["set_value_at_path",
-							"",
-							
+					["set_value_at_path",							
 							["attribute_at_path",
 									"data.exit.attributes.destination"],
-							
 							"receiver.attributes.roomID"]]]
 }

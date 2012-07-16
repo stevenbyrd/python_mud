@@ -14,10 +14,11 @@ class Say(Command):
 		room		= Engine.RoomEngine.getRoom(roomID)
 		speakEvent	= Event()
 		
-		speakEvent.attributes['signature']		= 'actor_emoted'
-		speakEvent.attributes['data']['emoter']	= actor
-		speakEvent.attributes['data']['target']	= None
-		speakEvent.attributes['data']['room']	= room
+		speakEvent.attributes['signature']			= 'actor_emoted'
+		speakEvent.attributes['data']['emoter']		= actor
+		speakEvent.attributes['data']['target']		= None
+		speakEvent.attributes['data']['room']		= room
+		speakEvent.attributes['data']['command']	= 'say'
 
 		if words == None or len(words) == 0:
 			speakEvent.attributes['data']['emoterText']		= 'Say what?'

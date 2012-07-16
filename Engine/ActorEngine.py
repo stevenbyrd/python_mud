@@ -1,10 +1,5 @@
-from Event.Event import Event
-from Event.EventHandler import EventHandler
 from Engine import Engine
-import CommandEngine
 from Actor.Player import Player
-import Driver.ConnectionListUpdater
-import threading
 import os
 import json
 
@@ -12,8 +7,12 @@ import json
 def emitEvent(event):
 	ActorEngine.instance.emitEvent(event)
 
+
 def addEventSubscriber(subscriber):
-	ActorEngine.instance.addEventSubscriber(subscriber)
+	if ActorEngine.instance != None:
+		ActorEngine.instance.addEventSubscriber(subscriber)
+	else:
+		ActorEngine.subscribers.append(subscriber)
 
 
 def playerExists(playerName):
@@ -25,10 +24,17 @@ def loadPlayer(playerName):
 
 
 class ActorEngine(Engine):
-	instance = None
+	instance 	= None
+	subscribers = []
 	
 	def __init__(self):
 		Engine.__init__(self)
+		
+		import CommandEngine
+		import threading
+		import EventHandlers.ActorEngine
+		import Driver.ConnectionListUpdater
+		
 		attributes = {
 			'playerSetSemaphore'	: threading.BoundedSemaphore(1),
 			'playerMap'				: {},
@@ -38,12 +44,19 @@ class ActorEngine(Engine):
 		
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
-	
-		self.attributes['event_handlers'].append(PlayerLoginEventHandler())
-		self.attributes['event_handlers'].append(PlayerLogoutEventHandler())
-		self.attributes['event_handlers'].append(BroadcastEventHandler())
-		
+			
 		ActorEngine.instance = self
+	
+		self.addEventHandler(EventHandlers.ActorEngine.PlayerLoginEventHandler())
+		self.addEventHandler(EventHandlers.ActorEngine.PlayerLogoutEventHandler())
+		self.addEventHandler(EventHandlers.ActorEngine.BroadcastEventHandler())
+		
+		
+		for subscriber in ActorEngine.subscribers:
+			self.addEventSubscriber(subscriber)
+			
+		ActorEngine.subscribers = []
+		
 		
 		Driver.ConnectionListUpdater.addEventSubscriber(self)
 		CommandEngine.addEventSubscriber(self)
@@ -100,54 +113,7 @@ class ActorEngine(Engine):
 			
 			
 
-class BroadcastEventHandler:
-	def __init__(self):
-		self.attributes = {'signature':'broadcast_to_all_players'}
 
-	def handleEvent(self, event):
-		receiver = event.attributes['receiver']
-		
-		receiver.attributes['playerSetSemaphore'].acquire();
-
-		message											= event.attributes['data']['message']
-		notificationEvent								= Event()
-		notificationEvent.attributes['signature']		= 'received_notification'
-		notificationEvent.attributes['data']['message'] = message
-		notificationEvent.attributes['data']['actor']	= None
-
-		receiver.emitEvent(notificationEvent)
-		
-		receiver.attributes['playerSetSemaphore'].release();
-
-
-
-
-
-class PlayerLoginEventHandler:
-	def __init__(self):
-		self.attributes = {'signature' : 'player_login'}
-
-	def handleEvent(self, event):
-		receiver	= event.attributes['receiver']
-		player		= event.attributes['data']['player']
-
-		receiver.addPlayer(player)
-
-
-
-
-
-
-class PlayerLogoutEventHandler(EventHandler):
-	def __init__(self):
-		self.attributes = {'signature':'player_logout'}
-
-	def handleEvent(self, event):
-		receiver	= event.attributes['receiver']
-		connection	= event.attributes['data']['connection']
-		player		= connection.attributes['player']
-
-		receiver.removePlayer(player)
 
 
 		
