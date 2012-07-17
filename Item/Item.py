@@ -10,7 +10,8 @@ class Item(EventReceiver, EventEmitter):
 		EventEmitter.__init__(self)
 		
 		attributes = {
-			'itemType'		: 'plain',
+			'itemType'		: '',
+			'itemClass'		: '',
 			'itemID'		: '',
 			'name'			: '',
 			'pluralName'	: '',
@@ -34,5 +35,6 @@ class Item(EventReceiver, EventEmitter):
 		self.addEventHandler(EventHandlers.Item.ItemDroppedHandler())
 		self.addEventHandler(EventHandlers.Item.ActorAttemptedItemGrabHandler())
 		self.addEventHandler(EventHandlers.Item.ActorGrabbedItemHandler())
+		self.addEventHandler(EventHandlers.Item.ActorAttemptedItemEquipHandler())
 		
 		inventory.addEventSubscriber(self)

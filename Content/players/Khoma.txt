@@ -43,55 +43,55 @@
 	"roomID":"0",
 	"inventory":{
 					"equipment":{
-									"wielded":{
-												"itemType":"wieldable",
+									"Head":{
+												"itemType":"Equipable",
+												"itemClass":"Head",
 												"itemID":"0",
-												"name":"sword",
-												"pluralName":"swords",
-												"description":"A rusty sword",
+												"name":"hood",
+												"pluralName":"hoods",
+												"description":"A deep hood",
 												"stats":
 												{
 													"weight":1
-												},
-												"equipment_slot":"wielded"
+												}
+											},
+									"Body":{
+												"itemType":"Equipable",
+												"itemClass":"Body",
+												"itemID":"0",
+												"name":"tattered shirt",
+												"pluralName":"tattered shirts",
+												"description":"An extremely weathered shirt",
+												"stats":
+												{
+													"weight":1
+												}
+											},
+									"Wielded":{
+												"itemType":"Equipable",
+												"itemClass":"Wielded",
+												"itemID":"0",
+												"name":"ivory-handled revolver",
+												"pluralName":"ivory-handled revolvers",
+												"description":"A huge six-shooter with an ornate ivory handle",
+												"stats":
+												{
+													"weight":1
+												}
 											}
 								},
 					"items":[
 								{
-									"itemType":"wieldable",
+									"itemType":"Equipable",
+									"itemClass":"Legs",
 									"itemID":"0",
-									"name":"sword",
-									"pluralName":"swords",
-									"description":"A rusty sword",
+									"name":"tattered pants",
+									"pluralName":"pairs of tattered pants",
+									"description":"An extremely weathered pair of pants",
 									"stats":
 									{
 										"weight":1
-									},
-									"equipment_slot":"wielded"
-								},
-								{
-									"itemType":"wieldable",
-									"itemID":"0",
-									"name":"hammer",
-									"pluralName":"swords",
-									"description":"A rusty sword",
-									"stats":
-									{
-										"weight":1
-									},
-									"equipment_slot":"wielded"
-								},
-								{
-									"itemType":"wieldable",
-									"itemID":"0",
-									"name":"crown",
-									"pluralName":"swords",
-									"description":"A rusty sword",
-									"stats":
-									{
-										"weight":1
-									},
-									"equipment_slot":"wielded"
+									}
 								}
 							]
 				}

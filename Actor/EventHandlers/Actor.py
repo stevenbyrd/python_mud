@@ -53,3 +53,16 @@ class ActorGrabbedItemHandler:
 		
 		if event.attributes['data']['actor'] == receiver:
 			receiver.emitEvent(event)
+			
+			
+			
+			
+class ActorAttemptedItemEquipHandler:
+	def __init__(self):
+		self.attributes = {'signature': 'actor_attempted_item_equip'}
+
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
+
+		if event.attributes['data']['actor'] == receiver:
+			receiver.emitEvent(event)

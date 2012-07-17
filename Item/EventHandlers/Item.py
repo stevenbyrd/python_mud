@@ -55,3 +55,37 @@ class ActorAttemptedItemGrabHandler:
 			event.attributes['signature'] = 'actor_grabbed_item'
 					
 			Engine.RoomEngine.emitEvent(event)
+			
+			
+			
+			
+			
+class ActorAttemptedItemEquipHandler:
+	def __init__(self):
+		self.attributes = {'signature': 'actor_attempted_item_equip'}
+
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
+		
+		if event.attributes['data']['item'] == receiver:
+			actor = event.attributes['data']['actor']
+			
+			if receiver.attributes['itemType'] != 'Equipable':
+				feedbackEvent									= Event()
+				feedbackEvent.attributes['signature']			= 'received_feedback'
+				feedbackEvent.attributes['data']['feedback']	= 'You can\'t equip that.'
+				feedbackEvent.attributes['data']['actor']		= actor
+
+				Engine.ActorEngine.emitEvent(feedbackEvent)
+			else:
+				event.attributes['signature'] = 'actor_equipped_item'
+				
+				actor.emitEvent(event)
+				
+				
+				
+				
+				
+				
+				
+				

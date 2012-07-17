@@ -296,3 +296,4 @@ class ActorGrabbedItemHandler:
 		
 		if event.attributes['data']['room'] == receiver:
 			receiver.emitEvent(event)
+			

@@ -1,5 +1,6 @@
 from Event.EventReceiver import EventReceiver
 from Event.EventEmitter import EventEmitter
+import importlib
 
 
 class Inventory(EventReceiver, EventEmitter):
@@ -19,10 +20,11 @@ class Inventory(EventReceiver, EventEmitter):
 		owner.addEventSubscriber(self)
 		
 		
+		
 	def createItem(self, itemJson):
-		if itemJson['itemType'] == 'wieldable':
-			from Item.Equipable.Wieldable import Wieldable
-			
-			return Wieldable(itemJson, self)
-				
-		return None
+		moduleName	= itemJson['itemType']
+		className	= itemJson['itemClass']
+		itemModule	= importlib.import_module('Item.{}.{}'.format(moduleName, className))
+		itemClass	= getattr(itemModule, className)
+
+		return itemClass(itemJson, self)

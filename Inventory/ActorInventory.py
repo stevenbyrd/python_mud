@@ -4,42 +4,41 @@ from Inventory import Inventory
 class ActorInventory(Inventory):
 	def __init__(self, inventoryJson, owner):
 		import EventHandlers.ActorInventory
-		from Item.Equipable.Wieldable import Wieldable
 		
 		Inventory.__init__(self, inventoryJson, owner)
 
 		self.attributes['equipment'] = {
-				'head'		: None,
-				'ears'		: None,
-				'eyes'		: None,
-				'face'		: None,
-				'neck'		: [None, None],
-				'body'		: None,
-				'arms'		: None,
-				'wrist'		: [None, None],
-				'hands'		: None,
-				'finger'	: [None, None],
-				'waist'		: None,
-				'legs'		: None,
-				'feet'		: None,
-				'shield'	: None,
-				'wielded'	: None,
+				'Head'		: None,
+				'Ears'		: None,
+				'Eyes'		: None,
+				'Face'		: None,
+				'Neck'		: [None, None],
+				'Body'		: None,
+				'Arms'		: None,
+				'Wrist'		: [None, None],
+				'Hands'		: None,
+				'Finger'	: [None, None],
+				'Waist'		: None,
+				'Legs'		: None,
+				'Feet'		: None,
+				'Shield'	: None,
+				'Wielded'	: None,
 		}
 		
 		if inventoryJson.has_key('equipment'):
 			equipment = inventoryJson['equipment']
 		
 			for key in equipment.keys():
-				itemJson = equipment[key]
-			
-				if key == 'wielded':
-					self.attributes['equipment'][key] = Wieldable(itemJson, self)
+				self.attributes['equipment'][key] = self.createItem(equipment[key])
+
 		
 		self.addEventHandler(EventHandlers.ActorInventory.ActorAttemptedDropHandler())
 		self.addEventHandler(EventHandlers.ActorInventory.ItemDroppedHandler())
 		self.addEventHandler(EventHandlers.ActorInventory.ActorInitiatedItemGrabHandler())
 		self.addEventHandler(EventHandlers.ActorInventory.ActorGrabbedItemHandler())
 		self.addEventHandler(EventHandlers.ActorInventory.ActorViewedEquipmentHandler())
+		self.addEventHandler(EventHandlers.ActorInventory.ActorAttemptedItemEquipHandler())
+		self.addEventHandler(EventHandlers.ActorInventory.ActorEquippedItemHandler())
 		
 		
 	def listItems(self):

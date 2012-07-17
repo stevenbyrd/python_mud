@@ -72,3 +72,4 @@ class Actor(EventReceiver, EventEmitter):
 		self.addEventHandler(EventHandlers.Actor.ItemDroppedHandler())
 		self.addEventHandler(EventHandlers.Actor.ActorInitiatedItemGrabHandler())
 		self.addEventHandler(EventHandlers.Actor.ActorGrabbedItemHandler())
+		self.addEventHandler(EventHandlers.Actor.ActorAttemptedItemEquipHandler())

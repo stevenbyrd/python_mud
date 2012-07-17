@@ -37,57 +37,7 @@
 								 ]
 					},
 	"inventory":{
-					"equipment":{
-									"wielded":{
-												"itemType":"wieldable",
-												"itemID":"0",
-												"name":"sword",
-												"pluralName":"swords",
-												"description":"A rusty sword",
-												"stats":
-												{
-													"weight":1
-												},
-												"equipment_slot":"wielded"
-											}
-								},
-					"items":[
-								{
-									"itemType":"wieldable",
-									"itemID":"0",
-									"name":"ritual knife",
-									"pluralName":"swords",
-									"description":"A rusty sword",
-									"stats":
-									{
-										"weight":1
-									},
-									"equipment_slot":"wielded"
-								},
-								{
-									"itemType":"wieldable",
-									"itemID":"0",
-									"name":"orphan",
-									"pluralName":"swords",
-									"description":"A rusty sword",
-									"stats":
-									{
-										"weight":1
-									},
-									"equipment_slot":"wielded"
-								},
-								{
-									"itemType":"wieldable",
-									"itemID":"0",
-									"name":"stone altar",
-									"pluralName":"swords",
-									"description":"A rusty sword",
-									"stats":
-									{
-										"weight":1
-									},
-									"equipment_slot":"wielded"
-								}
-							]
+					"equipment":{},
+					"items":[]
 				}
 }

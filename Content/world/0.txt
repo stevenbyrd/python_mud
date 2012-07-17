@@ -24,7 +24,8 @@
 	"inventory":{
 					"items":[
 								{
-									"itemType":"wieldable",
+									"itemType":"Equipable",
+									"itemClass":"Wielded",
 									"itemID":"0",
 									"name":"sword",
 									"pluralName":"swords",
@@ -32,8 +33,7 @@
 									"stats":
 									{
 										"weight":1
-									},
-									"equipment_slot":"weapon"
+									}
 								}
 							]
 				}
