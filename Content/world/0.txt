@@ -29,7 +29,7 @@
 									"itemID":"0",
 									"name":"sword",
 									"pluralName":"swords",
-									"description":"A rusty sword",
+									"description":["A rusty sword"],
 									"stats":
 									{
 										"weight":1

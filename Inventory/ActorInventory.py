@@ -1,4 +1,5 @@
 from Inventory import Inventory
+from lib import ANSI
 
 
 class ActorInventory(Inventory):
@@ -39,6 +40,9 @@ class ActorInventory(Inventory):
 		self.addEventHandler(EventHandlers.ActorInventory.ActorViewedEquipmentHandler())
 		self.addEventHandler(EventHandlers.ActorInventory.ActorAttemptedItemEquipHandler())
 		self.addEventHandler(EventHandlers.ActorInventory.ActorEquippedItemHandler())
+		self.addEventHandler(EventHandlers.ActorInventory.ActorAttemptedItemRemovalHandler())
+		self.addEventHandler(EventHandlers.ActorInventory.ActorRemovedItemHandler())
+		self.addEventHandler(EventHandlers.ActorInventory.ActorObservedHandler())
 		
 		
 	def listItems(self):
@@ -53,3 +57,34 @@ class ActorInventory(Inventory):
 			retVal = retVal[0:-1]
 		
 		return retVal
+		
+		
+	def listEquipment(self):
+		equipArray	= []
+		equipment	= filter(lambda item: item != None,
+							[self.attributes['equipment']['Head'],
+							 self.attributes['equipment']['Ears'],
+							 self.attributes['equipment']['Eyes'],
+							 self.attributes['equipment']['Face'],
+							 self.attributes['equipment']['Neck'][0],
+							 self.attributes['equipment']['Neck'][1],
+							 self.attributes['equipment']['Body'],
+							 self.attributes['equipment']['Arms'],
+							 self.attributes['equipment']['Wrist'][0],
+							 self.attributes['equipment']['Wrist'][1],
+							 self.attributes['equipment']['Hands'],
+							 self.attributes['equipment']['Finger'][0],
+							 self.attributes['equipment']['Finger'][1],
+							 self.attributes['equipment']['Waist'],
+							 self.attributes['equipment']['Legs'],
+							 self.attributes['equipment']['Feet'],
+							 self.attributes['equipment']['Shield'],
+							 self.attributes['equipment']['Wielded']])
+			
+			
+		for item in equipment:
+			slot = item.attributes['itemClass']
+			
+			equipArray.append('{}\t: {} {}'.format(ANSI.yellow(slot), item.attributes['adjective'], item.attributes['name']))
+			
+		return equipArray

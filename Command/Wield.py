@@ -2,7 +2,7 @@ from Event.Event import Event
 from Command import Command
 import Engine.ActorEngine
 
-class Equip(Command):
+class Wield(Command):
 	def __init__(self):
 		Command.__init__(self)
 		
@@ -12,7 +12,9 @@ class Equip(Command):
 		equipEvent.attributes['data']['actor']		= source
 		
 		if args == None or len(args) == 0:
-			equipEvent.attributes['signature']			= 'actor_viewed_equipment'
+			equipEvent.attributes['signature']			= 'received_feedback'
+			equipEvent.attributes['data']['feedback']	= 'Wield what?'
+
 		else:
 			if len(args) == 1:
 				args.append('')
@@ -20,6 +22,6 @@ class Equip(Command):
 			equipEvent.attributes['signature']			= 'actor_attempted_item_equip'
 			equipEvent.attributes['data']['itemName']	= args[0]
 			equipEvent.attributes['data']['args']		= args[1:]
-			equipEvent.attributes['data']['command']	= 'equip'
+			equipEvent.attributes['data']['command']	= 'wield'
 			
 		Engine.ActorEngine.emitEvent(equipEvent)

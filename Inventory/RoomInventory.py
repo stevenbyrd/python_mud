@@ -13,6 +13,7 @@ class RoomInventory(Inventory):
 		self.addEventHandler(EventHandlers.RoomInventory.ItemDroppedHandler())
 		self.addEventHandler(EventHandlers.RoomInventory.ActorAttemptedItemGrabHandler())
 		self.addEventHandler(EventHandlers.RoomInventory.ActorGrabbedItemHandler())
+		self.addEventHandler(EventHandlers.RoomInventory.WasObservedHandler())
 		
 		
 	def describe(self):

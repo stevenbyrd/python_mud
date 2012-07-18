@@ -59,15 +59,20 @@ class CommandEngine(Engine):
 		cmdList['say']			= Command.loadCommand('Say')
 		cmdList['cast']			= Command.loadCommand('Cast')
 		cmdList['c']			= cmdList['cast']
-		cmdList['i']			= Command.loadCommand('Inventory')
-		cmdList['inventory']	= cmdList['i']
-		cmdList['inven']		= cmdList['i']
+		cmdList['inventory']	= Command.loadCommand('Inventory')
+		cmdList['i']			= cmdList['inventory']
+		cmdList['inven']		= cmdList['inventory']
+		cmdList['inv']			= cmdList['inventory']
 		cmdList['drop']			= Command.loadCommand('Drop')
 		cmdList['grab']			= Command.loadCommand('Grab')
 		cmdList['get']			= cmdList['grab']
 		cmdList['equip']		= Command.loadCommand('Equip')
 		cmdList['eq']			= cmdList['equip']
 		cmdList['equipment']	= cmdList['equip']
+		cmdList['wear']			= Command.loadCommand('Wear')
+		cmdList['wield']		= Command.loadCommand('Wield')
+		cmdList['remove']		= Command.loadCommand('Remove')
+		cmdList['rem']			= cmdList['remove']
 		
 		
 		# EMOTES

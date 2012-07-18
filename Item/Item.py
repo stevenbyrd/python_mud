@@ -36,5 +36,6 @@ class Item(EventReceiver, EventEmitter):
 		self.addEventHandler(EventHandlers.Item.ActorAttemptedItemGrabHandler())
 		self.addEventHandler(EventHandlers.Item.ActorGrabbedItemHandler())
 		self.addEventHandler(EventHandlers.Item.ActorAttemptedItemEquipHandler())
+		self.addEventHandler(EventHandlers.Item.WasObservedHandler())
 		
 		inventory.addEventSubscriber(self)

@@ -25,8 +25,7 @@
 												"data.observer"],
 
 									"description":
-										["attribute_at_path",
-												"receiver.attributes.description"]
+										["get_actor_description"]
 								}
 							}]]]
 }

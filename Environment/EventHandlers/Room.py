@@ -2,6 +2,10 @@ from Event.Event import Event
 import Engine.RoomEngine
 import Engine.AffectEngine
 from lib import ANSI
+import re
+
+
+pattern = re.compile('[1-9][0-9]*')
 
 
 class ActorAttemptedMovementEventHandler:
@@ -135,14 +139,25 @@ class ActorObservedHandler:
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
 		
-		if event.attributes['data']['room'] == receiver:			
+		if event.attributes['data']['room'] == receiver:
+			args		= event.attributes['data']['args']
 			observer	= event.attributes['data']['observer']
 			target		= event.attributes['data']['target']
-			targetList	= filter(lambda actor : 
-									actor.attributes['name'].lower().startswith(target.lower()), 
-								receiver.attributes['players'])
-
-			if len(targetList) == 0:
+			players		= receiver.attributes['players']
+			inventory	= receiver.attributes['inventory']
+			items		= inventory.attributes['items']
+			permItems	= inventory.attributes['permanent_items']
+			hiddenItems = inventory.attributes['hidden_items']
+			objNumber	= 0
+			targetList	= filter(lambda object : 
+									object.attributes['name'].lower().startswith(target.lower()), 
+								 players + items + permItems + hiddenItems)
+								
+			if len(args) >= 1 and args[0] != '':				
+				if pattern.match(args[0]) and re.search('[^0-9]', args[0]) == None:
+					objNumber = int(args[0]) - 1
+								
+			if objNumber >= len(targetList):
 				feedbackEvent									= Event()
 				feedbackEvent.attributes['signature']			= 'received_feedback'
 				feedbackEvent.attributes['data']['feedback']	= 'You don\'t see that here.'
@@ -152,7 +167,7 @@ class ActorObservedHandler:
 			else:
 				lookEvent									= Event()
 				lookEvent.attributes['data']['observer']	= observer
-				lookEvent.attributes['data']['target']		= targetList[0]
+				lookEvent.attributes['data']['target']		= targetList[objNumber]
 				lookEvent.attributes['signature']			= 'was_observed'
 
 				receiver.emitEvent(lookEvent)

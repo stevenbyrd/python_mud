@@ -49,7 +49,7 @@
 												"itemID":"0",
 												"name":"hood",
 												"pluralName":"hoods",
-												"description":"A deep hood",
+												"description":["A deep hood."],
 												"stats":
 												{
 													"weight":1
@@ -61,19 +61,7 @@
 												"itemID":"0",
 												"name":"tattered shirt",
 												"pluralName":"tattered shirts",
-												"description":"An extremely weathered shirt",
-												"stats":
-												{
-													"weight":1
-												}
-											},
-									"Wielded":{
-												"itemType":"Equipable",
-												"itemClass":"Wielded",
-												"itemID":"0",
-												"name":"ivory-handled revolver",
-												"pluralName":"ivory-handled revolvers",
-												"description":"A huge six-shooter with an ornate ivory handle",
+												"description":["An extremely weathered shirt."],
 												"stats":
 												{
 													"weight":1
@@ -87,7 +75,55 @@
 									"itemID":"0",
 									"name":"tattered pants",
 									"pluralName":"pairs of tattered pants",
-									"description":"An extremely weathered pair of pants",
+									"description":["An extremely weathered pair of pants."],
+									"stats":
+									{
+										"weight":1
+									}
+								},
+								{
+									"itemType":"Equipable",
+									"itemClass":"Head",
+									"itemID":"0",
+									"name":"crown",
+									"pluralName":"crowns",
+									"description":["An absurdly large crown."],
+									"stats":
+									{
+										"weight":1
+									}
+								},
+								{
+									"itemType":"Equipable",
+									"itemClass":"Wielded",
+									"itemID":"0",
+									"name":"ivory-handled revolver",
+									"pluralName":"ivory-handled revolvers",
+									"description":["A huge six-shooter with an ornate ivory handle."],
+									"stats":
+									{
+										"weight":1
+									}
+								},
+								{
+									"itemType":"Equipable",
+									"itemClass":"Neck",
+									"itemID":"0",
+									"name":"cape",
+									"pluralName":"pairs of tattered pants",
+									"description":[],
+									"stats":
+									{
+										"weight":1
+									}
+								},
+								{
+									"itemType":"Equipable",
+									"itemClass":"Neck",
+									"itemID":"0",
+									"name":"cloak",
+									"pluralName":"pairs of tattered pants",
+									"description":["An old cloak."],
 									"stats":
 									{
 										"weight":1

@@ -91,39 +91,17 @@ class ActorViewedEquipmentHandler:
 		actor		= event.attributes['data']['actor']
 		receiver	= event.attributes['receiver']
 		equipString	= ' nothing'		
-		
-		equipment	= filter(lambda item: item != None,
-							[receiver.attributes['equipment']['Head'],
-							 receiver.attributes['equipment']['Ears'],
-							 receiver.attributes['equipment']['Eyes'],
-							 receiver.attributes['equipment']['Face'],
-							 receiver.attributes['equipment']['Neck'][0],
-							 receiver.attributes['equipment']['Neck'][1],
-							 receiver.attributes['equipment']['Body'],
-							 receiver.attributes['equipment']['Arms'],
-							 receiver.attributes['equipment']['Wrist'][0],
-							 receiver.attributes['equipment']['Wrist'][1],
-							 receiver.attributes['equipment']['Hands'],
-							 receiver.attributes['equipment']['Finger'][0],
-							 receiver.attributes['equipment']['Finger'][1],
-							 receiver.attributes['equipment']['Waist'],
-							 receiver.attributes['equipment']['Legs'],
-							 receiver.attributes['equipment']['Feet'],
-							 receiver.attributes['equipment']['Shield'],
-							 receiver.attributes['equipment']['Wielded']])
+		equipment	= receiver.listEquipment()
 			
 		if len(equipment) != 0:
 			equipString = ''
 			
-			for item in equipment:
-				slot	= item.attributes['itemClass']
-				tabs	= (lambda slotName: len(slotName) <= 5 and '\t\t' or '\t' )(slot)
-				
-				equipString = '{}\n  {}{}: {} {}'.format(equipString, ANSI.yellow(slot), tabs, item.attributes['adjective'], item.attributes['name'])
+			for line in equipment:
+				equipString = '{}\n{}'.format(equipString, line)
 		
 		feedbackEvent									= Event()
 		feedbackEvent.attributes['signature']			= 'received_feedback'
-		feedbackEvent.attributes['data']['feedback']	= 'You are wearing:{}'.format(equipString)
+		feedbackEvent.attributes['data']['feedback']	= 'You are wearing:{}\n'.format(equipString)
 		feedbackEvent.attributes['data']['actor']		= actor
 
 		Engine.ActorEngine.emitEvent(feedbackEvent)		
@@ -175,22 +153,24 @@ class ActorEquippedItemHandler:
 		actor		= event.attributes['data']['actor']
 		slot		= item.attributes['itemClass']
 		equipment	= receiver.attributes['equipment']
-		equipable	= (lambda eq, sl: 
+		slotFull	= (lambda eq, sl: 
 							eq[sl] != None and
 							(type(eq[sl]) != type([]) or (eq[sl][0] != None and eq[sl][1] != None)))(equipment, slot)
 		
-		print 'equipable = {}'.format(equipable)
-		
-		if equipable:
-			feedbackEvent									= Event()
-			feedbackEvent.attributes['signature']			= 'received_feedback'
-			feedbackEvent.attributes['data']['feedback']	= 'You\'re already wearing something there.'
-			feedbackEvent.attributes['data']['actor']		= actor
+		if slotFull:
+			feedbackEvent								= Event()
+			feedbackEvent.attributes['signature']		= 'received_feedback'
+			feedbackEvent.attributes['data']['actor']	= actor
+			
+			if slot == 'Wielded':
+				feedbackEvent.attributes['data']['feedback'] = 'You already have something wielded.'
+			else:
+				feedbackEvent.attributes['data']['feedback'] = 'You\'re already wearing something on your {}.'.format(slot.lower())
 
 			Engine.ActorEngine.emitEvent(feedbackEvent)
 		else:
 			if equipment[slot] != None:
-				if equipment[slot][0] != None:
+				if equipment[slot][0] == None:
 					equipment[slot][0] = item
 				else:
 					equipment[slot][1] = item
@@ -211,8 +191,152 @@ class ActorEquippedItemHandler:
 														'target':None,
 														'emoter': actor,
 														'room': room,
-														"emoterText":"You equip the {}.".format(item.attributes['name']),
-														"audienceText":"#emoter# equips {} {}.".format(item.attributes['adjective'], item.attributes['name'])
+														"emoterText":"You {} the {}.".format(event.attributes['data']['equipperVerb'], item.attributes['name']),
+														"audienceText":"#emoter# {} {} {}.".format(event.attributes['data']['audienceVerb'], item.attributes['adjective'], item.attributes['name'])
 			}
 
 			Engine.RoomEngine.emitEvent(emoteEvent)
+			
+			
+			
+			
+class ActorAttemptedItemRemovalHandler:
+	def __init__(self):
+		self.attributes = {'signature': 'actor_attempted_item_removal'}
+
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
+		itemName	= event.attributes['data']['itemName']
+		args		= event.attributes['data']['args']
+		itemNumber	= 0
+		equipment	= filter(lambda element: element != None and element.attributes['name'].lower().startswith(itemName.lower()),
+							[receiver.attributes['equipment']['Head'],
+							 receiver.attributes['equipment']['Ears'],
+							 receiver.attributes['equipment']['Eyes'],
+							 receiver.attributes['equipment']['Face'],
+							 receiver.attributes['equipment']['Neck'][0],
+							 receiver.attributes['equipment']['Neck'][1],
+							 receiver.attributes['equipment']['Body'],
+							 receiver.attributes['equipment']['Arms'],
+							 receiver.attributes['equipment']['Wrist'][0],
+							 receiver.attributes['equipment']['Wrist'][1],
+							 receiver.attributes['equipment']['Hands'],
+							 receiver.attributes['equipment']['Finger'][0],
+							 receiver.attributes['equipment']['Finger'][1],
+							 receiver.attributes['equipment']['Waist'],
+							 receiver.attributes['equipment']['Legs'],
+							 receiver.attributes['equipment']['Feet'],
+							 receiver.attributes['equipment']['Shield'],
+							 receiver.attributes['equipment']['Wielded']])
+		
+		
+		if len(args) >= 1 and args[0] != '':				
+			if pattern.match(args[0]) and re.search('[^0-9]', args[0]) == None:
+				itemNumber = int(args[0]) - 1
+				
+		if itemNumber < len(equipment):						
+			event.attributes['data']['item'] = equipment[itemNumber]
+			
+			receiver.emitEvent(event)
+		else:
+			feedbackEvent								= Event()
+			feedbackEvent.attributes['signature']		= 'received_feedback'
+			feedbackEvent.attributes['data']['actor']	= event.attributes['data']['actor']
+			feedbackEvent.attributes['data']['feedback'] = 'Remove what?'
+
+			Engine.ActorEngine.emitEvent(feedbackEvent)
+			
+			
+			
+			
+class ActorRemovedItemHandler:
+	def __init__(self):
+		self.attributes = {'signature': 'actor_removed_item'}
+
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
+		item		= event.attributes['data']['item']
+		actor		= event.attributes['data']['actor']
+		slot		= item.attributes['itemClass']
+		equipment	= receiver.attributes['equipment']
+		
+		if type(equipment[slot]) == type([]):
+			if equipment[slot][0] == item:
+				equipment[slot][0] = None
+			else:
+				equipment[slot][1] = None
+		else:
+			equipment[slot] = None
+			
+		receiver.attributes['items'].append(item)
+		
+		receiver.emitEvent(event)
+		
+		emoteEvent	= Event()
+		emoter		= actor
+		roomID		= emoter.attributes['roomID']
+		room		= Engine.RoomEngine.getRoom(roomID)
+		
+		emoteEvent.attributes['signature']	= 'actor_emoted'
+		emoteEvent.attributes['data']		= {
+													'target':None,
+													'emoter': actor,
+													'room': room,
+													"emoterText":"You removed the {}.".format(item.attributes['name']),
+													"audienceText":"#emoter# removed {} {}.".format(item.attributes['adjective'], item.attributes['name'])
+		}
+
+		Engine.RoomEngine.emitEvent(emoteEvent)
+		
+		
+		
+		
+class ActorObservedHandler:
+	def __init__(self):
+		self.attributes = {'signature':'actor_observed'}
+
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
+		args		= event.attributes['data']['args']
+		observer	= event.attributes['data']['observer']
+		target		= event.attributes['data']['target']
+		items		= receiver.attributes['items']
+		objNumber	= 0
+		targetList	= filter(lambda item: 
+								item != None and item.attributes['name'].lower().startswith(target.lower()),
+							 [receiver.attributes['equipment']['Head'],
+							  receiver.attributes['equipment']['Ears'],
+							  receiver.attributes['equipment']['Eyes'],
+							  receiver.attributes['equipment']['Face'],
+							  receiver.attributes['equipment']['Neck'][0],
+							  receiver.attributes['equipment']['Neck'][1],
+							  receiver.attributes['equipment']['Body'],
+							  receiver.attributes['equipment']['Arms'],
+							  receiver.attributes['equipment']['Wrist'][0],
+							  receiver.attributes['equipment']['Wrist'][1],
+							  receiver.attributes['equipment']['Hands'],
+							  receiver.attributes['equipment']['Finger'][0],
+							  receiver.attributes['equipment']['Finger'][1],
+							  receiver.attributes['equipment']['Waist'],
+							  receiver.attributes['equipment']['Legs'],
+							  receiver.attributes['equipment']['Feet'],
+							  receiver.attributes['equipment']['Shield'],
+							  receiver.attributes['equipment']['Wielded']] + items)
+							
+		if len(args) >= 1 and args[0] != '':				
+			if pattern.match(args[0]) and re.search('[^0-9]', args[0]) == None:
+				objNumber = int(args[0]) - 1
+							
+		if objNumber >= len(targetList):
+			objNumber = objNumber - len(targetList)
+			args[0]		= '{}'.format(objNumber)
+			
+			Engine.RoomEngine.emitEvent(event)
+		else:
+			lookEvent									= Event()
+			lookEvent.attributes['data']['observer']	= observer
+			lookEvent.attributes['data']['target']		= targetList[objNumber]
+			lookEvent.attributes['signature']			= 'was_observed'
+
+			receiver.emitEvent(lookEvent)
+				

@@ -61,3 +61,15 @@ class ActorGrabbedItemHandler:
 		receiver.attributes['items'].remove(event.attributes['data']['item'])
 
 		receiver.emitEvent(event)
+		
+		
+		
+		
+class WasObservedHandler:
+	def __init__(self):
+		self.attributes = {'signature':'was_observed'}
+
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
+		
+		receiver.emitEvent(event)

@@ -18,8 +18,14 @@ class Look(Command):
 	
 		if args == None or len(args) == 0:
 			lookEvent.attributes['signature'] = 'was_observed'
+			
+			Engine.RoomEngine.emitEvent(lookEvent)
 		else:
+			if len(args) == 1:
+				args.append('')
+				
 			lookEvent.attributes['signature']		= 'actor_observed'
 			lookEvent.attributes['data']['target']	= args[0]
+			lookEvent.attributes['data']['args']	= args[1:]
 			
-		Engine.RoomEngine.emitEvent(lookEvent)
+			actor.emitEvent(lookEvent)

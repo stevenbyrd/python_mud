@@ -1,5 +1,6 @@
 from Event.EventReceiver import EventReceiver
 from Event.EventEmitter import EventEmitter
+from lib import ANSI
 
 
 class Actor(EventReceiver, EventEmitter):
@@ -17,7 +18,7 @@ class Actor(EventReceiver, EventEmitter):
 			'uniqueID'		: '',
 			'name'			: '',
 			'description'	: [],
-			'race'			: '',
+			'race'			: 'Human',
 			'gender'		: '',
 			'roomID'		: '0',
 			'stats'			: {
@@ -73,3 +74,22 @@ class Actor(EventReceiver, EventEmitter):
 		self.addEventHandler(EventHandlers.Actor.ActorInitiatedItemGrabHandler())
 		self.addEventHandler(EventHandlers.Actor.ActorGrabbedItemHandler())
 		self.addEventHandler(EventHandlers.Actor.ActorAttemptedItemEquipHandler())
+		self.addEventHandler(EventHandlers.Actor.ActorAttemptedItemRemovalHandler())
+	
+	
+	def getDescription(self):
+		description = [ANSI.yellow('You see {} the {}.'.format(self.attributes['name'], self.attributes['race']))]
+		
+		if len(self.attributes['description']) > 0:
+			
+			for line in self.attributes['description']:
+				description.append(ANSI.cyan(line))
+			
+		equipment = self.attributes['inventory'].listEquipment()
+		
+		if len(equipment) > 0:
+			description = description + equipment
+			
+		return description
+			
+		

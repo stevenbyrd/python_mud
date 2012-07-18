@@ -24,7 +24,8 @@ functions = {
 	'forward_event'				: lambda event, args: event.attributes['receiver'].emitEvent(event),
 	'None'						: lambda event, args: None,
 	'get_element_from_list'		: lambda event, args: getElementFromList(event, args),
-	'filter_list_with_lambda'	: lambda event, args: filterListWithLambda(event, args)
+	'filter_list_with_lambda'	: lambda event, args: filterListWithLambda(event, args),
+	'get_actor_description'		: lambda event, args: event.attributes['receiver'].getDescription()
 }
 
 

@@ -135,3 +135,8 @@ class ActorViewedEquipmentHandler:
 		if event.attributes['data']['actor'] == receiver:
 			receiver.emitEvent(event)
 			
+			
+			
+			
+
+			

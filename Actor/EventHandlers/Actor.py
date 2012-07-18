@@ -66,3 +66,16 @@ class ActorAttemptedItemEquipHandler:
 
 		if event.attributes['data']['actor'] == receiver:
 			receiver.emitEvent(event)
+			
+			
+			
+			
+class ActorAttemptedItemRemovalHandler:
+	def __init__(self):
+		self.attributes = {'signature': 'actor_attempted_item_removal'}
+
+	def handleEvent(self, event):
+		receiver = event.attributes['receiver']
+
+		if event.attributes['data']['actor'] == receiver:
+			receiver.emitEvent(event)
