@@ -1,7 +1,11 @@
 from Engine import Engine
 from Actor.Player import Player
+from Actor.NPC import NPC
 import os
 import json
+
+
+currentDir = os.getcwd()
 
 
 def emitEvent(event):
@@ -21,6 +25,10 @@ def playerExists(playerName):
 	
 def loadPlayer(playerName):
 	return ActorEngine.instance.loadPlayer(playerName)
+	
+	
+def loadNPC(npcID):
+	return ActorEngine.instance.loadNPC(npcID)
 
 
 class ActorEngine(Engine):
@@ -88,7 +96,6 @@ class ActorEngine(Engine):
 	
 		
 	def loadPlayer(self, playerName):
-		currentDir	= os.getcwd()
 		filePath	= '{}/Content/players/{}.txt'.format(currentDir, playerName) 
 		playerFile	= open(filePath, 'r')
 		jsonString	= playerFile.read()
@@ -98,6 +105,18 @@ class ActorEngine(Engine):
 		playerFile.close()
 		
 		return player
+		
+		
+	def loadNPC(self, npcId):
+		filePath	= '{}/Content/npc/{}.txt'.format(currentDir, npcId) 
+		npcFile		= open(filePath, 'r')
+		jsonString	= npcFile.read()
+		jsonObj		= json.loads(jsonString)
+		npc			= NPC(jsonObj)
+		
+		npcFile.close()
+		
+		return npc
 		
 		
 	def playerExists(self, playerName):

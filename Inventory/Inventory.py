@@ -11,11 +11,12 @@ class Inventory(EventReceiver, EventEmitter):
 		self.attributes['items']	= []
 		self.attributes['owner']	= owner
 		
-		for itemJson in inventoryJson['items']:
-			item = self.createItem(itemJson)
+		if inventoryJson != None:
+			for itemJson in inventoryJson['items']:
+				item = self.createItem(itemJson)
 			
-			if item != None:
-				self.attributes['items'].append(item)
+				if item != None:
+					self.attributes['items'].append(item)
 		
 		owner.addEventSubscriber(self)
 		

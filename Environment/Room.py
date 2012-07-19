@@ -9,13 +9,13 @@ class Room(EventReceiver, EventEmitter):
 		import Engine.RoomEngine
 		import EventHandlers.Room
 		from Inventory.RoomInventory import RoomInventory
+		from SpawnTemplate import SpawnTemplate
 		
 		EventReceiver.__init__(self)
 		EventEmitter.__init__(self)
 		
 		attributes = {
 			'playerSemaphore'	: threading.BoundedSemaphore(1),
-			'npcSemaphore'		: threading.BoundedSemaphore(1),
 			'roomID'			: '',
 			'name'				: '',
 			'description'		: [],
@@ -23,8 +23,8 @@ class Room(EventReceiver, EventEmitter):
 			'players'			: [],
 			'npcs'				: [],
 			'spawnableNPCs'		: [],
-			'updateRate'		: 0,
-			'inventory'			: None
+			'inventory'			: None,
+			'spawnTemplates'	: []
 		}
 		
 		for key in attributes.keys():
@@ -48,6 +48,11 @@ class Room(EventReceiver, EventEmitter):
 				inventory = RoomInventory(roomJson[key], self)
 				
 				self.attributes[key] = inventory
+			elif key == 'spawnTemplates':
+				for template in roomJson[key]:
+					spawnTemplate = SpawnTemplate(template, self)
+					
+					self.attributes['spawnTemplates'].append(spawnTemplate)
 			else:
 				self.attributes[key] = roomJson[key]
 		
@@ -78,6 +83,7 @@ class Room(EventReceiver, EventEmitter):
 		self.attributes['playerSemaphore'].release()
 
 
+
 	def addPlayer(self, player):
 		playerList	= self.attributes['players']
 
@@ -88,4 +94,20 @@ class Room(EventReceiver, EventEmitter):
 			player.attributes['roomID'] = self.attributes['roomID']
 			player.insertCommand('look')
 
-		self.attributes['playerSemaphore'].release()		
+		self.attributes['playerSemaphore'].release()
+		
+		
+		
+	def removeNPC(self, npc):
+		npcList = self.attributes['npcs']
+
+		if npc in set(npcList):
+			npcList.remove(npc)
+
+
+
+	def addNPC(self, npc):
+		npcList = self.attributes['npcs']
+
+		if npc not in set(npcList):
+			npcList.append(npc)

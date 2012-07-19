@@ -10,6 +10,21 @@ class RoomInventory(Inventory):
 		self.attributes['hidden_items']		= []
 		self.attributes['permanent_items']	= []
 		
+		if inventoryJson != None:
+			if inventoryJson.has_key('hidden_items'):
+				for itemJson in inventoryJson['hidden_items']:
+					item = self.createItem(itemJson)
+			
+					if item != None:
+						self.attributes['hidden_items'].append(item)
+						
+			if inventoryJson.has_key('permanent_items'):
+				for itemJson in inventoryJson['permanent_items']:
+					item = self.createItem(itemJson)
+			
+					if item != None:
+						self.attributes['permanent_items'].append(item)
+		
 		self.addEventHandler(EventHandlers.RoomInventory.ItemDroppedHandler())
 		self.addEventHandler(EventHandlers.RoomInventory.ActorAttemptedItemGrabHandler())
 		self.addEventHandler(EventHandlers.RoomInventory.ActorGrabbedItemHandler())

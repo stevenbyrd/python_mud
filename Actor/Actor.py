@@ -40,41 +40,46 @@ class Actor(EventReceiver, EventEmitter):
 			'inventory'		: None
 		}
 		
-		for key in actorJSON.keys():
-			if key == 'inventory':
-				inventory		= ActorInventory(actorJSON[key], self)
-				attributes[key]	= inventory
-			else:
-				attributes[key] = actorJSON[key]
+		if actorJSON != None:
+			for key in actorJSON.keys():
+				if key == 'inventory':
+					inventory		= ActorInventory(actorJSON[key], self)
+					attributes[key]	= inventory
+				else:
+					attributes[key] = actorJSON[key]
 		
-		for key in attributes.keys():
-			self.attributes[key] = attributes[key]
-		
-		Engine.ActorEngine.addEventSubscriber(self)
-		
-		startingRoom = Engine.RoomEngine.getRoom(self.attributes['roomID'])
-		
-		startingRoom.addEventSubscriber(self)
+			for key in attributes.keys():
+				self.attributes[key] = attributes[key]
 			
-		for key in self.attributes['eventAdjusters']:
-			adjusters = self.attributes['eventAdjusters'][key]
+			if self.attributes['inventory'] == None:
+				self.attributes['inventory'] = ActorInventory(None, self)
+		
+			Engine.ActorEngine.addEventSubscriber(self)
+		
+			startingRoom = Engine.RoomEngine.getRoom(self.attributes['roomID'])
+		
+			startingRoom.addEventSubscriber(self)
 			
-			for adjusterName in adjusters:
-				self.addCustomEventAdjuster(key, adjusterName)
+			for key in self.attributes['eventAdjusters']:
+				adjusters = self.attributes['eventAdjusters'][key]
+			
+				for adjusterName in adjusters:
+					self.addCustomEventAdjuster(key, adjusterName)
 				
 		
-		for key in self.attributes['eventHandlers']:
-			handlers = self.attributes['eventHandlers'][key]
+			for key in self.attributes['eventHandlers']:
+				handlers = self.attributes['eventHandlers'][key]
 			
-			for handlerName in handlers:
-				self.addCustomEventHandler(key, handlerName)
+				for handlerName in handlers:
+					self.addCustomEventHandler(key, handlerName)
 				
-		self.addEventHandler(EventHandlers.Actor.ActorAttemptedDropHandler())
-		self.addEventHandler(EventHandlers.Actor.ItemDroppedHandler())
-		self.addEventHandler(EventHandlers.Actor.ActorInitiatedItemGrabHandler())
-		self.addEventHandler(EventHandlers.Actor.ActorGrabbedItemHandler())
-		self.addEventHandler(EventHandlers.Actor.ActorAttemptedItemEquipHandler())
-		self.addEventHandler(EventHandlers.Actor.ActorAttemptedItemRemovalHandler())
+			self.addEventHandler(EventHandlers.Actor.ActorAttemptedDropHandler())
+			self.addEventHandler(EventHandlers.Actor.ItemDroppedHandler())
+			self.addEventHandler(EventHandlers.Actor.ActorInitiatedItemGrabHandler())
+			self.addEventHandler(EventHandlers.Actor.ActorGrabbedItemHandler())
+			self.addEventHandler(EventHandlers.Actor.ActorAttemptedItemEquipHandler())
+			self.addEventHandler(EventHandlers.Actor.ActorAttemptedItemRemovalHandler())
+			self.addEventHandler(EventHandlers.Actor.ActorMovedFromRoomEventHandler())
 	
 	
 	def getDescription(self):

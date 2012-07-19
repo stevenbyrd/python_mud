@@ -1,6 +1,6 @@
 {
 	"name":"dummy",
-	"pluralName":"dummies"
+	"pluralName":"dummies",
 	"race":"Sol",
 	"actorID":"-1",
 	"description":[

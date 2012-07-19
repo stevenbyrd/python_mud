@@ -1,4 +1,6 @@
 import lib.ANSI
+from .. import Player
+from .. import NPC
 
 class ReceivedNotificationHandler:
 	def __init__(self):
@@ -138,5 +140,21 @@ class ActorViewedEquipmentHandler:
 			
 			
 			
+class ActorAddedToRoomEventHandler:
+	def __init__(self):
+		self.attributes = {'signature':'actor_added_to_room'}
 
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
+		actor		= event.attributes['data']['actor']
+		
+		if actor != receiver:
+			arrivedString = ''
+			
+			if isinstance(actor, Player.Player):
+				arrivedString = actor.attributes['name']
+			elif isinstance(actor, NPC.NPC):
+				arrivedString = '{} {}'.format(actor.attributes['adjective'].upper(), actor.attributes['name'])
+				
+			receiver.sendFinal('{} just arrived.'.format(arrivedString))
 			

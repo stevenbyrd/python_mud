@@ -26,11 +26,12 @@ class ActorInventory(Inventory):
 				'Wielded'	: None,
 		}
 		
-		if inventoryJson.has_key('equipment'):
-			equipment = inventoryJson['equipment']
+		if inventoryJson != None:
+			if inventoryJson.has_key('equipment'):
+				equipment = inventoryJson['equipment']
 		
-			for key in equipment.keys():
-				self.attributes['equipment'][key] = self.createItem(equipment[key])
+				for key in equipment.keys():
+					self.attributes['equipment'][key] = self.createItem(equipment[key])
 
 		
 		self.addEventHandler(EventHandlers.ActorInventory.ActorAttemptedDropHandler())

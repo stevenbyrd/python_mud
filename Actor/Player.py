@@ -11,14 +11,16 @@ class Player(Humanoid):
 
 		self.attributes['connection'] = None
 		
-		self.addEventHandler(EventHandlers.Player.ReceivedNotificationHandler())
-		self.addEventHandler(EventHandlers.Player.ReceivedFeedbackHandler())
-		self.addEventHandler(EventHandlers.Player.EntityDescribedSelfHandler())
-		self.addEventHandler(EventHandlers.Player.ActorAttemptedDropHandler())
-		self.addEventHandler(EventHandlers.Player.ItemDroppedHandler())
-		self.addEventHandler(EventHandlers.Player.ActorInitiatedItemGrabHandler())
-		self.addEventHandler(EventHandlers.Player.ActorGrabbedItemHandler())
-		self.addEventHandler(EventHandlers.Player.ActorViewedEquipmentHandler())
+		if actorJSON != None:
+			self.addEventHandler(EventHandlers.Player.ReceivedNotificationHandler())
+			self.addEventHandler(EventHandlers.Player.ReceivedFeedbackHandler())
+			self.addEventHandler(EventHandlers.Player.EntityDescribedSelfHandler())
+			self.addEventHandler(EventHandlers.Player.ActorAttemptedDropHandler())
+			self.addEventHandler(EventHandlers.Player.ItemDroppedHandler())
+			self.addEventHandler(EventHandlers.Player.ActorInitiatedItemGrabHandler())
+			self.addEventHandler(EventHandlers.Player.ActorGrabbedItemHandler())
+			self.addEventHandler(EventHandlers.Player.ActorViewedEquipmentHandler())
+			self.addEventHandler(EventHandlers.Player.ActorAddedToRoomEventHandler())
 		
 	
 	def send(self, message):

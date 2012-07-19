@@ -19,6 +19,7 @@ class CommandEngine(Engine):
 	def __init__(self):
 		import Driver.UpdateDriver
 		import EventHandlers.CommandEngine
+		import ActorEngine
 
 		Engine.__init__(self)
 		
@@ -42,6 +43,7 @@ class CommandEngine(Engine):
 		self.buildCommandList()
 		
 		Driver.UpdateDriver.addEventSubscriber(self)
+		ActorEngine.addEventSubscriber(self)
 	
 	
 	def buildCommandList(self):

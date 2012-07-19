@@ -83,5 +83,5 @@ class EventReceiver:
 				break
 		
 		if newEvent.attributes['signature'] != None:
-			for handler in filter(filterFunc, self.attributes['event_handlers']):
-					handler.handleEvent(newEvent)			
+			for handler in filter(filterFunc, self.attributes['event_handlers']):				
+				handler.handleEvent(newEvent)

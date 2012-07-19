@@ -13,5 +13,12 @@
 					],
 	"inventory":{
 					"items":[]
-				}
+				},
+	"spawnTemplates":[
+						{
+							"npcID":"0",
+							"wanderRate":0.05,
+							"spawnRate":0.2
+						}
+					  ]
 }

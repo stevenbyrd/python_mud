@@ -3,9 +3,10 @@ import Engine.RoomEngine
 import Engine.AffectEngine
 from lib import ANSI
 import re
+from Actor.Player import Player
 
 
-pattern = re.compile('[1-9][0-9]*')
+pattern	= re.compile('[1-9][0-9]*')
 
 
 class ActorAttemptedMovementEventHandler:
@@ -72,7 +73,11 @@ class ActorMovedFromRoomEventHandler:
 		if event.attributes['data']['room'] == receiver:
 			actor = event.attributes['data']['actor']
 			
-			receiver.removePlayer(actor)
+			if isinstance(actor, Player):
+				receiver.removePlayer(actor)
+			else:
+				receiver.removeNPC(actor)
+				
 			receiver.emitEvent(event)
 			
 
@@ -84,11 +89,17 @@ class ActorAddedToRoomEventHandler:
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
+	
 		if event.attributes['data']['room'] == receiver:			
 			actor = event.attributes['data']['actor']
 			
-			receiver.addPlayer(actor)
+			if isinstance(actor, Player):
+				receiver.addPlayer(actor)
+			else:
+				receiver.addNPC(actor)
+			
 			receiver.emitEvent(event)
+			
 			
 			
 			
@@ -187,6 +198,7 @@ class WasObservedHandler:
 			description = [ANSI.red(receiver.attributes['name']) + '\n\r']
 			exitList	= 'Obvious exits:'
 			playerList	= filter(lambda p: p != player, receiver.attributes['players'])
+			npcList		= receiver.attributes['npcs']
 
 			for line in receiver.attributes['description']:
 				description.append(line)
@@ -203,12 +215,6 @@ class WasObservedHandler:
 
 			description.append(ANSI.blue(exitList))
 			
-			inventory	= receiver.attributes['inventory']
-			itemList	= inventory.describe()
-			
-			if itemList != '':
-				description.append(itemList)
-
 			if len(playerList) > 0:
 				playerLine = 'Players:'
 
@@ -219,6 +225,38 @@ class WasObservedHandler:
 					playerLine = playerLine[0:-1]
 
 				description.append(ANSI.green(playerLine))
+			
+			if len(npcList) > 0:
+				npcLine		= 'NPCs:'
+				listedNPCs	= []
+
+				for npc in npcList:					
+					npcName = npc.attributes['name']
+					
+					if npcName not in set(listedNPCs):
+						listedNPCs.append(npcName)
+						
+						reducedList = filter(lambda element: 
+												element.attributes['name'] == npcName,
+											 npcList)
+						adjective	= npc.attributes['adjective']
+					
+						if len(reducedList) > 1:
+							adjective	= '{}'.format(len(reducedList))
+							npcName		= npc.attributes['pluralName']
+						
+						npcLine = '{} {} {},'.format(npcLine, adjective, npcName)
+
+				if npcLine.endswith(','):
+					npcLine = npcLine[0:-1]
+
+				description.append(npcLine)
+			
+			inventory	= receiver.attributes['inventory']
+			itemList	= inventory.describe()
+			
+			if itemList != '':
+				description.append(itemList)
 
 			describeEvent									= Event()
 			describeEvent.attributes['signature']			= 'entity_described_self'
@@ -311,4 +349,5 @@ class ActorGrabbedItemHandler:
 		
 		if event.attributes['data']['room'] == receiver:
 			receiver.emitEvent(event)
+
 			
