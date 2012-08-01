@@ -23,7 +23,6 @@ class RoomEngine(Engine):
 	def __init__(self):
 		import Driver.ConnectionListUpdater
 		import CommandEngine
-		import EventHandlers.RoomEngine
 		
 		Engine.__init__(self)
 		
@@ -35,8 +34,8 @@ class RoomEngine(Engine):
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 		
-		self.addEventHandler(EventHandlers.RoomEngine.PlayerLoginEventHandler())
-		self.addEventHandler(EventHandlers.RoomEngine.PlayerLogoutEventHandler())
+		self.addEventHandlerByNameWithAdjusters('Engine.EventHandlers.RoomEngine.PlayerLoginEventHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Engine.EventHandlers.RoomEngine.PlayerLogoutEventHandler', None)
 		
 		RoomEngine.instance = self
 		

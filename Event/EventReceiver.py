@@ -6,7 +6,7 @@ import os
 import json
 from EventAdjuster import EventAdjuster
 import Driver.TickDriver
-
+import importlib
 
 currentDir = os.getcwd()
 
@@ -16,51 +16,27 @@ class EventReceiver:
 		BaseClass.__init__(self)
 		
 		self.attributes['event_handlers']	= []
-		self.attributes['event_adjusters']	= []
 		self.attributes['tick_count']		= 0
 		
 		Driver.TickDriver.addEventSubscriber(self)
 		
 		
-	def addEventHandler(self, handler):
-		if handler != None:
-			self.attributes['event_handlers'].append(handler)
-	
-	
-	
-	def addCustomEventHandler(self, handlerType, handlerName):
-		filePath	= '{}/Content/eventHandlers/{}/{}.txt'.format(currentDir, handlerType, handlerName)
-		handlerFile	= open(filePath, 'r')
-		jsonString	= handlerFile.read()
-		jsonObj		= json.loads(jsonString)
-		handler		= EventHandler(jsonObj)
-		
-		handlerFile.close()
-		
-		self.addEventHandler(handler)
 		
 	
+	def addEventHandlerByNameWithAdjusters(self, handlerName, adjusters):
+		path		= handlerName.split('.')
+		modulePath	= path[0]
 	
+		for step in path[1:-1]:
+			modulePath = '{}.{}'.format(modulePath, step)
 	
-	def addEventAdjuster(self, adjuster):
-		if adjuster != None:
-			self.attributes['event_adjusters'].append(adjuster)
-	
-	
-	
-	
-	def addCustomEventAdjuster(self, adjusterType, adjusterName):
-		filePath		= '{}/Content/eventAdjusters/{}/{}.txt'.format(currentDir, adjusterType, adjusterName)
-		adjusterFile	= open(filePath, 'r')
-		jsonString		= adjusterFile.read()
-		jsonObj			= json.loads(jsonString)
-		adjuster		= EventAdjuster(jsonObj)
+		handlerModule				= importlib.import_module(modulePath)
+		handlerClass				= getattr(handlerModule, path[-1])
+		handler						= handlerClass(adjusters)
 		
-		adjusterFile.close()		
-		
-		self.addEventAdjuster(adjuster)
-		
-		
+		self.attributes['event_handlers'].append(handler)
+	
+	
 	
 	
 	def receiveEvent(self, event, emitter):
@@ -68,20 +44,14 @@ class EventReceiver:
 			self.attributes['tick_count'] += 1
 		
 		filterFunc	= (lambda receiver: receiver.attributes['signature'] == event.attributes['signature'])
-		newEvent	= Event()
-		
-		newEvent.attributes = {
-			'signature'	: event.attributes['signature'],
-			'data'		: event.attributes['data'].copy(),
-			'receiver'	: self
-		}
 	
-		for adjuster in filter(filterFunc, self.attributes['event_adjusters']):
-			adjuster.adjust(newEvent)
+		for handler in filter(filterFunc, self.attributes['event_handlers']):
+			newEvent = Event()
 		
-			if newEvent.attributes['signature'] == None:
-				break
-		
-		if newEvent.attributes['signature'] != None:
-			for handler in filter(filterFunc, self.attributes['event_handlers']):				
-				handler.handleEvent(newEvent)
+			newEvent.attributes = {
+				'signature'	: event.attributes['signature'],
+				'data'		: event.attributes['data'].copy(),
+				'receiver'	: self
+			}
+			
+			handler.receiveEvent(newEvent)

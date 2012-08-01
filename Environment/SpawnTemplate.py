@@ -22,8 +22,12 @@ class SpawnTemplate(EventReceiver, EventEmitter):
 			self.attributes[key] = attributes[key]
 			
 		for key in templateJson.keys():
-			self.attributes[key] = templateJson[key]
+			if key == 'eventHandlers':
+				for element in templateJson[key]:		
+					adjusters = (lambda dictionary: dictionary.has_key('adjusters') and dictionary['adjusters'] or None)(element)
+					
+					self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.SpawnTemplate.{}'.format(element['name']), adjusters)
+			else:
+				self.attributes[key] = templateJson[key]
 		
 		room.addEventSubscriber(self)
-		
-		self.addEventHandler(EventHandlers.SpawnTemplate.GameTickedHandler())

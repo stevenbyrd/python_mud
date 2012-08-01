@@ -18,7 +18,21 @@
 						{
 							"npcID":"0",
 							"wanderRate":0.05,
-							"spawnRate":0.2
+							"spawnRate":1,
+							"eventHandlers":[
+												{
+													"name":"GameTickedHandler",
+													"adjusters":[
+																	{
+																		"name":"lib.CommonHandlers.FilterGameTicksByModulus",
+																		"args":{
+																					"modulus":3
+																			   }
+																	}
+												 				]
+												}
+											]
+											
 						}
 					  ]
 }

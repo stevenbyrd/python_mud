@@ -24,14 +24,25 @@
 	"currentMana":1,
 	"maxMana":200,
 	"eventHandlers":{
-						"actor":[
-									"was_observed",
-									"gained_health"
+						"Actor":[
+									{
+										"name":"ActorWasObservedEventHandler"
+									},
+									{
+										"name":"ActorGainedHealthEventHandler"
+									}
 								],
 								
-						"player":[
-									"actor_moved_from_room",
-									"actor_emoted"
+						"Player":[
+									{
+										"name":"ActorAddedToRoomEventHandler"
+									},
+									{
+										"name":"ActorEmotedEventHandler"
+									},
+									{
+										"name":"ActorMovedFromRoomEventHandler"
+									}
 								 ]
 					},
 	"inventory":{

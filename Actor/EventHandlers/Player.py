@@ -1,10 +1,12 @@
 import lib.ANSI
 from .. import Player
 from .. import NPC
+from Event.EventHandler import EventHandler
 
-class ReceivedNotificationHandler:
-	def __init__(self):
-		self.attributes = {'signature':'received_notification'}
+class ReceivedNotificationHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='received_notification'
 	
 	def handleEvent(self, event):
 		actor = event.attributes['data']['actor']
@@ -21,9 +23,10 @@ class ReceivedNotificationHandler:
 			
 			
 
-class ReceivedFeedbackHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'received_feedback'}
+class ReceivedFeedbackHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'received_feedback'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
@@ -37,9 +40,10 @@ class ReceivedFeedbackHandler:
 
 
 
-class EntityDescribedSelfHandler:
-	def __init__(self):
-		self.attributes = {'signature':'entity_described_self'}
+class EntityDescribedSelfHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='entity_described_self'
 	
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']
@@ -65,9 +69,10 @@ class EntityDescribedSelfHandler:
 						
 						
 						
-class ActorAttemptedDropHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_attempted_item_drop'}
+class ActorAttemptedDropHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_attempted_item_drop'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
@@ -79,9 +84,10 @@ class ActorAttemptedDropHandler:
 
 
 
-class ItemDroppedHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'item_dropped'}
+class ItemDroppedHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'item_dropped'
 
 	def handleEvent(self, event):		
 		receiver	= event.attributes['receiver']
@@ -95,9 +101,10 @@ class ItemDroppedHandler:
 			
 			
 			
-class ActorInitiatedItemGrabHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_initiated_item_grab'}
+class ActorInitiatedItemGrabHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_initiated_item_grab'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
@@ -110,9 +117,10 @@ class ActorInitiatedItemGrabHandler:
 				
 				
 				
-class ActorGrabbedItemHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_grabbed_item'}
+class ActorGrabbedItemHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_grabbed_item'
 
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']
@@ -127,9 +135,10 @@ class ActorGrabbedItemHandler:
 			
 			
 			
-class ActorViewedEquipmentHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_viewed_equipment'}
+class ActorViewedEquipmentHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_viewed_equipment'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
@@ -140,9 +149,10 @@ class ActorViewedEquipmentHandler:
 			
 			
 			
-class ActorAddedToRoomEventHandler:
-	def __init__(self):
-		self.attributes = {'signature':'actor_added_to_room'}
+class ActorAddedToRoomEventHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='actor_added_to_room'
 
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']
@@ -157,4 +167,51 @@ class ActorAddedToRoomEventHandler:
 				arrivedString = '{} {}'.format(actor.attributes['adjective'].upper(), actor.attributes['name'])
 				
 			receiver.sendFinal('{} just arrived.'.format(arrivedString))
+
+
+
+
+class ActorEmotedEventHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='actor_emoted'
+	
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
+		emoter		= event.attributes['data']['emoter']
+		target		= event.attributes['data']['target']
+		text		= None
+		
+		if emoter == receiver:
+			text = event.attributes['data']['emoterText']
+		elif target != None and target == receiver:
+			text = event.attributes['data']['targetText']
+		else:
+			text = event.attributes['data']['audienceText']
+		
+		if text != None and text != '':
+			text = text.replace('#emoter#', emoter.attributes['name'])
+			
+			if target != None:
+				text = text.replace('#target#', target.attributes['name'])
+			
+			receiver.sendFinal(text)
+			
+			
+			
+
+class ActorMovedFromRoomEventHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='actor_moved_from_room'
+	
+	def handleEvent(self, event):
+		receiver	= event.attributes['receiver']
+		actor		= event.attributes['data']['actor']
+		exitName	= event.attributes['data']['exit'].attributes['name']
+		
+		if actor == receiver:
+			receiver.sendFinal('You leave {}.'.format(exitName))
+		else:
+			receiver.sendFinal('{} leaves {}.'.format(actor.attributes['name'], exitName))
 			

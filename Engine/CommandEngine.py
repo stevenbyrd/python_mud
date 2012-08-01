@@ -18,7 +18,6 @@ class CommandEngine(Engine):
 	
 	def __init__(self):
 		import Driver.UpdateDriver
-		import EventHandlers.CommandEngine
 		import ActorEngine
 
 		Engine.__init__(self)
@@ -31,7 +30,7 @@ class CommandEngine(Engine):
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
 
-		self.addEventHandler(EventHandlers.CommandEngine.CommandExecutionEventHandler())
+		self.addEventHandlerByNameWithAdjusters('Engine.EventHandlers.CommandEngine.CommandExecutionEventHandler', None)
 		
 		CommandEngine.instance = self
 		

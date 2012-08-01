@@ -1,13 +1,15 @@
 import re
 from Event.Event import Event
+from Event.EventHandler import EventHandler
 
 
 pattern = re.compile('[1-9][0-9]*')
 
 
-class ItemDroppedHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'item_dropped'}
+class ItemDroppedHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'item_dropped'
 
 	def handleEvent(self, event):		
 		receiver = event.attributes['receiver']
@@ -17,9 +19,10 @@ class ItemDroppedHandler:
 		
 		
 		
-class ActorAttemptedItemGrabHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_attempted_item_grab'}
+class ActorAttemptedItemGrabHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_attempted_item_grab'
 
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']
@@ -51,9 +54,10 @@ class ActorAttemptedItemGrabHandler:
 			
 			
 			
-class ActorGrabbedItemHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_grabbed_item'}
+class ActorGrabbedItemHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_grabbed_item'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
@@ -65,9 +69,10 @@ class ActorGrabbedItemHandler:
 		
 		
 		
-class WasObservedHandler:
-	def __init__(self):
-		self.attributes = {'signature':'was_observed'}
+class WasObservedHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='was_observed'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']

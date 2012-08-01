@@ -1,4 +1,5 @@
 from Event.Event import Event
+from Event.EventHandler import EventHandler
 import Engine.ActorEngine
 import Engine.RoomEngine
 import re
@@ -8,9 +9,10 @@ from lib import ANSI
 pattern = re.compile('[1-9][0-9]*')
 
 
-class ActorAttemptedDropHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_attempted_item_drop'}
+class ActorAttemptedDropHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_attempted_item_drop'
 
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']
@@ -42,9 +44,10 @@ class ActorAttemptedDropHandler:
 			
 			
 			
-class ItemDroppedHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'item_dropped'}
+class ItemDroppedHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'item_dropped'
 
 	def handleEvent(self, event):		
 		receiver = event.attributes['receiver']
@@ -56,9 +59,10 @@ class ItemDroppedHandler:
 		
 		
 		
-class ActorInitiatedItemGrabHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_initiated_item_grab'}
+class ActorInitiatedItemGrabHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_initiated_item_grab'
 
 	def handleEvent(self, event):
 		# as of now, this is sort of a superfluous step in the event chain -- we'll come back here when
@@ -71,9 +75,10 @@ class ActorInitiatedItemGrabHandler:
 		
 		
 		
-class ActorGrabbedItemHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_grabbed_item'}
+class ActorGrabbedItemHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_grabbed_item'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
@@ -83,9 +88,10 @@ class ActorGrabbedItemHandler:
 		
 		
 		
-class ActorViewedEquipmentHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_viewed_equipment'}
+class ActorViewedEquipmentHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_viewed_equipment'
 
 	def handleEvent(self, event):
 		actor		= event.attributes['data']['actor']
@@ -109,9 +115,10 @@ class ActorViewedEquipmentHandler:
 
 
 
-class ActorAttemptedItemEquipHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_attempted_item_equip'}
+class ActorAttemptedItemEquipHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_attempted_item_equip'
 
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']
@@ -143,9 +150,10 @@ class ActorAttemptedItemEquipHandler:
 
 
 
-class ActorEquippedItemHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_equipped_item'}
+class ActorEquippedItemHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_equipped_item'
 
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']
@@ -200,9 +208,10 @@ class ActorEquippedItemHandler:
 			
 			
 			
-class ActorAttemptedItemRemovalHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_attempted_item_removal'}
+class ActorAttemptedItemRemovalHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_attempted_item_removal'
 
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']
@@ -249,9 +258,10 @@ class ActorAttemptedItemRemovalHandler:
 			
 			
 			
-class ActorRemovedItemHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_removed_item'}
+class ActorRemovedItemHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_removed_item'
 
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']
@@ -291,9 +301,10 @@ class ActorRemovedItemHandler:
 		
 		
 		
-class ActorObservedHandler:
-	def __init__(self):
-		self.attributes = {'signature':'actor_observed'}
+class ActorObservedHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='actor_observed'
 
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']

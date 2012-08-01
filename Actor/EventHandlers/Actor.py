@@ -1,8 +1,12 @@
 import Engine.RoomEngine
+import Engine.ActorEngine
+from Event.Event import Event
+from Event.EventHandler import EventHandler
 
-class ActorAttemptedDropHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_attempted_item_drop'}
+class ActorAttemptedDropHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_attempted_item_drop'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
@@ -15,9 +19,10 @@ class ActorAttemptedDropHandler:
 				
 				
 				
-class ItemDroppedHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'item_dropped'}
+class ItemDroppedHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'item_dropped'
 
 	def handleEvent(self, event):		
 		receiver = event.attributes['receiver']
@@ -28,9 +33,10 @@ class ItemDroppedHandler:
 			
 			
 			
-class ActorInitiatedItemGrabHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_initiated_item_grab'}
+class ActorInitiatedItemGrabHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_initiated_item_grab'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
@@ -44,9 +50,10 @@ class ActorInitiatedItemGrabHandler:
 				
 				
 				
-class ActorGrabbedItemHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_grabbed_item'}
+class ActorGrabbedItemHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_grabbed_item'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
@@ -57,9 +64,10 @@ class ActorGrabbedItemHandler:
 			
 			
 			
-class ActorAttemptedItemEquipHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_attempted_item_equip'}
+class ActorAttemptedItemEquipHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_attempted_item_equip'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
@@ -70,9 +78,10 @@ class ActorAttemptedItemEquipHandler:
 			
 			
 			
-class ActorAttemptedItemRemovalHandler:
-	def __init__(self):
-		self.attributes = {'signature': 'actor_attempted_item_removal'}
+class ActorAttemptedItemRemovalHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'actor_attempted_item_removal'
 
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
@@ -83,9 +92,10 @@ class ActorAttemptedItemRemovalHandler:
 			
 			
 			
-class ActorMovedFromRoomEventHandler:
-	def __init__(self):
-		self.attributes = {'signature':'actor_moved_from_room'}
+class ActorMovedFromRoomEventHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='actor_moved_from_room'
 
 	def handleEvent(self, event):		
 		receiver	= event.attributes['receiver']
@@ -100,3 +110,39 @@ class ActorMovedFromRoomEventHandler:
 			
 			receiver.attributes['roomID'] = destination.attributes['roomID']
 			
+			
+			
+			
+class ActorGainedHealthEventHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='gained_health'
+
+	def handleEvent(self, event):		
+		receiver	= event.attributes['receiver']
+		target		= event.attributes['data']['target']
+
+		if target == receiver:
+			receiver.attributes['currentHP'] += event.attributes['data']['amount']
+			
+			
+			
+			
+class ActorWasObservedEventHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='was_observed'
+
+	def handleEvent(self, event):		
+		receiver	= event.attributes['receiver']
+		target		= event.attributes['data']['target']
+
+		if target == receiver:
+			describeEvent									= Event()
+			describeEvent.attributes['signature']			= 'entity_described_self'
+			describeEvent.attributes['data']['room']		= receiver.attributes['roomID']
+			describeEvent.attributes['data']['observer']	= event.attributes['data']['observer']
+			describeEvent.attributes['data']['description']	= receiver.getDescription()
+			
+			ActorEngine.emitEvent(describeEvent)
+		

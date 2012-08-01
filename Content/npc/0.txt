@@ -19,5 +19,12 @@
 	"currentHP":1,
 	"maxHP":20,
 	"currentMana":1,
-	"maxMana":20
+	"maxMana":20,
+	"eventHandlers":{
+						"Actor":[
+									{
+										"name":"ActorWasObservedEventHandler"
+									}
+								]
+					}
 }

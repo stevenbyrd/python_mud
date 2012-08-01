@@ -25,10 +25,10 @@ class RoomInventory(Inventory):
 					if item != None:
 						self.attributes['permanent_items'].append(item)
 		
-		self.addEventHandler(EventHandlers.RoomInventory.ItemDroppedHandler())
-		self.addEventHandler(EventHandlers.RoomInventory.ActorAttemptedItemGrabHandler())
-		self.addEventHandler(EventHandlers.RoomInventory.ActorGrabbedItemHandler())
-		self.addEventHandler(EventHandlers.RoomInventory.WasObservedHandler())
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.RoomInventory.ItemDroppedHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.RoomInventory.ActorAttemptedItemGrabHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.RoomInventory.ActorGrabbedItemHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.RoomInventory.WasObservedHandler', None)
 		
 		
 	def describe(self):

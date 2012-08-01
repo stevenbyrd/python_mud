@@ -22,23 +22,29 @@
 	"maxHP":200,
 	"currentMana":1,
 	"maxMana":200,
-	"eventAdjusters":{
-						"actor":[
-									"testAdjustment"
-								]
-					 },
 	"eventHandlers":{
-						"actor":[
-									"was_observed",
-									"gained_health"
+						"Actor":[
+									{
+										"name":"ActorWasObservedEventHandler"
+									},
+									{
+										"name":"ActorGainedHealthEventHandler"
+									}
 								],
 								
-						"player":[
-									"actor_moved_from_room",
-									"actor_emoted"
+						"Player":[
+									{
+										"name":"ActorAddedToRoomEventHandler"
+									},
+									{
+										"name":"ActorEmotedEventHandler"
+									},
+									{
+										"name":"ActorMovedFromRoomEventHandler"
+									}
 								 ]
 					},
-	"roomID":"0",
+	"roomID":"3",
 	"inventory":{
 					"equipment":{
 									"Head":{

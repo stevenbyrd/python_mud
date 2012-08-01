@@ -40,7 +40,6 @@ class ActorEngine(Engine):
 		
 		import CommandEngine
 		import threading
-		import EventHandlers.ActorEngine
 		import Driver.ConnectionListUpdater
 		
 		attributes = {
@@ -55,9 +54,9 @@ class ActorEngine(Engine):
 			
 		ActorEngine.instance = self
 	
-		self.addEventHandler(EventHandlers.ActorEngine.PlayerLoginEventHandler())
-		self.addEventHandler(EventHandlers.ActorEngine.PlayerLogoutEventHandler())
-		self.addEventHandler(EventHandlers.ActorEngine.BroadcastEventHandler())
+		self.addEventHandlerByNameWithAdjusters('Engine.EventHandlers.ActorEngine.PlayerLoginEventHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Engine.EventHandlers.ActorEngine.PlayerLogoutEventHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Engine.EventHandlers.ActorEngine.BroadcastEventHandler', None)
 		
 		
 		for subscriber in ActorEngine.subscribers:

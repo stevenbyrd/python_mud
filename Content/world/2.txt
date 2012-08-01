@@ -12,7 +12,9 @@
 				}
 			],
 	"eventAdjusters":[
-						"no_speaking"
+						{
+							"name":"NoSpeakingEventAdjuster"
+						}
 					 ],
 	"eventHandlers":[
 					],

@@ -4,23 +4,21 @@ from Humanoid import Humanoid
 
 
 class Player(Humanoid):
-	def __init__(self, actorJSON):
-		import EventHandlers.Player
-		
+	def __init__(self, actorJSON):		
 		Humanoid.__init__(self, actorJSON)
 
 		self.attributes['connection'] = None
 		
 		if actorJSON != None:
-			self.addEventHandler(EventHandlers.Player.ReceivedNotificationHandler())
-			self.addEventHandler(EventHandlers.Player.ReceivedFeedbackHandler())
-			self.addEventHandler(EventHandlers.Player.EntityDescribedSelfHandler())
-			self.addEventHandler(EventHandlers.Player.ActorAttemptedDropHandler())
-			self.addEventHandler(EventHandlers.Player.ItemDroppedHandler())
-			self.addEventHandler(EventHandlers.Player.ActorInitiatedItemGrabHandler())
-			self.addEventHandler(EventHandlers.Player.ActorGrabbedItemHandler())
-			self.addEventHandler(EventHandlers.Player.ActorViewedEquipmentHandler())
-			self.addEventHandler(EventHandlers.Player.ActorAddedToRoomEventHandler())
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ReceivedNotificationHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ReceivedFeedbackHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.EntityDescribedSelfHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ActorAttemptedDropHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ItemDroppedHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ActorInitiatedItemGrabHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ActorGrabbedItemHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ActorViewedEquipmentHandler', None)
+			
 		
 	
 	def send(self, message):

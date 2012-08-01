@@ -8,7 +8,6 @@ class Actor(EventReceiver, EventEmitter):
 		import Engine.RoomEngine
 		import Engine.ActorEngine
 		from Inventory.ActorInventory import ActorInventory
-		import EventHandlers.Actor
 
 		EventReceiver.__init__(self)
 		EventEmitter.__init__(self)
@@ -35,8 +34,8 @@ class Actor(EventReceiver, EventEmitter):
 			'maxHP'			: 0,
 			'currentMana'	: 0,
 			'maxMana'		: 0,
-			'eventAdjusters': [],
-			'eventHandlers'	: [],
+			'eventAdjusters': {},
+			'eventHandlers'	: {},
 			'inventory'		: None
 		}
 		
@@ -45,6 +44,12 @@ class Actor(EventReceiver, EventEmitter):
 				if key == 'inventory':
 					inventory		= ActorInventory(actorJSON[key], self)
 					attributes[key]	= inventory
+				elif key == 'eventHandlers':					
+					for category in actorJSON[key].keys():
+						for element in actorJSON[key][category]:		
+							adjusters = (lambda dictionary: dictionary.has_key('adjusters') and dictionary['adjusters'] or None)(element)
+							
+							self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.{}.{}'.format(category, element['name']), adjusters)
 				else:
 					attributes[key] = actorJSON[key]
 		
@@ -59,34 +64,20 @@ class Actor(EventReceiver, EventEmitter):
 			startingRoom = Engine.RoomEngine.getRoom(self.attributes['roomID'])
 		
 			startingRoom.addEventSubscriber(self)
-			
-			for key in self.attributes['eventAdjusters']:
-				adjusters = self.attributes['eventAdjusters'][key]
-			
-				for adjusterName in adjusters:
-					self.addCustomEventAdjuster(key, adjusterName)
 				
-		
-			for key in self.attributes['eventHandlers']:
-				handlers = self.attributes['eventHandlers'][key]
-			
-				for handlerName in handlers:
-					self.addCustomEventHandler(key, handlerName)
-				
-			self.addEventHandler(EventHandlers.Actor.ActorAttemptedDropHandler())
-			self.addEventHandler(EventHandlers.Actor.ItemDroppedHandler())
-			self.addEventHandler(EventHandlers.Actor.ActorInitiatedItemGrabHandler())
-			self.addEventHandler(EventHandlers.Actor.ActorGrabbedItemHandler())
-			self.addEventHandler(EventHandlers.Actor.ActorAttemptedItemEquipHandler())
-			self.addEventHandler(EventHandlers.Actor.ActorAttemptedItemRemovalHandler())
-			self.addEventHandler(EventHandlers.Actor.ActorMovedFromRoomEventHandler())
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Actor.ActorAttemptedDropHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Actor.ItemDroppedHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Actor.ActorInitiatedItemGrabHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Actor.ActorGrabbedItemHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Actor.ActorAttemptedItemEquipHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Actor.ActorAttemptedItemRemovalHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Actor.ActorMovedFromRoomEventHandler', None)
 	
 	
 	def getDescription(self):
 		description = [ANSI.yellow('You see {} the {}.'.format(self.attributes['name'], self.attributes['race']))]
 		
 		if len(self.attributes['description']) > 0:
-			
 			for line in self.attributes['description']:
 				description.append(ANSI.cyan(line))
 			

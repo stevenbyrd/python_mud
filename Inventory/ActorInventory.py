@@ -3,9 +3,7 @@ from lib import ANSI
 
 
 class ActorInventory(Inventory):
-	def __init__(self, inventoryJson, owner):
-		import EventHandlers.ActorInventory
-		
+	def __init__(self, inventoryJson, owner):		
 		Inventory.__init__(self, inventoryJson, owner)
 
 		self.attributes['equipment'] = {
@@ -34,16 +32,16 @@ class ActorInventory(Inventory):
 					self.attributes['equipment'][key] = self.createItem(equipment[key])
 
 		
-		self.addEventHandler(EventHandlers.ActorInventory.ActorAttemptedDropHandler())
-		self.addEventHandler(EventHandlers.ActorInventory.ItemDroppedHandler())
-		self.addEventHandler(EventHandlers.ActorInventory.ActorInitiatedItemGrabHandler())
-		self.addEventHandler(EventHandlers.ActorInventory.ActorGrabbedItemHandler())
-		self.addEventHandler(EventHandlers.ActorInventory.ActorViewedEquipmentHandler())
-		self.addEventHandler(EventHandlers.ActorInventory.ActorAttemptedItemEquipHandler())
-		self.addEventHandler(EventHandlers.ActorInventory.ActorEquippedItemHandler())
-		self.addEventHandler(EventHandlers.ActorInventory.ActorAttemptedItemRemovalHandler())
-		self.addEventHandler(EventHandlers.ActorInventory.ActorRemovedItemHandler())
-		self.addEventHandler(EventHandlers.ActorInventory.ActorObservedHandler())
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.ActorInventory.ActorAttemptedDropHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.ActorInventory.ItemDroppedHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.ActorInventory.ActorInitiatedItemGrabHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.ActorInventory.ActorGrabbedItemHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.ActorInventory.ActorViewedEquipmentHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.ActorInventory.ActorAttemptedItemEquipHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.ActorInventory.ActorEquippedItemHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.ActorInventory.ActorAttemptedItemRemovalHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.ActorInventory.ActorRemovedItemHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Inventory.EventHandlers.ActorInventory.ActorObservedHandler', None)
 		
 		
 	def listItems(self):

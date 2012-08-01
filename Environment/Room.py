@@ -7,7 +7,6 @@ class Room(EventReceiver, EventEmitter):
 		import threading
 		from Exit import Exit
 		import Engine.RoomEngine
-		import EventHandlers.Room
 		from Inventory.RoomInventory import RoomInventory
 		from SpawnTemplate import SpawnTemplate
 		
@@ -39,11 +38,10 @@ class Room(EventReceiver, EventEmitter):
 					
 					self.attributes[key].append(exit)
 			elif key == 'eventHandlers':
-				for handlerName in roomJson[key]:
-					self.addCustomEventHandler('room', handlerName)
-			elif key == 'eventAdjusters':
-				for adjusterName in roomJson[key]:
-					self.addCustomEventAdjuster('room', adjusterName)
+				for element in roomJson[key]:
+					adjusters = (lambda dictionary: dictionary.has_key('adjusters') and dictionary['adjusters'] or None)(element)
+					
+					self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.{}'.format(element['name']), adjusters)
 			elif key == 'inventory':
 				inventory = RoomInventory(roomJson[key], self)
 				
@@ -56,17 +54,17 @@ class Room(EventReceiver, EventEmitter):
 			else:
 				self.attributes[key] = roomJson[key]
 		
-		self.addEventHandler(EventHandlers.Room.ActorAttemptedMovementEventHandler())
-		self.addEventHandler(EventHandlers.Room.ActorMovedFromRoomEventHandler())
-		self.addEventHandler(EventHandlers.Room.ActorAddedToRoomEventHandler())
-		self.addEventHandler(EventHandlers.Room.ActorObservedHandler())
-		self.addEventHandler(EventHandlers.Room.WasObservedHandler())
-		self.addEventHandler(EventHandlers.Room.ActorEmotedHandler())
-		self.addEventHandler(EventHandlers.Room.PlayerLogoutHandler())
-		self.addEventHandler(EventHandlers.Room.SpellCastAttempted())
-		self.addEventHandler(EventHandlers.Room.ActorAttemptedItemGrabHandler())
-		self.addEventHandler(EventHandlers.Room.ActorGrabbedItemHandler())
-		self.addEventHandler(EventHandlers.Room.ItemDroppedHandler())
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ActorAttemptedMovementEventHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ActorMovedFromRoomEventHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ActorAddedToRoomEventHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ActorObservedHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.WasObservedHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ActorEmotedHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.PlayerLogoutHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.SpellCastAttempted', None)
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ActorAttemptedItemGrabHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ActorGrabbedItemHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ItemDroppedHandler', None)
 		
 		Engine.RoomEngine.addEventSubscriber(self)
 		

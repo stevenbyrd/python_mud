@@ -23,7 +23,6 @@ class ConnectionEngine(Engine):
 		from Driver import LoginListener
 		import threading
 		import CommandEngine
-		import EventHandlers.ConnectionEngine
 		
 		Engine.__init__(self)
 		
@@ -40,8 +39,8 @@ class ConnectionEngine(Engine):
 			self.attributes[key] = attributes[key]
 
 
-		self.addEventHandler(EventHandlers.ConnectionEngine.PlayerLoginHandler())
-		self.addEventHandler(EventHandlers.ConnectionEngine.PlayerLogoutHandler())
+		self.addEventHandlerByNameWithAdjusters('Engine.EventHandlers.ConnectionEngine.PlayerLoginHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Engine.EventHandlers.ConnectionEngine.PlayerLogoutHandler', None)
 		
 		ConnectionEngine.instance = self
 		

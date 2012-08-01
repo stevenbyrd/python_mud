@@ -1,14 +1,37 @@
-import json
-import copy
+import importlib
 
 class EventHandler:
-	def __init__(self, attributes):
-		self.attributes	= attributes
-				
+	def __init__(self, adjusters):
+		self.attributes = {
+			'signature'		: '',
+			'data'			: {},
+			'adjusters'		: []
+		}
 
-	def handleEvent(self, event):
-		import lib.ScriptFunctions
+		if adjusters != None:
+			for adjusterJSON in adjusters:
+				adjusterName	= adjusterJSON['name']
+				args			= (lambda dictionary : dictionary.has_key('args') and dictionary['args'] or None)(adjusterJSON)
+				path			= adjusterName.split('.')
+				modulePath		= path[0]
+	
+				for step in path[1:-1]:
+					modulePath = '{}.{}'.format(modulePath, step)
+	
+				adjusterModule				= importlib.import_module(modulePath)
+				adjusterClass				= getattr(adjusterModule, path[-1])
+				adjuster					= adjusterClass()
+				adjuster.attributes['args'] = args
 		
-		function = copy.deepcopy(self.attributes['function'])
+				self.attributes['adjusters'].append(adjuster)
+
+
+	def receiveEvent(self, event):
+		for adjuster in self.attributes['adjusters']:
+			adjuster.adjustEvent(event)
+			
+			if event.attributes['signature'] == None:
+				break
 		
-		lib.ScriptFunctions.evaluate(event, function)
+		if event.attributes['signature'] != None:
+			self.handleEvent(event)

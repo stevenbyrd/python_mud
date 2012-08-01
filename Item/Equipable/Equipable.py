@@ -10,4 +10,4 @@ class Equipable(Item):
 		
 		Handlers = importlib.import_module('Item.EventHandlers.Equipable')
 
-		self.addEventHandler(Handlers.ActorAttemptedItemRemovalHandler())
+		self.addEventHandlerByNameWithAdjusters('Item.EventHandlers.Equipable.ActorAttemptedItemRemovalHandler', None)

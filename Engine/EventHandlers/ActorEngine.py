@@ -1,8 +1,10 @@
 from Event.Event import Event
+from Event.EventHandler import EventHandler
 
-class BroadcastEventHandler:
-	def __init__(self):
-		self.attributes = {'signature':'broadcast_to_all_players'}
+class BroadcastEventHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='broadcast_to_all_players'
 
 
 	def handleEvent(self, event):
@@ -24,9 +26,10 @@ class BroadcastEventHandler:
 
 
 
-class PlayerLoginEventHandler:
-	def __init__(self):
-		self.attributes = {'signature' : 'player_login'}
+class PlayerLoginEventHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'player_login'
 
 
 	def handleEvent(self, event):
@@ -40,9 +43,10 @@ class PlayerLoginEventHandler:
 
 
 
-class PlayerLogoutEventHandler:
-	def __init__(self):
-		self.attributes = {'signature':'player_logout'}
+class PlayerLogoutEventHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='player_logout'
 
 
 	def handleEvent(self, event):

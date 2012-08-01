@@ -1,9 +1,10 @@
 from Event.Event import Event
+from Event.EventHandler import EventHandler
 
-
-class CommandExecutionEventHandler:
-	def __init__(self):
-		self.attributes = {'signature' : 'execute_command'}
+class CommandExecutionEventHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] = 'execute_command'
 
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']
