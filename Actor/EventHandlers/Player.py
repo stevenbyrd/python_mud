@@ -9,15 +9,11 @@ class ReceivedNotificationHandler(EventHandler):
 		self.attributes['signature'] ='received_notification'
 	
 	def handleEvent(self, event):
-		actor = event.attributes['data']['actor']
 		receiver	= event.attributes['receiver']
-		
-		#actor == None indicates a broadcast
-		if actor == receiver or actor == None:
-			message = '\n\r### {}\n\r'.format(event.attributes['data']['message'])
-			colored	= lib.ANSI.yellow(message)
+		message		= '\n\r### {}\n\r'.format(event.attributes['data']['message'])
+		colored		= lib.ANSI.yellow(message)
 			
-			receiver.sendFinal(colored)
+		receiver.sendFinal(colored)
 			
 			
 			
@@ -29,12 +25,10 @@ class ReceivedFeedbackHandler(EventHandler):
 		self.attributes['signature'] = 'received_feedback'
 
 	def handleEvent(self, event):
-		receiver = event.attributes['receiver']
-		
-		if event.attributes['data']['actor'] == receiver:
-			feedback = event.attributes['data']['feedback']
+		receiver	= event.attributes['receiver']
+		feedback	= event.attributes['data']['feedback']
 			
-			receiver.sendFinal('{}'.format(feedback))
+		receiver.sendFinal('{}'.format(feedback))
 
 
 

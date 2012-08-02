@@ -7,8 +7,14 @@ class EventEmitter(BaseClass):
 
 	
 	def emitEvent(self, event):
-		for subscriber in self.attributes['subscribers']:
-			subscriber.receiveEvent(event, self)
+		if event.attributes['event_target'] != None:
+			subscriber = event.attributes['event_target']
+			
+			if subscriber in set(self.attributes['subscribers']):
+				subscriber.receiveEvent(event, self)
+		else:
+			for subscriber in self.attributes['subscribers']:
+				subscriber.receiveEvent(event, self)
 
 	
 	def addEventSubscriber(self, subscriber):

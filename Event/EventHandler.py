@@ -20,8 +20,7 @@ class EventHandler:
 	
 				adjusterModule				= importlib.import_module(modulePath)
 				adjusterClass				= getattr(adjusterModule, path[-1])
-				adjuster					= adjusterClass()
-				adjuster.attributes['args'] = args
+				adjuster					= adjusterClass(args)
 		
 				self.attributes['adjusters'].append(adjuster)
 

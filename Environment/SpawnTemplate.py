@@ -23,10 +23,10 @@ class SpawnTemplate(EventReceiver, EventEmitter):
 			
 		for key in templateJson.keys():
 			if key == 'eventHandlers':
-				for element in templateJson[key]:		
+				for element in templateJson[key]:
 					adjusters = (lambda dictionary: dictionary.has_key('adjusters') and dictionary['adjusters'] or None)(element)
 					
-					self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.SpawnTemplate.{}'.format(element['name']), adjusters)
+					self.addEventHandlerByNameWithAdjusters(element['name'], adjusters)
 			else:
 				self.attributes[key] = templateJson[key]
 		

@@ -10,6 +10,9 @@
 				}
 			],
 	"eventHandlers":[
+						{
+							"name":"Environment.EventHandlers.Room.WasObservedHandler"
+						}
 					],
 	"inventory":{
 					"items":[]
@@ -21,10 +24,10 @@
 							"spawnRate":1,
 							"eventHandlers":[
 												{
-													"name":"GameTickedHandler",
+													"name":"Environment.EventHandlers.SpawnTemplate.GameTickedHandler",
 													"adjusters":[
 																	{
-																		"name":"lib.CommonHandlers.FilterGameTicksByModulus",
+																		"name":"lib.CommonEventAdjusters.FilterGameTicksByModulus",
 																		"args":{
 																					"modulus":3
 																			   }
@@ -32,7 +35,6 @@
 												 				]
 												}
 											]
-											
 						}
 					  ]
 }

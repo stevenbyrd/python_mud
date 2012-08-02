@@ -11,12 +11,10 @@
 					"isHidden":true
 				}
 			],
-	"eventAdjusters":[
-						{
-							"name":"NoSpeakingEventAdjuster"
-						}
-					 ],
 	"eventHandlers":[
+						{
+							"name":"Environment.EventHandlers.Room.WasObservedHandler"
+						}
 					],
 	"inventory":{
 					"items":[]

@@ -1,0 +1,26 @@
+{
+	"roomID":"4",
+	"name":"Test Room 4",
+	"description":["This room is too dark to see in."],
+	"exits":[
+				{
+					"name":"east",
+					"destination":"0",
+					"isHidden":false
+				}
+			],
+	"eventHandlers":[
+						{
+							"name":"Environment.EventHandlers.Room.WasObservedHandler",
+							"adjusters":[
+								{
+									"name":"Environment.EventAdjusters.Room.ObservedWhileDarkAdjuster"
+								}
+							]
+						}
+					],
+	"inventory":{
+					"items":[]
+				},
+	"spawnTemplates":[]
+}

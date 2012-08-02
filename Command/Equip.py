@@ -8,11 +8,11 @@ class Equip(Command):
 		
 
 	def execute(self, source, args):
-		equipEvent									= Event()
-		equipEvent.attributes['data']['actor']		= source
+		equipEvent								= Event()
+		equipEvent.attributes['data']['actor']	= source
 		
 		if args == None or len(args) == 0:
-			equipEvent.attributes['signature']			= 'actor_viewed_equipment'
+			equipEvent.attributes['signature'] = 'actor_viewed_equipment'
 		else:
 			if len(args) == 1:
 				args.append('')

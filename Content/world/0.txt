@@ -17,9 +17,17 @@
 					"name":"south",
 					"destination":"3",
 					"isHidden":false
+				},
+				{
+					"name":"west",
+					"destination":"4",
+					"isHidden":false
 				}
 			],
 	"eventHandlers":[
+						{
+							"name":"Environment.EventHandlers.Room.WasObservedHandler"
+						}
 					],
 	"inventory":{
 					"items":[

@@ -11,5 +11,5 @@ class ActorAttemptedItemRemovalHandler(EventHandler):
 		
 		if event.attributes['data']['item'] == receiver:
 			event.attributes['signature'] = 'actor_removed_item'
-			
+		
 			event.attributes['data']['actor'].emitEvent(event)

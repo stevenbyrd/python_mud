@@ -144,5 +144,48 @@ class ActorWasObservedEventHandler(EventHandler):
 			describeEvent.attributes['data']['observer']	= event.attributes['data']['observer']
 			describeEvent.attributes['data']['description']	= receiver.getDescription()
 			
-			ActorEngine.emitEvent(describeEvent)
+			Engine.ActorEngine.emitEvent(describeEvent)
+			
+			
+			
+			
+class HealOnTickHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='game_tick'
+		
+	def handleEvent(self, event):
+		actor	= event.attributes['receiver']
+		con		= actor.attributes['stats']['constitution']
+		focus	= actor.attributes['stats']['focus']
+
+		healEvent								= Event()
+		healEvent.attributes['signature']		= 'gained_health_from_tick'
+		healEvent.attributes['data']['hp']		= int(con / 3)
+		healEvent.attributes['data']['mana']	= int(focus / 3)
+		healEvent.attributes['event_target']	= actor
+		
+		Engine.ActorEngine.emitEvent(healEvent)
+		
+		
+		
+		
+class ActorGainedHealthFromTickHandler(EventHandler):
+	def __init__(self, adjusters):
+		EventHandler.__init__(self, adjusters)
+		self.attributes['signature'] ='gained_health_from_tick'
+
+	def handleEvent(self, event):		
+		receiver	= event.attributes['receiver']
+
+		receiver.attributes['currentHP'] += event.attributes['data']['hp']
+		receiver.attributes['currentMana'] += event.attributes['data']['mana']
+		
+		if receiver.attributes['currentHP'] > receiver.attributes['maxHP']:
+			receiver.attributes['currentHP'] = receiver.attributes['maxHP']
+			
+		if receiver.attributes['currentMana'] > receiver.attributes['maxMana']:
+			receiver.attributes['currentMana'] = receiver.attributes['maxMana']
+		
+
 		

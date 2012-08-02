@@ -25,9 +25,9 @@ class AffectEmote(AffectComponent):
 			eventData['target']	= target.attributes['name']
 
 		eventData['emoter']	= source
-		eventData['room']	= room
 
-		emoteEvent.attributes['signature']	= 'actor_emoted'
-		emoteEvent.attributes['data']		= eventData
+		emoteEvent.attributes['signature']		= 'actor_emoted'
+		emoteEvent.attributes['data']			= eventData
+		emoteEvent.attributes['data']['room']	= room
 	
 		Engine.RoomEngine.emitEvent(emoteEvent)

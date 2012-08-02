@@ -1,6 +1,11 @@
 from Event.EventReceiver import EventReceiver
 from Event.EventEmitter import EventEmitter
 from lib import ANSI
+import os
+import json
+
+
+currentDir = os.getcwd()
 
 
 class Actor(EventReceiver, EventEmitter):
@@ -45,11 +50,10 @@ class Actor(EventReceiver, EventEmitter):
 					inventory		= ActorInventory(actorJSON[key], self)
 					attributes[key]	= inventory
 				elif key == 'eventHandlers':					
-					for category in actorJSON[key].keys():
-						for element in actorJSON[key][category]:		
-							adjusters = (lambda dictionary: dictionary.has_key('adjusters') and dictionary['adjusters'] or None)(element)
-							
-							self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.{}.{}'.format(category, element['name']), adjusters)
+					for element in actorJSON[key]:		
+						adjusters = (lambda dictionary: dictionary.has_key('adjusters') and dictionary['adjusters'] or None)(element)
+						
+						self.addEventHandlerByNameWithAdjusters(element['name'], adjusters)
 				else:
 					attributes[key] = actorJSON[key]
 		
@@ -72,6 +76,22 @@ class Actor(EventReceiver, EventEmitter):
 			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Actor.ActorAttemptedItemEquipHandler', None)
 			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Actor.ActorAttemptedItemRemovalHandler', None)
 			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Actor.ActorMovedFromRoomEventHandler', None)
+			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Actor.ActorGainedHealthFromTickHandler', None)
+			
+		#add event handlers specific to this actor's race
+		
+		filePath	= '{}/Content/races/{}.txt'.format(currentDir, self.attributes['race']) 
+		raceFile	= open(filePath, 'r')
+		jsonString	= raceFile.read()
+		jsonObj		= json.loads(jsonString)
+		handlers	= jsonObj['eventHandlers']
+
+		raceFile.close()
+		
+		for handler in handlers:
+			adjusters = (lambda dictionary: dictionary.has_key('adjusters') and dictionary['adjusters'] or None)(handler)
+			
+			self.addEventHandlerByNameWithAdjusters(handler['name'], adjusters)
 	
 	
 	def getDescription(self):

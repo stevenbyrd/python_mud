@@ -50,9 +50,12 @@ class ItemDroppedHandler(EventHandler):
 		self.attributes['signature'] = 'item_dropped'
 
 	def handleEvent(self, event):		
-		receiver = event.attributes['receiver']
+		receiver	= event.attributes['receiver']
+		item		= event.attributes['data']['item']
 
-		receiver.attributes['items'].remove(event.attributes['data']['item'])
+		receiver.attributes['items'].remove(item)
+		
+		event.attributes['data']['item'] = item
 
 		receiver.emitEvent(event)
 		
@@ -68,7 +71,8 @@ class ActorInitiatedItemGrabHandler(EventHandler):
 		# as of now, this is sort of a superfluous step in the event chain -- we'll come back here when
 		# we implement containers (bags) so that an actor can get items out of containers within his own
 		# inventory. For now, just publish an event to the RoomEngine
-		event.attributes['signature'] = 'actor_attempted_item_grab'
+		event.attributes['signature']		= 'actor_attempted_item_grab'
+		event.attributes['data']['room']	= event.attributes['data']['room']
 		
 		Engine.RoomEngine.emitEvent(event)
 		
@@ -94,8 +98,8 @@ class ActorViewedEquipmentHandler(EventHandler):
 		self.attributes['signature'] = 'actor_viewed_equipment'
 
 	def handleEvent(self, event):
-		actor		= event.attributes['data']['actor']
 		receiver	= event.attributes['receiver']
+		actor		= receiver.attributes['owner']
 		equipString	= ' nothing'		
 		equipment	= receiver.listEquipment()
 			
@@ -248,10 +252,10 @@ class ActorAttemptedItemRemovalHandler(EventHandler):
 			
 			receiver.emitEvent(event)
 		else:
-			feedbackEvent								= Event()
-			feedbackEvent.attributes['signature']		= 'received_feedback'
-			feedbackEvent.attributes['data']['actor']	= event.attributes['data']['actor']
-			feedbackEvent.attributes['data']['feedback'] = 'Remove what?'
+			feedbackEvent									= Event()
+			feedbackEvent.attributes['signature']			= 'received_feedback'
+			feedbackEvent.attributes['data']['actor']		= event.attributes['data']['actor']
+			feedbackEvent.attributes['data']['feedback']	= 'Remove what?'
 
 			Engine.ActorEngine.emitEvent(feedbackEvent)
 			
@@ -287,14 +291,14 @@ class ActorRemovedItemHandler(EventHandler):
 		roomID		= emoter.attributes['roomID']
 		room		= Engine.RoomEngine.getRoom(roomID)
 		
-		emoteEvent.attributes['signature']	= 'actor_emoted'
-		emoteEvent.attributes['data']		= {
-													'target':None,
-													'emoter': actor,
-													'room': room,
-													"emoterText":"You removed the {}.".format(item.attributes['name']),
-													"audienceText":"#emoter# removed {} {}.".format(item.attributes['adjective'], item.attributes['name'])
-		}
+		emoteEvent.attributes['signature']		= 'actor_emoted'
+		emoteEvent.attributes['data']			= {
+														'target'		: None,
+														'emoter'		: actor,
+														'room'			: room,
+														"emoterText"	: "You removed the {}.".format(item.attributes['name']),
+														"audienceText"	: "#emoter# removed {} {}.".format(item.attributes['adjective'], item.attributes['name'])
+			}
 
 		Engine.RoomEngine.emitEvent(emoteEvent)
 		
@@ -339,8 +343,10 @@ class ActorObservedHandler(EventHandler):
 				objNumber = int(args[0]) - 1
 							
 		if objNumber >= len(targetList):
-			objNumber = objNumber - len(targetList)
-			args[0]		= '{}'.format(objNumber)
+			objNumber							= objNumber - len(targetList)
+			args[0]								= '{}'.format(objNumber)
+			room								= Engine.RoomEngine.getRoom(observer.attributes['roomID'])
+			event.attributes['event_target']	= room
 			
 			Engine.RoomEngine.emitEvent(event)
 		else:

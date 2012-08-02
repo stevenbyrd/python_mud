@@ -23,28 +23,34 @@
 	"maxHP":200,
 	"currentMana":1,
 	"maxMana":200,
-	"eventHandlers":{
-						"Actor":[
-									{
-										"name":"ActorWasObservedEventHandler"
-									},
-									{
-										"name":"ActorGainedHealthEventHandler"
-									}
-								],
-								
-						"Player":[
-									{
-										"name":"ActorAddedToRoomEventHandler"
-									},
-									{
-										"name":"ActorEmotedEventHandler"
-									},
-									{
-										"name":"ActorMovedFromRoomEventHandler"
-									}
-								 ]
-					},
+	"eventHandlers":[
+						{
+							"name":"Actor.EventHandlers.Actor.ActorWasObservedEventHandler"
+						},
+						{
+							"name":"Actor.EventHandlers.Actor.ActorGainedHealthEventHandler"
+						},
+						{
+							"name":"Actor.EventHandlers.Player.ActorAddedToRoomEventHandler"
+						},
+						{
+							"name":"Actor.EventHandlers.Player.ActorEmotedEventHandler"
+						},
+						{
+							"name":"Actor.EventHandlers.Player.ActorMovedFromRoomEventHandler"
+						},		
+						{
+							"name":"Actor.EventHandlers.SupportSkills.RegenerationHandler",
+							"adjusters":[
+											{
+												"name":"Actor.EventAdjusters.SupportSkills.RegenerationAdjuster",
+												"args":{
+															"skill_level":0.75
+													   }
+											}
+										]
+						}
+					],
 	"inventory":{
 					"equipment":{},
 					"items":[]

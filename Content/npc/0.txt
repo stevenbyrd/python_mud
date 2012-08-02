@@ -1,7 +1,7 @@
 {
 	"name":"dummy",
 	"pluralName":"dummies",
-	"race":"Sol",
+	"race":"Human",
 	"actorID":"-1",
 	"description":[
 					"description line 0"
@@ -20,11 +20,9 @@
 	"maxHP":20,
 	"currentMana":1,
 	"maxMana":20,
-	"eventHandlers":{
-						"Actor":[
-									{
-										"name":"ActorWasObservedEventHandler"
-									}
-								]
-					}
+	"eventHandlers":[
+						{
+							"name":"Actor.EventHandlers.Actor.ActorWasObservedEventHandler"
+						}
+					]
 }

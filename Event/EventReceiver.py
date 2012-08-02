@@ -49,9 +49,10 @@ class EventReceiver:
 			newEvent = Event()
 		
 			newEvent.attributes = {
-				'signature'	: event.attributes['signature'],
-				'data'		: event.attributes['data'].copy(),
-				'receiver'	: self
+				'signature'		: event.attributes['signature'],
+				'data'			: event.attributes['data'].copy(),
+				'receiver'		: self,
+				'event_target'	: None
 			}
 			
 			handler.receiveEvent(newEvent)
