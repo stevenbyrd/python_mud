@@ -9,7 +9,5 @@ class RegenerationHandler(EventHandler):
 	def handleEvent(self, event):	
 		receiver = event.attributes['receiver']
 
-		receiver.attributes['currentHP'] += event.attributes['data']['hp']
-			
-		if receiver.attributes['currentHP'] > receiver.attributes['maxHP']:
-			receiver.attributes['currentHP'] = receiver.attributes['maxHP']
+		receiver.attributes['currentHP'] = min(receiver.attributes['currentHP'] + event.attributes['data']['hp'],
+											   receiver.attributes['maxHP'])

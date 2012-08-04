@@ -8,7 +8,7 @@ class SpawnTemplate(EventReceiver, EventEmitter):
 		import EventHandlers.SpawnTemplate
 		
 		EventReceiver.__init__(self)
-		EventEmitter.__init__(self)
+		EventEmitter.__init__(self, None)
 		
 		attributes = {
 			'npcID'			: '',

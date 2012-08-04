@@ -1,0 +1,23 @@
+{
+	"eventHandlers":[
+		{
+			"name":"Actor.EventHandlers.Actor.HealOnTickHandler",
+			"adjusters":[
+				{
+					"name":"lib.CommonEventAdjusters.FilterGameTicksByModulus",
+					"args":{
+						"modulus":1
+					}
+				}
+			]
+		},
+		{
+			"name":"Actor.EventHandlers.Player.EntityDescribedSelfHandler",
+			"adjusters":[
+				{
+					"name":"Actor.EventAdjusters.Player.ActorHasLowLightVisionAdjuster"
+				}
+			]
+		}
+	]
+}

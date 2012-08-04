@@ -11,7 +11,6 @@ class Room(EventReceiver, EventEmitter):
 		from SpawnTemplate import SpawnTemplate
 		
 		EventReceiver.__init__(self)
-		EventEmitter.__init__(self)
 		
 		attributes = {
 			'playerSemaphore'	: threading.BoundedSemaphore(1),
@@ -25,6 +24,10 @@ class Room(EventReceiver, EventEmitter):
 			'inventory'			: None,
 			'spawnTemplates'	: []
 		}
+		
+		out_adjusters	= []
+		inventory		= None
+		spawnTemplates	= None
 		
 		for key in attributes.keys():
 			self.attributes[key] = attributes[key]
@@ -43,14 +46,11 @@ class Room(EventReceiver, EventEmitter):
 					
 					self.addEventHandlerByNameWithAdjusters(element['name'], adjusters)
 			elif key == 'inventory':
-				inventory = RoomInventory(roomJson[key], self)
-				
-				self.attributes[key] = inventory
+				inventory = roomJson[key]
 			elif key == 'spawnTemplates':
-				for template in roomJson[key]:
-					spawnTemplate = SpawnTemplate(template, self)
-					
-					self.attributes['spawnTemplates'].append(spawnTemplate)
+				spawnTemplates = roomJson[key]
+			elif key == 'out_adjusters':
+				out_adjusters = roomJson[key]
 			else:
 				self.attributes[key] = roomJson[key]
 		
@@ -58,7 +58,7 @@ class Room(EventReceiver, EventEmitter):
 		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ActorMovedFromRoomEventHandler', None)
 		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ActorAddedToRoomEventHandler', None)
 		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ActorObservedHandler', None)
-		#self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.WasObservedHandler', None)
+		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.WasObservedHandler', None)
 		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ActorEmotedHandler', None)
 		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.PlayerLogoutHandler', None)
 		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.SpellCastAttempted', None)
@@ -67,6 +67,19 @@ class Room(EventReceiver, EventEmitter):
 		self.addEventHandlerByNameWithAdjusters('Environment.EventHandlers.Room.ItemDroppedHandler', None)
 		
 		Engine.RoomEngine.addEventSubscriber(self)
+		
+		EventEmitter.__init__(self, out_adjusters)
+		
+		if inventory != None:
+			self.attributes['inventory'] = RoomInventory(inventory, self)
+		else:
+			self.attributes['inventory'] = RoomInventory(None, self)
+			
+		if spawnTemplates != None:
+			for template in spawnTemplates:
+				spawnTemplate = SpawnTemplate(template, self)
+					
+				self.attributes['spawnTemplates'].append(spawnTemplate)
 		
 		
 		

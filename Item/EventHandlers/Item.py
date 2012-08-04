@@ -1,4 +1,5 @@
 import Engine.RoomEngine
+import Engine.ActorEngine
 from Event.Event import Event
 from Event.EventHandler import EventHandler
 
@@ -130,7 +131,7 @@ class WasObservedHandler(EventHandler):
 			describeEvent.attributes['data']['observer']	= observer
 			room											= Engine.RoomEngine.getRoom(observer.attributes['roomID'])
 			
-			room.emitEvent(describeEvent)
+			Engine.ActorEngine.emitEvent(describeEvent)
 				
 				
 				

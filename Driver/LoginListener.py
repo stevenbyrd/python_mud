@@ -22,7 +22,7 @@ class LoginListener(threading.Thread, EventEmitter):
 	
 	def __init__(self):
 		threading.Thread.__init__(self)
-		EventEmitter.__init__(self)
+		EventEmitter.__init__(self, None)
 		
 		LoginListener.instance = self
 	

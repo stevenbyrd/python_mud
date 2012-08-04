@@ -12,7 +12,6 @@ class Player(Humanoid):
 		if actorJSON != None:
 			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ReceivedNotificationHandler', None)
 			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ReceivedFeedbackHandler', None)
-			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.EntityDescribedSelfHandler', None)
 			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ActorAttemptedDropHandler', None)
 			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ItemDroppedHandler', None)
 			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ActorInitiatedItemGrabHandler', None)

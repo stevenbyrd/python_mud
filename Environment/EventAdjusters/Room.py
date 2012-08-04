@@ -15,7 +15,7 @@ class NoSpeakingEventAdjuster(EventAdjuster):
 			feedbackEvent									= Event()
 			feedbackEvent.attributes['signature']			= 'received_feedback'
 			feedbackEvent.attributes['data']['feedback']	= 'No sound escapes your lips.'
-			feedbackEvent.attributes['event_target']		= event.attributes['data']['emoter']
+			feedbackEvent.attributes['data']['actor']		= event.attributes['data']['emoter']
 			
 			receiver.emitEvent(feedbackEvent)
 			
@@ -25,7 +25,7 @@ class NoSpeakingEventAdjuster(EventAdjuster):
 class ObservedWhileDarkAdjuster(EventAdjuster):
 	def __init__(self, args):
 		EventAdjuster.__init__(self, args)
+		self.attributes['signature'] = 'entity_described_self'
 	
 	def adjustEvent(self, event):
-		receiver = event.attributes['receiver']
-		
+		event.attributes['flags'].append('room_is_dark')

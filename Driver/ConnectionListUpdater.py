@@ -21,7 +21,7 @@ class ConnectionListUpdater(threading.Thread, EventEmitter):
 	
 	def __init__(self):
 		threading.Thread.__init__(self)
-		EventEmitter.__init__(self)
+		EventEmitter.__init__(self, None)
 	
 		ConnectionListUpdater.instance = self
 		

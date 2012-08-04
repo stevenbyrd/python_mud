@@ -12,8 +12,10 @@
 				}
 			],
 	"eventHandlers":[
+					],
+	"out_adjusters":[
 						{
-							"name":"Environment.EventHandlers.Room.WasObservedHandler"
+							"name":"Environment.EventAdjusters.Room.NoSpeakingEventAdjuster"
 						}
 					],
 	"inventory":{

@@ -4,5 +4,6 @@ class Event:
         self.attributes = {
             'signature' 	: '',
             'data'      	: {},
+			'flags'			: [],
 			'event_target'	: None
         }

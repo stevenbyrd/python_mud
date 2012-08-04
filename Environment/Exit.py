@@ -4,7 +4,7 @@ from Event.EventEmitter import EventEmitter
 class Exit(EventReceiver, EventEmitter):
 	def __init__(self):
 		EventReceiver.__init__(self)
-		EventEmitter.__init__(self)
+		EventEmitter.__init__(self, None)
 		
 		attributes = {
 			'name'			: '',

@@ -1,4 +1,3 @@
-from Event.Event import Event
 from Event.EventAdjuster import EventAdjuster
 
 class RegenerationAdjuster(EventAdjuster):

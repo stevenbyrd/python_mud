@@ -6,7 +6,7 @@ import importlib
 class Inventory(EventReceiver, EventEmitter):
 	def __init__(self, inventoryJson, owner):		
 		EventReceiver.__init__(self)
-		EventEmitter.__init__(self)
+		EventEmitter.__init__(self, None)
 		
 		self.attributes['items']	= []
 		self.attributes['owner']	= owner

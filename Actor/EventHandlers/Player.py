@@ -43,6 +43,10 @@ class EntityDescribedSelfHandler(EventHandler):
 		receiver	= event.attributes['receiver']
 		description = event.attributes['data']['description']
 		observer	= event.attributes['data']['observer']
+		flagSet		= set(event.attributes['flags'])
+		
+		if 'room_is_dark' in flagSet and 'low_light_vision' not in flagSet:
+			description = [lib.ANSI.yellow('It is too dark to see!')]
 		
 		if observer == receiver:
 			if len(description) > 0:

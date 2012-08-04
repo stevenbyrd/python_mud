@@ -25,9 +25,6 @@
 				}
 			],
 	"eventHandlers":[
-						{
-							"name":"Environment.EventHandlers.Room.WasObservedHandler"
-						}
 					],
 	"inventory":{
 					"items":[

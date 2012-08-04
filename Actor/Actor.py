@@ -15,7 +15,6 @@ class Actor(EventReceiver, EventEmitter):
 		from Inventory.ActorInventory import ActorInventory
 
 		EventReceiver.__init__(self)
-		EventEmitter.__init__(self)
 		
 		attributes = {
 			'actorID'		: '',
@@ -44,24 +43,25 @@ class Actor(EventReceiver, EventEmitter):
 			'inventory'		: None
 		}
 		
+		out_adjusters	= []
+		inventory		= None
+		
 		if actorJSON != None:
 			for key in actorJSON.keys():
 				if key == 'inventory':
-					inventory		= ActorInventory(actorJSON[key], self)
-					attributes[key]	= inventory
+					inventory = actorJSON[key]
 				elif key == 'eventHandlers':					
 					for element in actorJSON[key]:		
 						adjusters = (lambda dictionary: dictionary.has_key('adjusters') and dictionary['adjusters'] or None)(element)
 						
 						self.addEventHandlerByNameWithAdjusters(element['name'], adjusters)
+				elif key == 'out_adjusters':
+					out_adjusters = actorJSON[key]
 				else:
 					attributes[key] = actorJSON[key]
 		
 			for key in attributes.keys():
-				self.attributes[key] = attributes[key]
-			
-			if self.attributes['inventory'] == None:
-				self.attributes['inventory'] = ActorInventory(None, self)
+				self.attributes[key] = attributes[key]				
 		
 			Engine.ActorEngine.addEventSubscriber(self)
 		
@@ -85,6 +85,9 @@ class Actor(EventReceiver, EventEmitter):
 		jsonString	= raceFile.read()
 		jsonObj		= json.loads(jsonString)
 		handlers	= jsonObj['eventHandlers']
+		
+		if jsonObj.has_key('out_adjusters'):
+			out_adjusters = out_adjusters + jsonObj['out_adjusters']
 
 		raceFile.close()
 		
@@ -92,6 +95,13 @@ class Actor(EventReceiver, EventEmitter):
 			adjusters = (lambda dictionary: dictionary.has_key('adjusters') and dictionary['adjusters'] or None)(handler)
 			
 			self.addEventHandlerByNameWithAdjusters(handler['name'], adjusters)
+			
+		EventEmitter.__init__(self, out_adjusters)
+		
+		if inventory != None:
+			self.attributes['inventory'] = ActorInventory(inventory, self)
+		else:
+			self.attributes['inventory'] = ActorInventory(None, self)
 	
 	
 	def getDescription(self):

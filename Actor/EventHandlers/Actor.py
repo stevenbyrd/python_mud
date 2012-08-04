@@ -123,7 +123,8 @@ class ActorGainedHealthEventHandler(EventHandler):
 		target		= event.attributes['data']['target']
 
 		if target == receiver:
-			receiver.attributes['currentHP'] += event.attributes['data']['amount']
+			receiver.attributes['currentHP'] = min(receiver.attributes['currentHP'] + event.attributes['data']['amount'],
+												   receiver.attributes['maxHP'])
 			
 			
 			
@@ -176,16 +177,14 @@ class ActorGainedHealthFromTickHandler(EventHandler):
 		self.attributes['signature'] ='gained_health_from_tick'
 
 	def handleEvent(self, event):		
-		receiver	= event.attributes['receiver']
+		receiver = event.attributes['receiver']
 
-		receiver.attributes['currentHP'] += event.attributes['data']['hp']
-		receiver.attributes['currentMana'] += event.attributes['data']['mana']
+		receiver.attributes['currentHP'] = min(receiver.attributes['currentHP'] + event.attributes['data']['hp'],
+											   receiver.attributes['maxHP'])
+											
+		receiver.attributes['currentMana'] = min(receiver.attributes['currentMana'] + event.attributes['data']['mana'],
+												 receiver.attributes['maxMana'])
 		
-		if receiver.attributes['currentHP'] > receiver.attributes['maxHP']:
-			receiver.attributes['currentHP'] = receiver.attributes['maxHP']
-			
-		if receiver.attributes['currentMana'] > receiver.attributes['maxMana']:
-			receiver.attributes['currentMana'] = receiver.attributes['maxMana']
 		
 
 		

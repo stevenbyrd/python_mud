@@ -10,13 +10,10 @@
 				}
 			],
 	"eventHandlers":[
+					],
+	"out_adjusters":[
 						{
-							"name":"Environment.EventHandlers.Room.WasObservedHandler",
-							"adjusters":[
-								{
-									"name":"Environment.EventAdjusters.Room.ObservedWhileDarkAdjuster"
-								}
-							]
+							"name":"Environment.EventAdjusters.Room.ObservedWhileDarkAdjuster"
 						}
 					],
 	"inventory":{
