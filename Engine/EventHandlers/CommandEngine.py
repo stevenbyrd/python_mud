@@ -23,7 +23,7 @@ class CommandExecutionEventHandler(EventHandler):
 			command		= commandList['go']
 			source		= event.attributes['data']['source']
 
-			if commandList.has_key(cmdName):
+			if commandList.has_key(cmdName):					
 				command = commandList[cmdName]
 				args	= event.attributes['data']['args']
 			else:

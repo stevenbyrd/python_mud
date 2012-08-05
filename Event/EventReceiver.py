@@ -11,7 +11,7 @@ import importlib
 currentDir = os.getcwd()
 
 
-class EventReceiver:
+class EventReceiver(BaseClass):
 	def __init__(self):
 		BaseClass.__init__(self)
 		
@@ -57,3 +57,6 @@ class EventReceiver:
 			}
 			
 			handler.receiveEvent(newEvent)
+			
+		if self.attributes.has_key('AI') and event.attributes['signature'] != 'game_tick':
+			self.attributes['AI'].receiveEvent(event, emitter)

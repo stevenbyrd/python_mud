@@ -6,15 +6,19 @@ class NPC(Actor):
 		Actor.__init__(self, actorJSON)
 		attributes = {
 			'spawnTime'		: datetime.datetime,
-			'pluralName'	: ''
+			'pluralName'	: '',
+			'is_perm'		: False
 		}
 		
 		for key in attributes.keys():
 			if self.attributes.has_key(key) == False:
 				self.attributes[key] = attributes[key]
-			
-		self.attributes['adjective'] = (lambda char: 
-											((char == 'a' or char == 'e' or char == 'i' or char == 'o' or char == 'u') and 'an') or 'a')(self.attributes['name'].lower()[0])
+		
+		if self.attributes['is_perm']:
+			self.attributes['adjective'] = ''
+		else:
+			self.attributes['adjective'] = (lambda char: 
+												((char == 'a' or char == 'e' or char == 'i' or char == 'o' or char == 'u') and 'an') or 'a')(self.attributes['name'].lower()[0])
 											
 		
 	def wander(self):

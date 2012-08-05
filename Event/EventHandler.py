@@ -28,6 +28,7 @@ class EventHandler:
 			self.handleEvent(event)
 			
 			
+			
 	def loadAdjusterFromJSON(self, adjusterJSON):
 		adjusterName	= adjusterJSON['name']
 		args			= (lambda dictionary : dictionary.has_key('args') and dictionary['args'] or None)(adjusterJSON)

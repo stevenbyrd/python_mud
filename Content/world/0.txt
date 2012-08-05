@@ -41,5 +41,25 @@
 									}
 								}
 							]
-				}
+				},
+	"spawnTemplates":[
+						{
+							"npcID":"1",
+							"wanderRate":0,
+							"spawnRate":1,
+							"eventHandlers":[
+												{
+													"name":"Environment.EventHandlers.SpawnTemplate.GameTickedHandler",
+													"adjusters":[
+																	{
+																		"name":"Environment.EventAdjusters.SpawnTemplate.LimitSpawnByNumberInRoom",
+																		"args":{
+																					"max_in_room":1
+																			   }
+																	}
+												 				]
+												}
+											]
+						}
+				     ]
 }

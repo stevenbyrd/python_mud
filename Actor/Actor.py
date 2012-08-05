@@ -13,6 +13,7 @@ class Actor(EventReceiver, EventEmitter):
 		import Engine.RoomEngine
 		import Engine.ActorEngine
 		from Inventory.ActorInventory import ActorInventory
+		from AI.AI import AI
 
 		EventReceiver.__init__(self)
 		
@@ -45,6 +46,7 @@ class Actor(EventReceiver, EventEmitter):
 		
 		out_adjusters	= []
 		inventory		= None
+		ai				= None
 		
 		if actorJSON != None:
 			for key in actorJSON.keys():
@@ -57,6 +59,8 @@ class Actor(EventReceiver, EventEmitter):
 						self.addEventHandlerByNameWithAdjusters(element['name'], adjusters)
 				elif key == 'out_adjusters':
 					out_adjusters = actorJSON[key]
+				elif key == 'AI':
+					ai = actorJSON[key]
 				else:
 					attributes[key] = actorJSON[key]
 		
@@ -102,6 +106,9 @@ class Actor(EventReceiver, EventEmitter):
 			self.attributes['inventory'] = ActorInventory(inventory, self)
 		else:
 			self.attributes['inventory'] = ActorInventory(None, self)
+			
+		if ai != None:
+			self.attributes['AI'] = AI(ai, self)
 	
 	
 	def getDescription(self):

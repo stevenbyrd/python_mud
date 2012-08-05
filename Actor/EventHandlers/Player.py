@@ -2,6 +2,8 @@ import lib.ANSI
 from .. import Player
 from .. import NPC
 from Event.EventHandler import EventHandler
+from Event.Event import Event
+import Engine.ActorEngine
 
 class ReceivedNotificationHandler(EventHandler):
 	def __init__(self, adjusters):

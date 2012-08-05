@@ -1,10 +1,10 @@
 {
-	"name":"dummy",
-	"pluralName":"dummies",
+	"name":"Debaka",
+	"pluralName":"",
 	"race":"Human",
-	"actorID":"-1",
+	"actorID":"-2",
 	"description":[
-					"description line 0"
+					"He seems friendly."
 				  ],
 	"stats":{
 				"strength":20,
@@ -15,7 +15,7 @@
 				"awareness":20
 			},
 	"gender":"male",
-	"roomID":"3",
+	"roomID":"0",
 	"currentHP":1,
 	"maxHP":20,
 	"currentMana":1,
@@ -24,5 +24,13 @@
 						{
 							"name":"Actor.EventHandlers.Actor.ActorWasObservedEventHandler"
 						}
-					]
+					],
+	"AI":{
+			"current_state":"idle",
+			"eventHandlers":[
+								{
+									"name":"AI.EventHandlers.RoomEvents.WaveToNewcomersHandler"
+								}
+							]
+		 }
 }

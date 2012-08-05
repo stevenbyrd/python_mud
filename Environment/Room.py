@@ -1,5 +1,7 @@
 from Event.EventReceiver import EventReceiver
 from Event.EventEmitter import EventEmitter
+from Event.Event import Event
+import Engine.ActorEngine
 
 
 class Room(EventReceiver, EventEmitter):
@@ -103,7 +105,14 @@ class Room(EventReceiver, EventEmitter):
 		if player not in set(playerList):			
 			playerList.append(player)
 			player.attributes['roomID'] = self.attributes['roomID']
-			player.insertCommand('look')
+			
+			commandEvent									= Event()
+			commandEvent.attributes['signature']			= 'execute_command'
+			commandEvent.attributes['data']['command']		= 'look'
+			commandEvent.attributes['data']['args']			= []
+			commandEvent.attributes['data']['source']		= player
+	
+			Engine.ActorEngine.emitEvent(commandEvent)
 
 		self.attributes['playerSemaphore'].release()
 		
