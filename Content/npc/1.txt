@@ -1,4 +1,5 @@
 {
+	"is_perm":1,
 	"name":"Debaka",
 	"pluralName":"",
 	"race":"Human",
@@ -26,11 +27,19 @@
 						}
 					],
 	"AI":{
-			"current_state":"idle",
-			"eventHandlers":[
+			"current_state":"friendly",
+			"states":[
+						{
+							"state_id":"friendly",
+							"transitions":[
 								{
-									"name":"AI.EventHandlers.RoomEvents.WaveToNewcomersHandler"
+									"name":"AI.Transitions.NPC.WaveToNewcomersTransition",
+									"args":{
+										"transition_state":"friendly"
+									}
 								}
 							]
+						}
+					 ]
 		 }
 }

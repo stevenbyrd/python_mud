@@ -28,6 +28,12 @@
 																		"args":{
 																					"modulus":3
 																			   }
+																	},
+																	{
+																		"name":"Environment.EventAdjusters.SpawnTemplate.LimitSpawnByNumberInRoom",
+																		"args":{
+																					"max_in_room":1
+																			   }
 																	}
 												 				]
 												}

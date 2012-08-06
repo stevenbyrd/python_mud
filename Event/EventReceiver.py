@@ -39,7 +39,7 @@ class EventReceiver(BaseClass):
 	
 	
 	
-	def receiveEvent(self, event, emitter):
+	def receiveEvent(self, event, emitter):		
 		if event.attributes['signature'] == 'game_tick':
 			self.attributes['tick_count'] += 1
 		
@@ -58,5 +58,15 @@ class EventReceiver(BaseClass):
 			
 			handler.receiveEvent(newEvent)
 			
-		if self.attributes.has_key('AI') and event.attributes['signature'] != 'game_tick':
-			self.attributes['AI'].receiveEvent(event, emitter)
+		if self.attributes.has_key('AI'):			
+			newEvent = Event()
+		
+			newEvent.attributes = {
+				'signature'		: event.attributes['signature'],
+				'data'			: event.attributes['data'].copy(),
+				'flags'			: event.attributes['flags'][:],
+				'receiver'		: self,
+				'event_target'	: None
+			}
+			
+			self.attributes['AI'].receiveEvent(newEvent, emitter)

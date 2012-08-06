@@ -27,10 +27,12 @@ class ReceivedFeedbackHandler(EventHandler):
 		self.attributes['signature'] = 'received_feedback'
 
 	def handleEvent(self, event):
-		receiver	= event.attributes['receiver']
-		feedback	= event.attributes['data']['feedback']
+		receiver = event.attributes['receiver']
+		
+		if receiver == event.attributes['data']['actor']:
+			feedback = event.attributes['data']['feedback']
 			
-		receiver.sendFinal('{}'.format(feedback))
+			receiver.sendFinal('{}'.format(feedback))
 
 
 

@@ -1,44 +1,31 @@
-from Event.EventReceiver import EventReceiver
-from Event.Event import Event
+from AIState import AIState
 
-class AI(EventReceiver):
-	def __init__(self, aiJson, owner):
-		EventReceiver.__init__(self)
+class AI:
+	def __init__(self, aiJson):
+		self.attributes = {
+			'current_state'	: None,
+			'states'		: []
+		}
 		
-		self.attributes['current_state']	= 'idle'
-		self.attributes['next_state']		= None
-		self.attributes['owner']			= owner
-		
-		if aiJson != None:
-			for key in aiJson.keys():
-				if key == 'eventHandlers':					
-					for element in aiJson[key]:		
-						adjusters = (lambda dictionary: dictionary.has_key('adjusters') and dictionary['adjusters'] or None)(element)
-						
-						self.addEventHandlerByNameWithAdjusters(element['name'], adjusters)
-				else:
-					self.attributes[key] = aiJson[key]
+		if aiJson != None:				
+			for state in aiJson['states']:
+				aiState = AIState(state)
+				
+				self.attributes['states'].append(aiState)
+				
+				if aiState.attributes['state_id'] == aiJson['current_state']:
+					self.attributes['current_state'] = aiState
 		
 	
 	def receiveEvent(self, event, emitter):
-		if event.attributes['signature'] == 'game_tick':
-			self.attributes['tick_count'] += 1
+		currentState = self.attributes['current_state']
 		
-		filterFunc = (lambda receiver: receiver.attributes['signature'] == event.attributes['signature'])
-	
-		for handler in filter(filterFunc, self.attributes['event_handlers']):
-			newEvent = Event()
-		
-			newEvent.attributes = {
-				'signature'		: event.attributes['signature'],
-				'data'			: event.attributes['data'].copy(),
-				'flags'			: event.attributes['flags'][:],
-				'receiver'		: self,
-				'event_target'	: None
-			}
+		if currentState != None:
+			nextStateID = currentState.receiveEvent(event)
 			
-			handler.receiveEvent(newEvent)
-			
-		if self.attributes['next_state'] != None:
-			self.attributes['current_state']	= self.attributes['next_state']
-			self.attributes['next_state']		= None
+			if nextStateID != None:
+				for state in self.attributes['states']:
+					if state.attributes['state_id'] == nextStateID:
+						self.attributes['current_state'] = state
+						
+						break

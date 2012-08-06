@@ -24,5 +24,34 @@
 						{
 							"name":"Actor.EventHandlers.Actor.ActorWasObservedEventHandler"
 						}
-					]
+					],
+	"AI":{
+			"current_state":"south",
+			"states":[
+						{
+							"state_id":"south",
+							"transitions":[
+								{
+									"name":"AI.Transitions.NPC.Move",
+									"args":{
+										"transition_state":"north",
+										"direction":"north"
+									}
+								}
+							]
+						},
+						{
+							"state_id":"north",
+							"transitions":[
+								{
+									"name":"AI.Transitions.NPC.Move",
+									"args":{
+										"transition_state":"south",
+										"direction":"south"
+									}
+								}
+							]
+						}
+					 ]
+		 }
 }

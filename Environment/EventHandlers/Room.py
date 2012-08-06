@@ -94,7 +94,7 @@ class ActorAddedToRoomEventHandler(EventHandler):
 	def handleEvent(self, event):
 		receiver = event.attributes['receiver']
 	
-		if event.attributes['data']['room'] == receiver:			
+		if event.attributes['data']['room'] == receiver:
 			actor = event.attributes['data']['actor']
 			
 			if isinstance(actor, Player):
@@ -238,7 +238,7 @@ class WasObservedHandler(EventHandler):
 				npcLine		= 'NPCs:'
 				listedNPCs	= []
 
-				for npc in npcList:					
+				for npc in npcList:
 					npcName = npc.attributes['name']
 					
 					if npcName not in set(listedNPCs):
@@ -253,7 +253,10 @@ class WasObservedHandler(EventHandler):
 							adjective	= '{}'.format(len(reducedList))
 							npcName		= npc.attributes['pluralName']
 						
-						npcLine = '{} {} {},'.format(npcLine, adjective, npcName)
+						if len(adjective) > 0:
+							npcLine = '{} {} {},'.format(npcLine, adjective, npcName)
+						else:
+							npcLine = '{} {}'.format(npcLine, npcName)
 
 				if npcLine.endswith(','):
 					npcLine = npcLine[0:-1]
