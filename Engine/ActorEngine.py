@@ -3,6 +3,7 @@ from Actor.Player import Player
 from Actor.NPC import NPC
 import os
 import json
+import lib.ANSI
 
 
 currentDir = os.getcwd()
@@ -29,6 +30,10 @@ def loadPlayer(playerName):
 	
 def loadNPC(npcID):
 	return ActorEngine.instance.loadNPC(npcID)
+	
+	
+def getPlayerList():
+	return ActorEngine.instance.getPlayerList()
 
 
 class ActorEngine(Engine):
@@ -128,6 +133,31 @@ class ActorEngine(Engine):
 			return True
 		except:
 			return False
+			
+			
+	def getPlayerList(self):
+		self.attributes['playerSetSemaphore'].acquire();
+		
+		feedback	= lib.ANSI.yellow('NAME____________________RACE')
+		players		= []
+		
+		for player in self.attributes['playerList']:
+			tuple = (player.attributes['name'], player.attributes['race'])
+			
+			players.append(tuple)
+			
+		self.attributes['playerSetSemaphore'].release();
+		
+		for player in sorted(players, key = lambda tuple: tuple[0]):
+			feedback	= '{}\n{}'.format(feedback, player[0])
+			numTabs		= (20 - len(player[0]))/4
+			
+			for num in range(numTabs):
+				feedback = '{}\t'.format(feedback)
+				
+			feedback = '{}{}'.format(feedback, player[1])
+		
+		return feedback
 			
 			
 

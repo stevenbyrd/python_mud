@@ -74,6 +74,7 @@ class CommandEngine(Engine):
 		cmdList['wield']		= Command.loadCommand('Wield')
 		cmdList['remove']		= Command.loadCommand('Remove')
 		cmdList['rem']			= cmdList['remove']
+		cmdList['who']			= Command.loadCommand('Who')
 		
 		
 		# EMOTES

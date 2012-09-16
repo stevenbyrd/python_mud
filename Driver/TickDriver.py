@@ -21,9 +21,7 @@ class TickDriver(threading.Thread, EventEmitter):
 		
 		tickEvent							= Event()
 		tickEvent.attributes['signature']	= 'game_tick'
-
 		self.tickEvent						= tickEvent
-		
 		TickDriver.instance					= self
 		
 		
