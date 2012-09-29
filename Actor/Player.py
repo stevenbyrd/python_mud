@@ -1,13 +1,17 @@
 from Event.EventHandler import EventHandler
 from Event.EventReceiver import EventReceiver
 from Humanoid import Humanoid
+from Menu.RootMenu import RootMenu
 
 
 class Player(Humanoid):
 	def __init__(self, actorJSON):		
 		Humanoid.__init__(self, actorJSON)
 
-		self.attributes['connection'] = None
+		self.attributes['connection']	= None
+		self.attributes['menus']		= []
+		
+		self.attributes['menus'].append(RootMenu(self))
 		
 		if actorJSON != None:
 			self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.Player.ReceivedNotificationHandler', None)
