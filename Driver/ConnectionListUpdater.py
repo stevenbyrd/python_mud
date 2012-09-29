@@ -55,9 +55,9 @@ class ConnectionListUpdater(threading.Thread, EventEmitter):
 			
 			Engine.ConnectionEngine.attribute('connectionList').append(connection)
 			
-			playerName												= player.attributes['name']
-			loginNotificationEvent									= Event()
-			loginNotificationEvent.attributes['signature']			= 'broadcast_to_all_players'
+			playerName						= player.attributes['name']
+			loginNotificationEvent					= Event()
+			loginNotificationEvent.attributes['signature']		= 'broadcast_to_all_players'
 			loginNotificationEvent.attributes['data']['message']	= '{} just logged in.'.format(playerName)
 		
 			self.emitEvent(loginNotificationEvent)
