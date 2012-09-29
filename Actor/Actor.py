@@ -64,7 +64,7 @@ class Actor(EventReceiver, EventEmitter):
 					attributes[key] = actorJSON[key]
 		
 			for key in attributes.keys():
-				self.attributes[key] = attributes[key]				
+				self.attributes[key] = attributes[key]
 		
 			Engine.ActorEngine.addEventSubscriber(self)
 		

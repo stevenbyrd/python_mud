@@ -26,7 +26,12 @@ class Connection:
 
 	def sendFinal(self, message):
 		self.send(message)
-		self.send(	ANSI.magenta('\n\r[') + 
-					ANSI.yellow('HP: ') + ANSI.white(self.attributes['player'].attributes['currentHP']) + 
-					ANSI.yellow(' Mana: ') + ANSI.white(self.attributes['player'].attributes['currentMana']) + 
-					ANSI.magenta(']: '))
+		
+		self.send('\n\r{}\n\r\t{} {}\n\r\t{} {}\n\r\t{}{}\n\r{}: '.format(ANSI.magenta('['),
+																				ANSI.yellow('HP:'),
+																				ANSI.white(self.attributes['player'].attributes['currentHP']),
+																				ANSI.yellow('Mana:'),
+																				ANSI.white(self.attributes['player'].attributes['currentMana']),
+																				ANSI.yellow('Options:'),
+																				self.attributes['player'].attributes['menus'][-1].getOptions(),
+																				ANSI.magenta(']')))

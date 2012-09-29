@@ -37,7 +37,7 @@ class Move(AITransition):
 		commandEvent								= Event()
 		commandEvent.attributes['signature']		= 'execute_command'
 		commandEvent.attributes['data']['command']	= 'go'
-		commandEvent.attributes['data']['args']		= self.attributes['direction']
+		commandEvent.attributes['data']['args']		= [self.attributes['direction']]
 		commandEvent.attributes['data']['source']	= receiver
 
 		Engine.ActorEngine.emitEvent(commandEvent)
