@@ -17,18 +17,11 @@
 	"spawnTemplates":[
 						{
 							"npcID":"0",
-							"wanderRate":0.05,
 							"spawnRate":1,
 							"eventHandlers":[
 												{
 													"name":"Environment.EventHandlers.SpawnTemplate.GameTickedHandler",
 													"adjusters":[
-																	{
-																		"name":"lib.CommonEventAdjusters.FilterGameTicksByModulus",
-																		"args":{
-																					"modulus":120
-																			   }
-																	},
 																	{
 																		"name":"Environment.EventAdjusters.SpawnTemplate.LimitSpawnByNumberInRoom",
 																		"args":{

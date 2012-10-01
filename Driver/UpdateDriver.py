@@ -34,7 +34,7 @@ class UpdateDriver(threading.Thread, EventEmitter):
 				player		= connection.attributes['player']
 				
 				if len(playerInput) > 0:
-					self.processInput(player, playerInput)
+					self.processInput(player, parsedInput)
 			
 			Engine.ConnectionEngine.release('openConnectionsSemaphore')
 			

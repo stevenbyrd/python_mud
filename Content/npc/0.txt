@@ -38,7 +38,15 @@
 										"direction":"north"
 									}
 								}
-							]
+							],
+							"adjusters":[
+								{
+									"name":"lib.CommonEventAdjusters.FilterGameTicksByModulus",
+									"args":{
+												"modulus":10
+										   }
+								}
+							 ]
 						},
 						{
 							"state_id":"north",
@@ -50,8 +58,17 @@
 										"direction":"south"
 									}
 								}
-							]
+							],
+							"adjusters":[
+								{
+									"name":"lib.CommonEventAdjusters.FilterGameTicksByModulus",
+									"args":{
+												"modulus":10
+										   }
+								}
+							 ]
 						}
 					 ]
-		 }
+		 },
+	"wanderRate":0
 }

@@ -22,7 +22,6 @@
 	"spawnTemplates":[
 						{
 							"npcID":"1",
-							"wanderRate":0,
 							"spawnRate":1,
 							"eventHandlers":[
 												{

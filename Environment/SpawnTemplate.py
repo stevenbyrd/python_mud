@@ -13,7 +13,6 @@ class SpawnTemplate(EventReceiver, EventEmitter):
 		attributes = {
 			'npcID'			: '',
 			'npcs'			: [],
-			'wanderRate'	: .5,
 			'spawnRate'		: .5,
 			'room'			: room
 		}

@@ -24,9 +24,9 @@ class EventEmitter(BaseClass):
 				break
 		
 		if event.attributes['signature'] != None:
-			for subscriber in self.attributes['subscribers']:
+			for subscriber in self.attributes['subscribers'][:]:
 				subscriber.receiveEvent(event, self)
-
+				
 	
 	def addEventSubscriber(self, subscriber):
 		if subscriber not in set(self.attributes['subscribers']):

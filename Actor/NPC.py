@@ -7,7 +7,8 @@ class NPC(Actor):
 		attributes = {
 			'spawnTime'		: datetime.datetime,
 			'pluralName'	: '',
-			'is_perm'		: False
+			'is_perm'		: False,
+			'wanderRate'	: 0
 		}
 		
 		for key in attributes.keys():
@@ -19,7 +20,9 @@ class NPC(Actor):
 		else:
 			self.attributes['adjective'] = (lambda char: 
 												((char == 'a' or char == 'e' or char == 'i' or char == 'o' or char == 'u') and 'an') or 'a')(self.attributes['name'].lower()[0])
-											
+		
+		self.addEventHandlerByNameWithAdjusters('Actor.EventHandlers.NPC.GameTickedHandler', None)									
+		
 		
 	def wander(self):
 		from Event.Event import Event

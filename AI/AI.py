@@ -15,6 +15,8 @@ class AI:
 				
 				if aiState.attributes['state_id'] == aiJson['current_state']:
 					self.attributes['current_state'] = aiState
+					
+			
 		
 	
 	def receiveEvent(self, event, emitter):
@@ -27,5 +29,5 @@ class AI:
 				for state in self.attributes['states']:
 					if state.attributes['state_id'] == nextStateID:
 						self.attributes['current_state'] = state
-						
+					
 						break
