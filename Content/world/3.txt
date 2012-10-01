@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "roomID":"3",
     "name":"Test Room 3",
     "description":["This room is for testing NPC spawning"],
@@ -40,4 +41,40 @@
 	    ]
 	}
     ]
+=======
+	"roomID":"3",
+	"name":"Test Room 3",
+	"description":["This room is for testing NPC spawning"],
+	"exits":[
+				{
+					"name":"north",
+					"destination":"0",
+					"isHidden":false
+				}
+			],
+	"eventHandlers":[
+					],
+	"inventory":{
+					"items":[]
+				},
+	"spawnTemplates":[
+						{
+							"npcID":"0",
+							"spawnRate":1,
+							"eventHandlers":[
+												{
+													"name":"Environment.EventHandlers.SpawnTemplate.GameTickedHandler",
+													"adjusters":[
+																	{
+																		"name":"Environment.EventAdjusters.SpawnTemplate.LimitSpawnByNumberInRoom",
+																		"args":{
+																					"max_in_room":1
+																			   }
+																	}
+												 				]
+												}
+											]
+						}
+					  ]
+>>>>>>> bf64e254f8059325d6762aa2de1dc819677452d0
 }

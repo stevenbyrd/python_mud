@@ -25,6 +25,7 @@ class GameTickedHandler(EventHandler):
 			
 			Engine.RoomEngine.emitEvent(spawnEvent)
 			
+<<<<<<< HEAD
 			receiver.attributes['npcs'].append(newNPC)
 		
 		wanderingNPCs = []
@@ -35,3 +36,6 @@ class GameTickedHandler(EventHandler):
 				
 		for npc in wanderingNPCs:
 			npc.wander()
+=======
+			receiver.attributes['npcs'].append(newNPC)
+>>>>>>> bf64e254f8059325d6762aa2de1dc819677452d0

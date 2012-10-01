@@ -2,6 +2,7 @@
 	"name":"Veliik",
 	"race":"Sol",
 	"actorID":"0",
+	"roomID":"3",
 	"uniqueID":"1",
 	"description":[
 					"description line 0",
