@@ -13,7 +13,6 @@ class EventHandler:
 				adjuster = self.loadAdjusterFromJSON(adjusterJSON)
 		
 				self.attributes['adjusters'].append(adjuster)
-				
 		
 
 
