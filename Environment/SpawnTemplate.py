@@ -11,11 +11,11 @@ class SpawnTemplate(EventReceiver, EventEmitter):
 		EventEmitter.__init__(self, None)
 		
 		attributes = {
-			'npcID'			: '',
-			'npcs'			: [],
+			'npcID'		: '',
+			'npcs'		: [],
 			'wanderRate'	: .5,
-			'spawnRate'		: .5,
-			'room'			: room
+			'spawnRate'	: .5,
+			'room'		: room
 		}
 		
 		for key in attributes.keys():

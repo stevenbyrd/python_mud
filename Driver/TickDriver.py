@@ -19,10 +19,10 @@ class TickDriver(threading.Thread, EventEmitter):
 		threading.Thread.__init__(self)
 		EventEmitter.__init__(self, None)
 		
-		tickEvent							= Event()
+		tickEvent				= Event()
 		tickEvent.attributes['signature']	= 'game_tick'
-		self.tickEvent						= tickEvent
-		TickDriver.instance					= self
+		self.tickEvent				= tickEvent
+		TickDriver.instance			= self
 		
 		
 	def run(self):

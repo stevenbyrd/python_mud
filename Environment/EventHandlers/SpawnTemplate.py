@@ -14,12 +14,12 @@ class GameTickedHandler(EventHandler):
 		receiver = event.attributes['receiver']
 		
 		if random.random() < receiver.attributes['spawnRate']:
-			newNPC											= Engine.ActorEngine.loadNPC(receiver.attributes['npcID'])
-			newNPC.attributes['roomID']						= receiver.attributes['room'].attributes['roomID']
-			spawnEvent										= Event()
-			spawnEvent.attributes['signature']				= 'actor_added_to_room'
-			spawnEvent.attributes['data']['room']			= receiver.attributes['room']
-			spawnEvent.attributes['data']['actor']			= newNPC
+			newNPC					= Engine.ActorEngine.loadNPC(receiver.attributes['npcID'])
+			newNPC.attributes['roomID']		= receiver.attributes['room'].attributes['roomID']
+			spawnEvent				= Event()
+			spawnEvent.attributes['signature']	= 'actor_added_to_room'
+			spawnEvent.attributes['data']['room']	= receiver.attributes['room']
+			spawnEvent.attributes['data']['actor']	= newNPC
 			
 			receiver.attributes['room'].addEventSubscriber(newNPC)
 			
