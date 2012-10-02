@@ -16,10 +16,6 @@ class SpawnTemplate(EventReceiver, EventEmitter):
 			'wanderRate'	: .5,
 			'spawnRate'	: .5,
 			'room'		: room
-			'npcID'			: '',
-			'npcs'			: [],
-			'spawnRate'		: .5,
-			'room'			: room
 		}
 		
 		for key in attributes.keys():
