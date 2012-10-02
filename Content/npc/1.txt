@@ -16,7 +16,7 @@
 				"awareness":20
 			},
 	"gender":"male",
-	"roomID":"0",
+	"roomID":"4",
 	"currentHP":1,
 	"maxHP":20,
 	"currentMana":1,

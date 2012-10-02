@@ -49,9 +49,13 @@ class UpdateDriver(threading.Thread, EventEmitter):
 			args			= parsedInput[1:]
 			commandEvent	= Event()
 			
+			if cmd != 'say' and cmd != 'select' and cmd != 'quit':
+				args	= [cmd]
+				cmd		= 'select'
+			
 			commandEvent.attributes['signature']			= 'execute_command'
 			commandEvent.attributes['data']['command']		= cmd
 			commandEvent.attributes['data']['args']			= args
 			commandEvent.attributes['data']['source']		= player
-		
+
 			self.emitEvent(commandEvent)

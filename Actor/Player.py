@@ -1,7 +1,9 @@
+from Event.Event import Event
 from Event.EventHandler import EventHandler
 from Event.EventReceiver import EventReceiver
 from Humanoid import Humanoid
 from Menu.RootMenu import RootMenu
+import Engine.ActorEngine
 
 
 class Player(Humanoid):
@@ -34,5 +36,12 @@ class Player(Humanoid):
 			self.attributes['connection'].sendFinal('\n\r' + message)
 		
 	
-	def insertCommand(self, command):
-		self.attributes['connection'].attributes['inputBuffer'].append(command)
+	def insertCommand(self, command, args = None):
+		commandEvent	= Event()
+		
+		commandEvent.attributes['signature']			= 'execute_command'
+		commandEvent.attributes['data']['command']		= command
+		commandEvent.attributes['data']['args']			= args
+		commandEvent.attributes['data']['source']		= self
+
+		Engine.ActorEngine.emitEvent(commandEvent)

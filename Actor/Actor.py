@@ -18,8 +18,7 @@ class Actor(EventReceiver, EventEmitter):
 		EventReceiver.__init__(self)
 		
 		attributes = {
-			'actorID'		: '',
-			'uniqueID'		: '',
+			'id'			: '',
 			'name'			: '',
 			'description'	: [],
 			'race'			: 'Human',

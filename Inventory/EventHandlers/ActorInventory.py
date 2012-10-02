@@ -312,55 +312,22 @@ class ActorObservedHandler(EventHandler):
 
 	def handleEvent(self, event):
 		receiver	= event.attributes['receiver']
-		args		= event.attributes['data']['args']
 		observer	= event.attributes['data']['observer']
 		target		= event.attributes['data']['target']
 		items		= receiver.attributes['items']
 		objNumber	= 0
 		
-		if target != None and args != None:
-			targetList	= filter(lambda item: 
-									item != None and item.attributes['name'].lower().startswith(target.lower()),
-								 [receiver.attributes['equipment']['Head'],
-								  receiver.attributes['equipment']['Ears'],
-								  receiver.attributes['equipment']['Eyes'],
-								  receiver.attributes['equipment']['Face'],
-								  receiver.attributes['equipment']['Neck'][0],
-								  receiver.attributes['equipment']['Neck'][1],
-								  receiver.attributes['equipment']['Body'],
-								  receiver.attributes['equipment']['Arms'],
-								  receiver.attributes['equipment']['Wrist'][0],
-								  receiver.attributes['equipment']['Wrist'][1],
-								  receiver.attributes['equipment']['Hands'],
-								  receiver.attributes['equipment']['Finger'][0],
-								  receiver.attributes['equipment']['Finger'][1],
-								  receiver.attributes['equipment']['Waist'],
-								  receiver.attributes['equipment']['Legs'],
-								  receiver.attributes['equipment']['Feet'],
-								  receiver.attributes['equipment']['Shield'],
-								  receiver.attributes['equipment']['Wielded']] + items)
-							
-			if len(args) >= 1 and args[0] != '':				
-				if pattern.match(args[0]) and re.search('[^0-9]', args[0]) == None:
-					objNumber = int(args[0]) - 1
-							
-			if objNumber >= len(targetList):
-				objNumber							= objNumber - len(targetList)
-				args[0]								= '{}'.format(objNumber)
-				room								= Engine.RoomEngine.getRoom(observer.attributes['roomID'])
-				event.attributes['event_target']	= room
-			
-				Engine.RoomEngine.emitEvent(event)
-			else:
-				lookEvent									= Event()
-				lookEvent.attributes['data']['observer']	= observer
-				lookEvent.attributes['data']['target']		= targetList[objNumber]
-				lookEvent.attributes['signature']			= 'was_observed'
+		if target != None and target in set(items):
+			lookEvent									= Event()
+			lookEvent.attributes['data']['observer']	= observer
+			lookEvent.attributes['data']['target']		= item
+			lookEvent.attributes['signature']			= 'was_observed'
 
-				receiver.emitEvent(lookEvent)
+			receiver.emitEvent(lookEvent)
 		else:
-			#The actor meant to look at the room
-			event.attributes['signature'] = 'was_observed'
+			#The actor meant to look at the room, or something in it
+			if target == None:
+				event.attributes['signature'] = 'was_observed'
 			
 			Engine.RoomEngine.emitEvent(event)
-				
+			

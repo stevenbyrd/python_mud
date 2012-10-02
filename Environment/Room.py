@@ -106,13 +106,7 @@ class Room(EventReceiver, EventEmitter):
 			playerList.append(player)
 			player.attributes['roomID'] = self.attributes['roomID']
 			
-			commandEvent									= Event()
-			commandEvent.attributes['signature']			= 'execute_command'
-			commandEvent.attributes['data']['command']		= 'look'
-			commandEvent.attributes['data']['args']			= []
-			commandEvent.attributes['data']['source']		= player
-	
-			Engine.ActorEngine.emitEvent(commandEvent)
+			player.insertCommand('look')
 
 		self.attributes['playerSemaphore'].release()
 		

@@ -157,7 +157,6 @@ class ActorObservedHandler(EventHandler):
 		receiver = event.attributes['receiver']
 		
 		if event.attributes['data']['room'] == receiver:
-			args		= event.attributes['data']['args']
 			observer	= event.attributes['data']['observer']
 			target		= event.attributes['data']['target']
 			players		= receiver.attributes['players']
@@ -166,29 +165,23 @@ class ActorObservedHandler(EventHandler):
 			items		= inventory.attributes['items']
 			permItems	= inventory.attributes['permanent_items']
 			hiddenItems = inventory.attributes['hidden_items']
-			objNumber	= 0
-			targetList	= filter(lambda object : 
-									object.attributes['name'].lower().startswith(target.lower()), 
-								 players + npcs + items + permItems + hiddenItems)
-								
-			if len(args) >= 1 and args[0] != '':				
-				if pattern.match(args[0]) and re.search('[^0-9]', args[0]) == None:
-					objNumber = int(args[0]) - 1
-								
-			if objNumber >= len(targetList):
+			mergedList	= players + npcs + items + permItems + hiddenItems
+			
+			if target in set(mergedList):
+				lookEvent									= Event()
+				lookEvent.attributes['data']['observer']	= observer
+				lookEvent.attributes['data']['target']		= target
+				lookEvent.attributes['signature']			= 'was_observed'
+
+				receiver.emitEvent(lookEvent)
+			else:
 				feedbackEvent									= Event()
 				feedbackEvent.attributes['signature']			= 'received_feedback'
 				feedbackEvent.attributes['data']['feedback']	= 'You don\'t see that here.'
 				feedbackEvent.attributes['data']['actor']		= observer
 
 				receiver.emitEvent(feedbackEvent)
-			else:
-				lookEvent									= Event()
-				lookEvent.attributes['data']['observer']	= observer
-				lookEvent.attributes['data']['target']		= targetList[objNumber]
-				lookEvent.attributes['signature']			= 'was_observed'
-
-				receiver.emitEvent(lookEvent)
+				
 
 
 
