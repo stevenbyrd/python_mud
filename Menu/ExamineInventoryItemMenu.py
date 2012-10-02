@@ -7,19 +7,38 @@ class ExamineInventoryItemMenu(Menu):
 		
 		
 		self.attributes['options'] = {
-			'1' : ('. Cancel', lambda : self.cancelMenu())
 		}
 		
-		'''
 		inventory	= player.attributes['inventory']
 		options		= {}
 		count		= 1
+		items		= []
+		equipped	= []
 		
-		for exit in room.attributes['exits']:
+		for key in inventory.attributes['equipment'].keys():
+			equippedItem = inventory.attributes['equipment'][key]
+			
+			if key == 'Neck' or key == 'Wrist' or key == 'Finger':
+				for item in equippedItem:
+					if item != None:
+						equipped.append(item)
+			else:
+				if equippedItem != None:
+					equipped.append(equippedItem)	
+		
+		for item in equipped:
 			key				= '{}'.format(count)
-			exitName		= '. {}'.format(exit.attributes['name'])
-			function		= self.createMover(exit.attributes['name'])
-			options[key]	= (exitName, function)
+			itemName		= '. {} (Equipped)'.format(item.attributes['name'])
+			function		= self.createViewer(item)
+			options[key]	= (itemName, function)
+			
+			count = count + 1
+		
+		for item in inventory.attributes['items']:
+			key				= '{}'.format(count)
+			itemName		= '. {}'.format(item.attributes['name'])
+			function		= self.createViewer(item)
+			options[key]	= (itemName, function)
 			
 			count = count + 1
 		
@@ -28,5 +47,5 @@ class ExamineInventoryItemMenu(Menu):
 		self.attributes['options'] = options
 		
 		
-	def createMover(self, direction):
-		return lambda : self.executeCommand('go', [direction], True)'''
+	def createViewer(self, item):
+		return lambda : self.executeCommand('look', [item])

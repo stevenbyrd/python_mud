@@ -315,12 +315,24 @@ class ActorObservedHandler(EventHandler):
 		observer	= event.attributes['data']['observer']
 		target		= event.attributes['data']['target']
 		items		= receiver.attributes['items']
-		objNumber	= 0
+		equipment	= receiver.attributes['equipment']
+		equipped	= []
 		
-		if target != None and target in set(items):
+		for key in equipment.keys():
+			equippedItem = equipment[key]
+			
+			if key == 'Neck' or key == 'Wrist' or key == 'Finger':
+				for item in equippedItem:
+					if item != None:
+						equipped.append(item)
+			else:
+				if equippedItem != None:
+					equipped.append(equippedItem)
+		
+		if target != None and target in set(items + equipped):
 			lookEvent									= Event()
 			lookEvent.attributes['data']['observer']	= observer
-			lookEvent.attributes['data']['target']		= item
+			lookEvent.attributes['data']['target']		= target
 			lookEvent.attributes['signature']			= 'was_observed'
 
 			receiver.emitEvent(lookEvent)
