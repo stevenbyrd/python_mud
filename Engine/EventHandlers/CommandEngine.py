@@ -20,7 +20,7 @@ class CommandExecutionEventHandler(EventHandler):
 			receiver.emitEvent(logoutEvent)
 		else:
 			commandList = receiver.attributes['commandList']
-			command		= commandList['go']
+			command		= commandList['select']
 			source		= event.attributes['data']['source']
 
 			if commandList.has_key(cmdName):					

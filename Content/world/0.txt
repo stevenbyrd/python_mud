@@ -3,43 +3,42 @@
     "name":"Test Room 0",
     "description":["This is the main testing room, where all players", "will initially spawn"],
     "exits":[
-	{
-	    "name":"north",
-	    "destination":"1",
-	    "isHidden":false
-	}, 
-	{
-	    "name":"east",
-	    "destination":"2",
-	    "isHidden":false
-	}, 
-	{
-	    "name":"south",
-	    "destination":"3",
-	    "isHidden":false
-	},
-	{
-	    "name":"west",
-	    "destination":"4",
-	    "isHidden":false
-	}
+				{
+				    "name":"north",
+				    "destination":"1",
+				    "isHidden":false
+				}, 
+				{
+				    "name":"east",
+				    "destination":"2",
+				    "isHidden":false
+				}, 
+				{
+				    "name":"south",
+				    "destination":"3",
+				    "isHidden":false
+				},
+				{
+				    "name":"west",
+				    "destination":"4",
+				    "isHidden":false
+				}
     ],
     "eventHandlers":[
-    ],
+	],
     "inventory":{
-	"items":[
-	    {
-		"itemType":"Equipable",
-		"itemClass":"Wielded",
-		"itemID":"0",
-		"name":"sword",
-		"pluralName":"swords",
-		"description":["A rusty sword"],
-		"stats":
-		{
-		    "weight":1
-		}
-	    }
-	]
+					"items":[
+					    		{
+									"itemType":"Equipable",
+									"itemClass":"Wielded",
+									"itemID":"0",
+									"name":"sword",
+									"pluralName":"swords",
+									"description":["A rusty sword"],
+									"stats":{
+									    		"weight":1
+											}
+							    }
+					]
     }
 }
