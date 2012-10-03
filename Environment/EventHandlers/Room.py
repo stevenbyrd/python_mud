@@ -21,46 +21,21 @@ class ActorAttemptedMovementEventHandler(EventHandler):
 		if event.attributes['data']['room'] == receiver:
 			actor		= event.attributes['data']['source']
 			direction	= event.attributes['data']['direction']
-			exit		= None
 		
-			if direction == '':
-				feedbackEvent									= Event()
-				feedbackEvent.attributes['signature']			= 'received_feedback'
-				feedbackEvent.attributes['data']['feedback']	= 'Go where?'
-				feedbackEvent.attributes['data']['actor']		= actor
-		
-				receiver.emitEvent(feedbackEvent)
-
-			else:
-				if direction != None:
-					exitList = filter(lambda e : 
-											e.attributes['name'].lower().startswith(direction.lower()), 
-										receiver.attributes['exits'])
-
-					if len(exitList) > 0:
-						exit = exitList[0]
-
-				if exit == None:
-					feedbackEvent									= Event()
-					feedbackEvent.attributes['signature']			= 'received_feedback'
-					feedbackEvent.attributes['data']['feedback']	= ANSI.yellow('You can\'t go that way!')
-					feedbackEvent.attributes['data']['actor']		= actor
-
-					receiver.emitEvent(feedbackEvent)
-				else:									
-					movedFromEvent								= Event()
-					movedFromEvent.attributes['signature']		= 'actor_moved_from_room'
-					movedFromEvent.attributes['data']['actor']	= actor
-					movedFromEvent.attributes['data']['exit']	= exit
-					movedFromEvent.attributes['data']['room']	= receiver
+			if direction != None:
+				movedFromEvent								= Event()
+				movedFromEvent.attributes['signature']		= 'actor_moved_from_room'
+				movedFromEvent.attributes['data']['actor']	= actor
+				movedFromEvent.attributes['data']['exit']	= direction
+				movedFromEvent.attributes['data']['room']	= receiver
+			
+				movedToEvent								= Event()
+				movedToEvent.attributes['signature']		= 'actor_added_to_room'
+				movedToEvent.attributes['data']['actor']	= actor
+				movedToEvent.attributes['data']['room']		= Engine.RoomEngine.getRoom(direction.attributes['destination'])
 				
-					movedToEvent								= Event()
-					movedToEvent.attributes['signature']		= 'actor_added_to_room'
-					movedToEvent.attributes['data']['actor']	= actor
-					movedToEvent.attributes['data']['room']		= Engine.RoomEngine.getRoom(exit.attributes['destination'])
-					
-					Engine.RoomEngine.emitEvent(movedFromEvent)
-					Engine.RoomEngine.emitEvent(movedToEvent)
+				Engine.RoomEngine.emitEvent(movedFromEvent)
+				Engine.RoomEngine.emitEvent(movedToEvent)
 
 
 

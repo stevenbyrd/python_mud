@@ -1,4 +1,5 @@
 import Engine.ActorEngine
+import Engine.RoomEngine
 from Event.Event import Event
 from AI.AITransition import AITransition
 
@@ -33,11 +34,16 @@ class Move(AITransition):
 
 
 	def transition(self, event):
-		receiver									= event.attributes['receiver']
-		commandEvent								= Event()
-		commandEvent.attributes['signature']		= 'execute_command'
-		commandEvent.attributes['data']['command']	= 'go'
-		commandEvent.attributes['data']['args']		= [self.attributes['direction']]
-		commandEvent.attributes['data']['source']	= receiver
+		receiver	= event.attributes['receiver']
+		room		= Engine.RoomEngine.getRoom(receiver.attributes['roomID'])
+		exitList	= filter(lambda exit : exit.attributes['name'] == self.attributes['direction'],
+							 room.attributes['exits'])
 
-		Engine.ActorEngine.emitEvent(commandEvent)
+		if len(exitList) > 0:
+			commandEvent								= Event()
+			commandEvent.attributes['signature']		= 'execute_command'
+			commandEvent.attributes['data']['command']	= 'go'
+			commandEvent.attributes['data']['args']		= [exitList[0]]
+			commandEvent.attributes['data']['source']	= receiver
+
+			Engine.ActorEngine.emitEvent(commandEvent)

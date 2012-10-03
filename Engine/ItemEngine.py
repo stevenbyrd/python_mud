@@ -49,10 +49,7 @@ class ItemEngine(Engine):
 		itemInfo	= self.attributes['itemLoadFunctions'][type](itemName)
 		filePath	= '{}/Content/items/{}'.format(currentDir, itemInfo[0]) 
 		itemFile	= open(filePath, 'r')
-		jsonString	= itemFile.read()
-		
-		print jsonString
-		
+		jsonString	= itemFile.read()		
 		jsonObj		= json.loads(jsonString)
 		itemClass	= itemInfo[1]
 		item		= itemClass(jsonObj)
@@ -67,8 +64,6 @@ class ItemEngine(Engine):
 	
 	def loadWeapon(self, itemName):
 		from Item.Equipable.Wieldable import Wieldable
-		
-		print 'after import'
 		
 		return 'equipable/wieldable/{}.txt'.format(itemName), Wieldable
 		
